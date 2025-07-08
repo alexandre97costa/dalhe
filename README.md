@@ -1,2 +1,3 @@
-# dalhe
-The repo for the DA-LHE website, that keeps track of laptimes on racing sims.
+# DA-LHE
+
+A web app that displays track times in racing sims. Built with SvelteKit, Supabase and ShadCN.
