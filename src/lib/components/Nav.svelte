@@ -7,40 +7,41 @@
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 
-	const components = [
+	const links = [
 		{
-			title: 'Alert Dialog',
-			href: '/docs/components/alert-dialog',
+			title: 'Início',
+			href: '/timeline',
 			description:
 				'A modal dialog that interrupts the user with important content and expects a response.'
 		},
 		{
-			title: 'Hover Card',
-			href: '/docs/components/hover-card',
+			title: 'Pistas',
+			href: '/tracks',
 			description: 'For sighted users to preview content available behind a link.'
 		},
 		{
-			title: 'Progress',
-			href: '/docs/components/progress',
+			title: 'Condutores',
+			href: '/drivers',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
+		}
+	];
+
+	const tournaments = [
+		{
+			title: 'Ver torneios',
+			href: '/tournaments',
+			description: 'Ver todos os torneios, acabados e a decorrer.'
 		},
 		{
-			title: 'Scroll-area',
-			href: '/docs/components/scroll-area',
-			description: 'Visually or semantically separates content.'
+			title: 'Criar torneio',
+			href: '/tournaments/new',
+			description: 'Para criar e ser anfitrião de um torneio.'
 		},
 		{
-			title: 'Tabs',
-			href: '/docs/components/tabs',
-			description:
-				'A set of layered sections of content—known as tab panels—that are displayed one at a time.'
-		},
-		{
-			title: 'Tooltip',
-			href: '/docs/components/tooltip',
-			description:
-				'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.'
+			title: 'Participar em torneio',
+			href: '/tournaments/active',
+			description: 'Para participar num torneio que esteja a decorrer.'
 		}
 	];
 </script>
@@ -67,11 +68,20 @@
 	</li>
 {/snippet}
 
-<LightSwitch />
 <NavigationMenu.Root viewport={false}>
 	<NavigationMenu.List>
+		{#each links as link, i (i)}
+			<NavigationMenu.Item>
+				<NavigationMenu.Link>
+					{#snippet child()}
+						<a href={link.href} class={navigationMenuTriggerStyle()}>{link.title}</a>
+					{/snippet}
+				</NavigationMenu.Link>
+			</NavigationMenu.Item>
+		{/each}
+
 		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>Home</NavigationMenu.Trigger>
+			<NavigationMenu.Trigger>Torneios</NavigationMenu.Trigger>
 			<NavigationMenu.Content>
 				<ul class="grid gap-2 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
 					<li class="row-span-3">
@@ -79,111 +89,26 @@
 							class="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
 						>
 							{#snippet child({ props })}
-								<a {...props} href="/">
-									<div class="mt-4 mb-2 text-lg font-medium">shadcn-svelte</div>
+								<div {...props} >
+									<div class="mt-4 mb-2 text-lg font-medium">Torneios</div>
 									<p class="text-muted-foreground text-sm leading-tight">
-										Beautifully designed components built with Tailwind CSS.
+										Competição entre vários condutores, em várias pistas, com lista de tempos isolada.
 									</p>
-								</a>
+								</div>
 							{/snippet}
 						</NavigationMenu.Link>
 					</li>
-					{@render ListItem({
-						href: '/docs',
-						title: 'Introduction',
-						content: 'Re-usable components built using Bits UI and Tailwind CSS.'
-					})}
-					{@render ListItem({
-						href: '/docs/installation',
-						title: 'Installation',
-						content: 'How to install dependencies and structure your app.'
-					})}
-					{@render ListItem({
-						href: '/docs/components/typography',
-						title: 'Typography',
-						content: 'Styles for headings, paragraphs, lists...etc'
-					})}
-				</ul>
-			</NavigationMenu.Content>
-		</NavigationMenu.Item>
-		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>Components</NavigationMenu.Trigger>
-			<NavigationMenu.Content>
-				<ul class="grid w-[400px] gap-2 p-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-					{#each components as component, i (i)}
+					{#each tournaments as tournament, i (i)}
 						{@render ListItem({
-							href: component.href,
-							title: component.title,
-							content: component.description
+							href: tournament.href,
+							title: tournament.title,
+							content: tournament.description
 						})}
 					{/each}
 				</ul>
 			</NavigationMenu.Content>
 		</NavigationMenu.Item>
 
-		<NavigationMenu.Item>
-			<NavigationMenu.Link>
-				{#snippet child()}
-					<a href="/docs" class={navigationMenuTriggerStyle()}>Docs</a>
-				{/snippet}
-			</NavigationMenu.Link>
-		</NavigationMenu.Item>
-		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>List</NavigationMenu.Trigger>
-			<NavigationMenu.Content>
-				<ul class="grid w-[300px] gap-4 p-2">
-					<li>
-						<NavigationMenu.Link href="#">
-							<div class="font-medium">Components</div>
-							<div class="text-muted-foreground">Browse all components in the library.</div>
-						</NavigationMenu.Link>
-						<NavigationMenu.Link href="#">
-							<div class="font-medium">Documentation</div>
-							<div class="text-muted-foreground">Learn how to use the library.</div>
-						</NavigationMenu.Link>
-						<NavigationMenu.Link href="#">
-							<div class="font-medium">Blog</div>
-							<div class="text-muted-foreground">Read our latest blog posts.</div>
-						</NavigationMenu.Link>
-					</li>
-				</ul>
-			</NavigationMenu.Content>
-		</NavigationMenu.Item>
-		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>Simple</NavigationMenu.Trigger>
-			<NavigationMenu.Content>
-				<ul class="grid w-[200px] gap-4 p-2">
-					<li>
-						<NavigationMenu.Link href="#">Components</NavigationMenu.Link>
-						<NavigationMenu.Link href="#">Documentation</NavigationMenu.Link>
-						<NavigationMenu.Link href="#">Blocks</NavigationMenu.Link>
-					</li>
-				</ul>
-			</NavigationMenu.Content>
-		</NavigationMenu.Item>
-		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>With Icon</NavigationMenu.Trigger>
-
-			<NavigationMenu.Content>
-				<ul class="grid w-[200px] gap-4 p-2">
-					<li>
-						<NavigationMenu.Link href="#" class="flex-row items-center gap-2">
-							<CircleHelpIcon />
-							Backlog
-						</NavigationMenu.Link>
-
-						<NavigationMenu.Link href="#" class="flex-row items-center gap-2">
-							<CircleIcon />
-							To Do
-						</NavigationMenu.Link>
-
-						<NavigationMenu.Link href="#" class="flex-row items-center gap-2">
-							<CircleCheckIcon />
-							Done
-						</NavigationMenu.Link>
-					</li>
-				</ul>
-			</NavigationMenu.Content>
-		</NavigationMenu.Item>
+		<LightSwitch />
 	</NavigationMenu.List>
 </NavigationMenu.Root>
