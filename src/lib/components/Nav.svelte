@@ -36,11 +36,6 @@
 
 	const tournaments = [
 		{
-			title: 'Ver torneios',
-			href: '/tournaments',
-			description: 'Ver todos os torneios, acabados e a decorrer.'
-		},
-		{
 			title: 'Criar torneio',
 			href: '/tournaments/new',
 			description: 'Para criar e ser anfitrião de um torneio.'
@@ -49,7 +44,12 @@
 			title: 'Participar em torneio',
 			href: '/tournaments/active',
 			description: 'Para participar num torneio que esteja a decorrer.'
-		}
+		},
+		{
+			title: 'Ver torneios',
+			href: '/tournaments',
+			description: 'Ver todos os torneios, acabados e a decorrer.'
+		},
 	];
 </script>
 
