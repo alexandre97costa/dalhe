@@ -29,7 +29,7 @@
     ]
 </script>
 
-<div class="rounded-md border">
+<div class="rounded-md border ">
 	<Table.Root>
 		<Table.Header>
             <Table.Row>
@@ -44,7 +44,7 @@
 			{#each tabledata as row, j}
 				<Table.Row data-state={'selected'}>
 					{#each Object.keys(row) as cell, k}
-						<Table.Cell>
+						<Table.Cell class="">
 							<FlexRender content={row[cell]} />
 						</Table.Cell>
 					{/each}
