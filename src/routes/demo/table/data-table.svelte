@@ -1,16 +1,9 @@
-<script>
+<script >
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 
 
 	let { data, columns } = $props();
-
-	const table = createSvelteTable({
-		get data() {
-			return data;
-		},
-		columns
-	});
 
     const tabledata = [
         {

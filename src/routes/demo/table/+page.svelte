@@ -1,8 +1,12 @@
 <script>
 	import DataTable from './data-table.svelte';
-	import { columns } from './columns.js';
+	import { columns } from './columns.ts';
 
 	let { data } = $props();
 </script>
 
-<DataTable data={data.payments} {columns} />
+<div class="flex flex-col gap-10">
+	<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Timeline</h1>
+
+	<DataTable data={data.payments} {columns} />
+</div>

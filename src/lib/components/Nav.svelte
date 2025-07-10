@@ -76,10 +76,11 @@
 {/snippet}
 
 <div class="flex items-center justify-between px-3 pt-2">
-	<Button href="/" variant="outline" size="icon" class="p-2 dark:bg-popover">
-		<img src={LogoImg} alt="logo" class="pt-0.5" />
+	<Button href="/" variant="ghost" size="icon" class="p-1 hover:bg-popover hover:dark:bg-popover">
+		<img src={LogoImg} alt="logo" class="pt-0.5 " />
 		<!-- <div class="h-[36px] w-[36px] flex items-center justify-center bg-neutral-950 p-1.5 rounded-md border-1 border-neutral-500">
 		</div> -->
+		
 	</Button>
 	<NavigationMenu.Root
 		viewport={false}
