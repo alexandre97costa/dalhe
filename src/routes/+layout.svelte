@@ -9,6 +9,6 @@
 <ModeWatcher />
 <Nav />
 
-<div class="flex w-full px-3 py-4">
+<div class="h-full container mx-auto my-10">
 	{@render children?.()}
 </div>

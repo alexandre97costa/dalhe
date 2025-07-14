@@ -76,11 +76,13 @@
 {/snippet}
 
 <div class="flex items-center justify-between px-3 pt-2">
-	<Button href="/" variant="ghost" size="icon" class="p-1 hover:bg-popover hover:dark:bg-popover">
-		<img src={LogoImg} alt="logo" class="pt-0.5 " />
+	<Button href="/" variant="ghost" size="lg" class="group p-2 hover:bg-popover hover:dark:bg-popover">
+		<img src={LogoImg} alt="logo" class=" max-w-8" />
 		<!-- <div class="h-[36px] w-[36px] flex items-center justify-center bg-neutral-950 p-1.5 rounded-md border-1 border-neutral-500">
 		</div> -->
-		
+		<!-- <span class="hidden group-hover:inline">
+			daaaaaaa-lhe
+		</span> -->
 	</Button>
 	<NavigationMenu.Root
 		viewport={false}
@@ -148,7 +150,7 @@
 								hover:text-white 
 								
 								dark:border-purple-500
-								dark:bg-black 
+								dark:bg-neutral-900 
 								dark:text-purple-400 
 								dark:hover:bg-purple-600 
 								dark:hover:text-white 

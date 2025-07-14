@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Avatar as AvatarPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils.js";
 
@@ -7,7 +7,7 @@
 		loadingStatus = $bindable("loading"),
 		class: className,
 		...restProps
-	} = $props();
+	}: AvatarPrimitive.RootProps = $props();
 </script>
 
 <AvatarPrimitive.Root
