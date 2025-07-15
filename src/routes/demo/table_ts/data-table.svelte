@@ -5,23 +5,38 @@
 		getCoreRowModel,
 		getPaginationRowModel
 	} from '@tanstack/table-core';
-	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
-	import * as Table from '$lib/components/ui/table/index.js';
-	import { Button } from "$lib/components/ui/button/index.js";
+	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index';
+	import * as Table from '$lib/components/ui/table/index';
+	import { Button } from "$lib/components/ui/button/index";
+	import type { Payment } from './columns';
 
 	type DataTableProps<TData, TValue> = {
-		data: TData[];
-		columns: ColumnDef<TData, TValue>[];
+		data: Payment[];
+		columns: ColumnDef<Payment>[];
 	};
 
 	let { data, columns }: DataTableProps<TData, TValue> = $props();
 
 	// let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 
+	const payments: Payment[] = [
+        {
+            id: "728ed52f",
+            amount: 100,
+            status: "pending",
+            email: "m@example.com",
+        },
+        {
+            id: "489e1d42",
+            amount: 125,
+            status: "processing",
+            email: "example@gmail.com",
+        },
+        // ...
+    ];
+
 	const table = createSvelteTable({
-		get data() {
-			return data;
-		},
+		data: payments,
 		columns,
 		// state: {
 		// 	get pagination() {
@@ -70,7 +85,7 @@
 					</Table.Row>
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+						<!-- <Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell> -->
 					</Table.Row>
 				{/each}
 			</Table.Body>

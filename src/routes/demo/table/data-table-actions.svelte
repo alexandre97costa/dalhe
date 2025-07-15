@@ -1,6 +1,6 @@
 <script>
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	let { id } = $props();

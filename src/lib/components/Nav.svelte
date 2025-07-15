@@ -1,7 +1,7 @@
 <script>
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index';
 	import { navigationMenuTriggerStyle } from '$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { cn } from '$lib/utils.js';

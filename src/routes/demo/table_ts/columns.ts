@@ -10,7 +10,7 @@ export type Payment = {
     email: string;
 };
 
-export const columnsExample: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "status",
         header: "Status",
@@ -19,9 +19,9 @@ export const columnsExample: ColumnDef<Payment>[] = [
         accessorKey: "email",
         header: "Email",
         cell: ({ row }) => {
+            let email = row.getValue("email");
             return renderSnippet(
-                createRawSnippet<[string]>((getEmail) => {
-                    const email = getEmail();
+                createRawSnippet<[string]>(() => {
                     return {
                         render: () => `<a href="mailto:${email}">${email}</a>`
                     }
