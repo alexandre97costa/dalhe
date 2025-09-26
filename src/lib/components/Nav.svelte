@@ -1,5 +1,5 @@
 <script>
-	import LightSwitch from '$lib/components/LightSwitch.svelte';
+	
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index';
 	import { navigationMenuTriggerStyle } from '$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte';
@@ -10,8 +10,6 @@
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 	import IconClockPlus from '@lucide/svelte/icons/clock-plus';
 
-
-	import LogoImg from '$lib/500w.png';
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
 
 	const links = [
@@ -22,12 +20,12 @@
 				'A modal dialog that interrupts the user with important content and expects a response.'
 		},
 		{
-			title: 'Pistas',
+			title: 'Líderes',
 			href: '/tracks',
 			description: 'For sighted users to preview content available behind a link.'
 		},
 		{
-			title: 'Condutores',
+			title: 'Torneios',
 			href: '/drivers',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
@@ -49,7 +47,7 @@
 			title: 'Ver torneios',
 			href: '/tournaments',
 			description: 'Ver todos os torneios, acabados e a decorrer.'
-		},
+		}
 	];
 </script>
 
@@ -75,20 +73,9 @@
 	</li>
 {/snippet}
 
-<div class="flex items-center justify-between px-3 pt-2">
-	<Button href="/" variant="ghost" size="lg" class="group p-2 hover:bg-popover hover:dark:bg-popover">
-		<img src={LogoImg} alt="logo" class=" max-w-8" />
-		<!-- <div class="h-[36px] w-[36px] flex items-center justify-center bg-neutral-950 p-1.5 rounded-md border-1 border-neutral-500">
-		</div> -->
-		<!-- <span class="hidden group-hover:inline">
-			daaaaaaa-lhe
-		</span> -->
-	</Button>
-	<NavigationMenu.Root
-		viewport={false}
-		class="bg-popover dark:border-input rounded-xl border p-1 "
-	>
-		<NavigationMenu.List>
+<div class="flex items-center justify-between ">
+	<NavigationMenu.Root viewport={false} class="bg-popover dark:border-input  px-2 py-4  ">
+		<NavigationMenu.List class="">
 			{#each links as link, i (i)}
 				<NavigationMenu.Item>
 					<NavigationMenu.Link>
@@ -98,7 +85,7 @@
 					</NavigationMenu.Link>
 				</NavigationMenu.Item>
 			{/each}
-
+<!-- 
 			<NavigationMenu.Item>
 				<NavigationMenu.Trigger>Torneios</NavigationMenu.Trigger>
 				<NavigationMenu.Content>
@@ -111,10 +98,7 @@
 									<div {...props}>
 										<div class="flex items-center gap-2">
 											<div class="mt-2 mb-2 text-lg font-medium">Torneios</div>
-											<Badge
-												variant="secondary"
-												class="bg-amber-500 text-white dark:bg-amber-600"
-											>
+											<Badge variant="secondary" class="bg-amber-500 text-white dark:bg-amber-600">
 												Novo
 											</Badge>
 										</div>
@@ -135,7 +119,7 @@
 						{/each}
 					</ul>
 				</NavigationMenu.Content>
-			</NavigationMenu.Item>
+			</NavigationMenu.Item> -->
 
 			<NavigationMenuItem>
 				<NavigationMenu.Link>
@@ -156,13 +140,13 @@
 								dark:hover:text-white 
 							"
 						>
-						Novo tempo
-						<IconClockPlus />	
+							Novo tempo
+							<IconClockPlus />
 						</Button>
 					{/snippet}
 				</NavigationMenu.Link>
 			</NavigationMenuItem>
 		</NavigationMenu.List>
 	</NavigationMenu.Root>
-	<LightSwitch />
+	
 </div>
