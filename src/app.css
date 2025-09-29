@@ -116,6 +116,6 @@
     @apply border-border outline-ring/50;
   }
   body,html {
-    @apply bg-background text-foreground h-full;
+    @apply bg-neutral-800 text-foreground h-full;
   }
 }
