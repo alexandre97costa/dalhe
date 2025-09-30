@@ -74,7 +74,7 @@
 {/snippet}
 
 <!-- <div class="flex items-center justify-between "> -->
-	<NavigationMenu.Root viewport={false} class="bg-popover dark:border-input w-full px-4 py-4 rounded-tl-2xl rounded-tr-2xl ">
+	<NavigationMenu.Root viewport={false} class="bg-popover dark:border-input w-full px-4 py-4 rounded-tl-2xl rounded-tr-2xl border-t-1 border-x-1 shadow-xl ">
 		<NavigationMenu.List class="gap-3">
 			{#each links as link, i (i)}
 				<NavigationMenu.Item>

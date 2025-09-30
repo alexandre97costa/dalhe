@@ -9,7 +9,7 @@
 	let { children } = $props();
 </script>
 
-<div class="fixed top-0 left-0 right-0 flex justify-between px-1 py-2 bg-background ">
+<div class="bg-background fixed top-0 right-0 left-0 flex justify-between px-1 py-2 border-b-1">
 	<Button
 		href="/"
 		variant="ghost"
@@ -29,10 +29,10 @@
 	</div>
 </div>
 
-<div class="container mx-auto mt-14 h-full p-2 border-x-2">
+<div class="container mx-auto mt-14 h-full  p-4">
 	{@render children?.()}
 </div>
 
-<div class="fixed bottom-0 left-0 right-0  flex justify-center">
+<div class="fixed right-0 bottom-0 left-0 flex justify-center">
 	<Nav />
 </div>
