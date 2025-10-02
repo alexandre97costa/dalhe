@@ -1,5 +1,4 @@
 <script>
-	
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index';
 	import { navigationMenuTriggerStyle } from '$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte';
@@ -9,6 +8,7 @@
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 	import IconClockPlus from '@lucide/svelte/icons/clock-plus';
+	import IconPlus from '@lucide/svelte/icons/plus';
 
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
 
@@ -26,6 +26,12 @@
 		},
 		{
 			title: 'Torneios',
+			href: '/drivers',
+			description:
+				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
+		},
+		{
+			title: 'Perfil',
 			href: '/drivers',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
@@ -73,80 +79,42 @@
 	</li>
 {/snippet}
 
-<!-- <div class="flex items-center justify-between "> -->
-	<NavigationMenu.Root viewport={false} class="bg-popover dark:border-input w-full px-4 py-4 rounded-tl-2xl rounded-tr-2xl border-t-1 border-x-1 shadow-xl ">
-		<NavigationMenu.List class="gap-3">
-			{#each links as link, i (i)}
-				<NavigationMenu.Item>
-					<NavigationMenu.Link>
-						{#snippet child()}
-							<a href={link.href} class={navigationMenuTriggerStyle()}>{link.title}</a>
-						{/snippet}
-					</NavigationMenu.Link>
-				</NavigationMenu.Item>
-			{/each}
-<!-- 
+<NavigationMenu.Root
+	viewport={false}
+	class="bg-popover dark:border-input w-full rounded-tl-2xl rounded-tr-2xl border-x-1 border-t-1 px-4 py-4 shadow-xl "
+>
+	<NavigationMenu.List class="gap-3">
+		{#each links as link, i (i)}
 			<NavigationMenu.Item>
-				<NavigationMenu.Trigger>Torneios</NavigationMenu.Trigger>
-				<NavigationMenu.Content>
-					<ul class="grid gap-2 p-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-						<li class="row-span-3">
-							<NavigationMenu.Link
-								class="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
-							>
-								{#snippet child({ props })}
-									<div {...props}>
-										<div class="flex items-center gap-2">
-											<div class="mt-2 mb-2 text-lg font-medium">Torneios</div>
-											<Badge variant="secondary" class="bg-amber-500 text-white dark:bg-amber-600">
-												Novo
-											</Badge>
-										</div>
-										<p class="text-muted-foreground text-sm leading-tight">
-											Competição entre vários condutores, em várias pistas, com lista de tempos
-											isolada.
-										</p>
-									</div>
-								{/snippet}
-							</NavigationMenu.Link>
-						</li>
-						{#each tournaments as tournament, i (i)}
-							{@render ListItem({
-								href: tournament.href,
-								title: tournament.title,
-								content: tournament.description
-							})}
-						{/each}
-					</ul>
-				</NavigationMenu.Content>
-			</NavigationMenu.Item> -->
-
-			<NavigationMenuItem>
-				<NavigationMenu.Link>
-					{#snippet child()}
-						<Button
-							href="times/new"
-							variant="outline"
-							class="
-								border-purple-500 
-								text-purple-500 
-								hover:bg-purple-500 
-								hover:text-white 
-								
-								dark:border-purple-500
-								dark:bg-neutral-900 
-								dark:text-purple-400 
-								dark:hover:bg-purple-600 
-								dark:hover:text-white 
-							"
-						>
-							Novo tempo
-							<IconClockPlus />
-						</Button>
-					{/snippet}
+				<NavigationMenu.Link href={link.href}>
+					{link.title}
 				</NavigationMenu.Link>
-			</NavigationMenuItem>
-		</NavigationMenu.List>
-	</NavigationMenu.Root>
-	
-<!-- </div> -->
+			</NavigationMenu.Item>
+		{/each}
+
+		<NavigationMenuItem>
+			<NavigationMenu.Link class="relative" asChild>
+				<Button
+					href="times/new"
+					variant="icon"
+					class="
+								fixd
+								inset-0
+
+								rounded-3xl
+								border-1 
+								bg-linear-to-bl  
+
+								from-violet-500 to-fuchsia-500 py-5
+
+								text-white 
+								dark:text-black  
+								
+							"
+				>
+					<IconPlus />
+				</Button>
+			</NavigationMenu.Link>
+		</NavigationMenuItem>
+	</NavigationMenu.List>
+</NavigationMenu.Root>
