@@ -8,6 +8,7 @@
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 	import IconClockPlus from '@lucide/svelte/icons/clock-plus';
+	import IconPlus from '@lucide/svelte/icons/plus';
 
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
 
@@ -85,6 +86,7 @@
 	class="bg-popover dark:border-input w-full rounded-tl-2xl rounded-tr-2xl border-x-1 border-t-1 px-4 py-4 shadow-xl "
 >
 	<NavigationMenu.List class="gap-3">
+<<<<<<< HEAD
 		<!-- Inicio e Líderes -->
 		{#each links as link, i (i)}
 			{#if i >= 0 && i <= 1}
@@ -136,5 +138,39 @@
 				</NavigationMenu.Item>
 			{/if}
 		{/each}
+=======
+		{#each links as link, i (i)}
+			<NavigationMenu.Item>
+				<NavigationMenu.Link href={link.href}>
+					{link.title}
+				</NavigationMenu.Link>
+			</NavigationMenu.Item>
+		{/each}
+
+		<NavigationMenuItem>
+			<NavigationMenu.Link class="relative" asChild>
+				<Button
+					href="times/new"
+					variant="icon"
+					class="
+								fixd
+								inset-0
+
+								rounded-3xl
+								border-1 
+								bg-linear-to-bl  
+
+								from-violet-500 to-fuchsia-500 py-5
+
+								text-white 
+								dark:text-black  
+								
+							"
+				>
+					<IconPlus />
+				</Button>
+			</NavigationMenu.Link>
+		</NavigationMenuItem>
+>>>>>>> 25879565d3b5e1b442c39671e9acfd3a28fabc7d
 	</NavigationMenu.List>
 </NavigationMenu.Root>
