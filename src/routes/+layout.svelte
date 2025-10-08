@@ -6,10 +6,20 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import LogoImg from '$lib/500w.png';
 
+	import { m } from '$lib/paraglide/messages.js';
+	import { getLocale, setLocale } from "$lib/paraglide/runtime.js";
+
 	let { children } = $props();
+
+	let language = $state(getLocale())
+
+	function toggleLanguage() {
+		language = language == "en" ? "pt" : "en"
+		setLocale(language)
+	}
 </script>
 
-<div class="bg-background fixed top-0 right-0 left-0 flex justify-between px-1 py-2 border-b-1">
+<div class="bg-background fixed top-0 right-0 left-0 flex justify-between border-b-1 px-1 py-2">
 	<Button
 		href="/"
 		variant="ghost"
@@ -23,13 +33,31 @@
 				daaaaaaa-lhe
 				</span> -->
 	</Button>
-	<ModeWatcher />
 	<div class="pr-3">
+		<Button
+			onclick={toggleLanguage}
+			variant="outline"
+			size="icon"
+			class="dark:bg-popover cursor-pointer"
+		>
+			<span
+				class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
+			>
+				PT
+			</span>
+			<span
+				class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 !transition-all dark:scale-100 dark:rotate-0"
+			>
+				EN
+			</span>
+			<span class="sr-only">Toggle language</span>
+		</Button>
 		<LightSwitch />
+		<ModeWatcher />
 	</div>
 </div>
 
-<div class="container mx-auto mt-14 h-full  p-4">
+<div class="container mx-auto mt-14 h-full p-4">
 	{@render children?.()}
 </div>
 

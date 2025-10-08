@@ -22,18 +22,18 @@
 				'A modal dialog that interrupts the user with important content and expects a response.'
 		},
 		{
-			title: 'Líderes',
+			title: m.nav_leaders(),
 			href: '/tracks',
 			description: 'For sighted users to preview content available behind a link.'
 		},
 		{
-			title: 'Torneios',
+			title: m.nav_tournaments(),
 			href: '/drivers',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
 		},
 		{
-			title: 'Perfil',
+			title: m.nav_profile(),
 			href: '/drivers',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
@@ -86,59 +86,6 @@
 	class="bg-popover dark:border-input w-full rounded-tl-2xl rounded-tr-2xl border-x-1 border-t-1 px-4 py-4 shadow-xl "
 >
 	<NavigationMenu.List class="gap-3">
-<<<<<<< HEAD
-		<!-- Inicio e Líderes -->
-		{#each links as link, i (i)}
-			{#if i >= 0 && i <= 1}
-				<NavigationMenu.Item>
-					<NavigationMenu.Link>
-						{#snippet child()}
-							<a href={link.href} class={navigationMenuTriggerStyle()}>{link.title}</a>
-						{/snippet}
-					</NavigationMenu.Link>
-				</NavigationMenu.Item>
-			{/if}
-		{/each}
-
-		<!-- CTA principal -->
-		<NavigationMenuItem>
-			<NavigationMenu.Link>
-				{#snippet child()}
-					<Button
-						href="times/new"
-						variant="outline"
-						class="
-								border-purple-500 
-								text-purple-500 
-								hover:bg-purple-500 
-								hover:text-white 
-								
-								dark:border-purple-500
-								dark:bg-neutral-900 
-								dark:text-purple-400 
-								dark:hover:bg-purple-600 
-								dark:hover:text-white 
-							"
-					>
-						<IconClockPlus />
-					</Button>
-				{/snippet}
-			</NavigationMenu.Link>
-		</NavigationMenuItem>
-
-		<!-- Torneios e Perfil -->
-		{#each links as link, i (i)}
-			{#if i >= 2 && i <= 3}
-				<NavigationMenu.Item>
-					<NavigationMenu.Link>
-						{#snippet child()}
-							<a href={link.href} class={navigationMenuTriggerStyle()}>{link.title}</a>
-						{/snippet}
-					</NavigationMenu.Link>
-				</NavigationMenu.Item>
-			{/if}
-		{/each}
-=======
 		{#each links as link, i (i)}
 			<NavigationMenu.Item>
 				<NavigationMenu.Link href={link.href}>
@@ -149,6 +96,7 @@
 
 		<NavigationMenuItem>
 			<NavigationMenu.Link class="relative" asChild>
+				{#snippet child()}
 				<Button
 					href="times/new"
 					variant="icon"
@@ -169,8 +117,8 @@
 				>
 					<IconPlus />
 				</Button>
+				{/snippet}
 			</NavigationMenu.Link>
 		</NavigationMenuItem>
->>>>>>> 25879565d3b5e1b442c39671e9acfd3a28fabc7d
 	</NavigationMenu.List>
 </NavigationMenu.Root>
