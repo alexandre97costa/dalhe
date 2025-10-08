@@ -1,4 +1,9 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from pt!"
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "hello_world": "Hello, {name} from pt!",
+    "nav_home": "Início",
+    "nav_leaders": "Líderes",
+    "nav_add": "Nova Laptime",
+    "nav_tournaments": "Torneios",
+    "nav_profile": "Perfil"
 }
