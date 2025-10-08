@@ -17,7 +17,7 @@
 	const links = [
 		{
 			title: m.nav_home(),
-			href: '/times',
+			href: '/demo/aura-mockup',
 			description:
 				'A modal dialog that interrupts the user with important content and expects a response.'
 		},
@@ -34,91 +34,69 @@
 		},
 		{
 			title: m.nav_profile(),
-			href: '/drivers',
+			href: '/profile',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
 		}
 	];
-
-	const tournaments = [
-		{
-			title: 'Criar torneio',
-			href: '/tournaments/new',
-			description: 'Para criar e ser anfitrião de um torneio.'
-		},
-		{
-			title: 'Participar em torneio',
-			href: '/tournaments/active',
-			description: 'Para participar num torneio que esteja a decorrer.'
-		},
-		{
-			title: 'Ver torneios',
-			href: '/tournaments',
-			description: 'Ver todos os torneios, acabados e a decorrer.'
-		}
-	];
 </script>
-
-{#snippet ListItem({ title, content, href, class: className, ...restProps })}
-	<li>
-		<NavigationMenu.Link>
-			{#snippet child()}
-				<a
-					{href}
-					class={cn(
-						'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block space-y-1 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none',
-						className
-					)}
-					{...restProps}
-				>
-					<div class="text-sm leading-none font-medium">{link.title}</div>
-					<p class="text-muted-foreground line-clamp-2 text-sm leading-snug">
-						{content}
-					</p>
-				</a>
-			{/snippet}
-		</NavigationMenu.Link>
-	</li>
-{/snippet}
 
 <NavigationMenu.Root
 	viewport={false}
-	class="bg-popover dark:border-input w-full rounded-tl-2xl rounded-tr-2xl border-x-1 border-t-1 px-4 py-4 shadow-xl "
+	class="bg-popover dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl "
 >
 	<NavigationMenu.List class="gap-3">
 		{#each links as link, i (i)}
-			<NavigationMenu.Item>
-				<NavigationMenu.Link href={link.href}>
-					{link.title}
-				</NavigationMenu.Link>
-			</NavigationMenu.Item>
+			{#if i == 0 || i == 1}
+				<NavigationMenu.Item>
+					<NavigationMenu.Link href={link.href}>
+						{link.title}
+					</NavigationMenu.Link>
+				</NavigationMenu.Item>
+			{/if}
 		{/each}
 
-		<NavigationMenuItem>
-			<NavigationMenu.Link class="relative" asChild>
+		<NavigationMenuItem class="relative h-4 w-14 ">
+			<NavigationMenu.Link asChild>
 				{#snippet child()}
-				<Button
-					href="times/new"
-					variant="icon"
-					class="
-								fixd
-								inset-0
+					<Button
+						href="times/new"
+						variant=""
+						class="
+								absolute 
+								bottom-1
+								aspect-square
+								scale-125
+								mx-2.5
 
-								rounded-3xl
+								shadow-lg
+								shadow-purple-500/20 
+								dark:shadow-purple-400/20 
+
+								rounded-4xl
 								border-1 
-								bg-linear-to-bl  
-
-								from-violet-500 to-fuchsia-500 py-5
-
-								text-white 
-								dark:text-black  
-								
+								border-purple-300
+								dark:border-purple-400
+								bg-purple-400/20
+								py-5
+								text-purple-600 
+								dark:text-purple-400  
 							"
-				>
-					<IconPlus />
-				</Button>
+					>
+						<IconPlus size="48" />
+					</Button>
 				{/snippet}
 			</NavigationMenu.Link>
 		</NavigationMenuItem>
+
+		{#each links as link, i (i)}
+			{#if i == 2 || i == 3}
+				<NavigationMenu.Item>
+					<NavigationMenu.Link href={link.href}>
+						{link.title}
+					</NavigationMenu.Link>
+				</NavigationMenu.Item>
+			{/if}
+		{/each}
 	</NavigationMenu.List>
 </NavigationMenu.Root>
