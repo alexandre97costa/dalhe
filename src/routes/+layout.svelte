@@ -8,6 +8,7 @@
 
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
+	import { title } from "$lib/store.js";
 
 	let { children } = $props();
 
@@ -19,7 +20,11 @@
 	}
 </script>
 
-<div class="bg-background fixed top-0 right-0 left-0 flex justify-between border-b-1 px-1 py-2">
+<svelte:head>
+	<title>{$title ? $title + ' • Dá-lhe!' : 'Dá-lhe'}</title>
+</svelte:head>
+
+<div class="bg-background/20 backdrop-blur-sm fixed top-0 right-0 left-0 flex justify-between border-b-1 px-1 py-2">
 	<div class="flex items-center gap-2">
 		<Button
 			href="/"
@@ -37,8 +42,8 @@
 
 		<div class="flex flex-col">
 
-			<h1 class="text-xl font-semibold">Perfil</h1>
-			<h2 class="text-xs text-neutral-500">alexandre97costa</h2>
+			<h1 class="text-xl font-semibold">{$title}</h1>
+			<!-- <h2 class="text-xs text-neutral-500">alexandre97costa</h2> -->
 		</div>
 	</div>
 	<div class="flex items-center gap-2 pr-3">

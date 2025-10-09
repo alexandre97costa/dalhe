@@ -23,12 +23,12 @@
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/tracks',
+			href: '/leaders',
 			description: 'For sighted users to preview content available behind a link.'
 		},
 		{
 			title: m.nav_tournaments(),
-			href: '/drivers',
+			href: '/tournaments',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.'
 		},
@@ -43,7 +43,7 @@
 
 <NavigationMenu.Root
 	viewport={false}
-	class="bg-popover dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl "
+	class="bg-popover/20 backdrop-blur-sm dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl "
 >
 	<NavigationMenu.List class="grid grid-cols-10 gap-3 min-w-[100vw] ">
 		{#each links as link, i (i)}
@@ -60,7 +60,7 @@
 			<NavigationMenu.Link asChild>
 				{#snippet child()}
 					<Button
-						href="times/new"
+						href="/new"
 						variant=""
 						class="
 								absolute 
@@ -69,6 +69,7 @@
 								scale-125
 								mx-2.5
 
+								backdrop-blur-sm
 								shadow-lg
 								shadow-purple-500/20 
 								dark:shadow-purple-400/20 
@@ -100,8 +101,3 @@
 		{/each}
 	</NavigationMenu.List>
 </NavigationMenu.Root>
-
-
-<style>
-
-</style>
