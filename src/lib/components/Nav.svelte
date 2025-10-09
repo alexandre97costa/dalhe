@@ -45,10 +45,10 @@
 	viewport={false}
 	class="bg-popover dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl "
 >
-	<NavigationMenu.List class="gap-3">
+	<NavigationMenu.List class="grid grid-cols-10 gap-3 min-w-[100vw] ">
 		{#each links as link, i (i)}
 			{#if i == 0 || i == 1}
-				<NavigationMenu.Item>
+				<NavigationMenu.Item class="flex justify-center col-span-2">
 					<NavigationMenu.Link href={link.href}>
 						{link.title}
 					</NavigationMenu.Link>
@@ -56,7 +56,7 @@
 			{/if}
 		{/each}
 
-		<NavigationMenuItem class="relative h-4 w-14 ">
+		<NavigationMenuItem class="relative h-4  col-span-2 flex justify-center">
 			<NavigationMenu.Link asChild>
 				{#snippet child()}
 					<Button
@@ -91,7 +91,7 @@
 
 		{#each links as link, i (i)}
 			{#if i == 2 || i == 3}
-				<NavigationMenu.Item>
+				<NavigationMenu.Item class="flex justify-center col-span-2">
 					<NavigationMenu.Link href={link.href}>
 						{link.title}
 					</NavigationMenu.Link>
@@ -100,3 +100,8 @@
 		{/each}
 	</NavigationMenu.List>
 </NavigationMenu.Root>
+
+
+<style>
+
+</style>
