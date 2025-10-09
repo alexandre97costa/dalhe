@@ -9,7 +9,7 @@ function createTitle() {
 			set(`${value}`)
 		},
 		clear: () => {
-			set('Home • Dá-lhe!');
+			set('');
 		}
 	}
 }

@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>{$title ? $title + ' • Dá-lhe!' : 'Dá-lhe'}</title>
+	<title>{$title ? $title + ' • Dá-lhe!' : 'Dá-lhe!'}</title>
 </svelte:head>
 
 <div class="bg-background/20 backdrop-blur-sm fixed top-0 right-0 left-0 flex justify-between border-b-1 px-1 py-2">
@@ -66,6 +66,7 @@
 		<ModeWatcher />
 	</div>
 </div>
+
 
 <div class="container mx-auto mt-14 h-full p-4">
 	{@render children?.()}

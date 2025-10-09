@@ -45,7 +45,7 @@
 	viewport={false}
 	class="bg-popover/20 backdrop-blur-sm dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl "
 >
-	<NavigationMenu.List class="grid grid-cols-10 gap-3 min-w-[100vw] ">
+	<NavigationMenu.List class="grid grid-cols-10 gap-3 min-w-[100vw] md:min-w-full">
 		{#each links as link, i (i)}
 			{#if i == 0 || i == 1}
 				<NavigationMenu.Item class="flex justify-center col-span-2">
