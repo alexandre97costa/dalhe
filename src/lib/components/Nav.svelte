@@ -85,6 +85,7 @@
 							"
 					>
 						<IconPlus size="48" />
+						<span class="sr-only">{m.nav_add}</span>
 					</Button>
 				{/snippet}
 			</NavigationMenu.Link>
