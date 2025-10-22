@@ -2,13 +2,21 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { formSchema, type FormSchema } from './schema';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { type Infer, superForm, SuperValidated } from 'sveltekit-superforms';
+	import { zod4 } from 'sveltekit-superforms/adapters';
 
 	let { data }: { data: { form: SuperValidated<Infer<FormSchema>> } } = $props();
 
 	const form = superForm(data.form, {
-		validators: zodClient(formSchema)
+		validators: zod4(formSchema),
+		SPA: true,
+		onUpdate: ({ form }) => {
+			if (form.valid) {
+				console.log(`You submitted ${JSON.stringify(form.data, null, 2)}`);
+			} else {
+				console.error('Please fix the errors in the form.');
+			}
+		}
 	});
 
 	const { form: formData, enhance } = form;
