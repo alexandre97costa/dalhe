@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { formSchema, type FormSchema } from './schema';
-	import { type Infer, superForm, SuperValidated } from 'sveltekit-superforms';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 
 	let { data }: { data: { form: SuperValidated<Infer<FormSchema>> } } = $props();
@@ -12,7 +12,7 @@
 		SPA: true,
 		onUpdate: ({ form }) => {
 			if (form.valid) {
-				console.log(`You submitted ${JSON.stringify(form.data, null, 2)}`);
+				console.log(form);
 			} else {
 				console.error('Please fix the errors in the form.');
 			}
