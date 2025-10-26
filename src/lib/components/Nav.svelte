@@ -60,7 +60,7 @@
 			<NavigationMenu.Link asChild>
 				{#snippet child()}
 					<Button
-						href="/demo/new"
+						href="/new"
 						variant=""
 						class="
 								absolute 

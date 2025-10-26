@@ -5,5 +5,7 @@
     "nav_leaders": "Líderes",
     "nav_add": "Nova volta",
     "nav_tournaments": "Torneios",
-    "nav_profile": "Perfil"
+    "nav_profile": "Perfil",
+    "nav_add_cancel": "Cancelar",
+    "nav_add_save": "Criar volta"
 }
