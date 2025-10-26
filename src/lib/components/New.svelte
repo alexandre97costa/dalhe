@@ -15,6 +15,7 @@
 	const id = $props.id();
 </script>
 
+<!-- Form -->
 {#snippet form()}
 	<form class="grid items-start gap-4">
 		<div class="grid gap-2">
@@ -25,7 +26,7 @@
 			<Label for="username-{id}">Username</Label>
 			<Input id="username-{id}" value="@shadcn" />
 		</div>
-		<div class="flex w-full flex-col gap-4 px-4">
+		<div class="flex w-full flex-col gap-4">
 			<Label for="input-laptime">Tempo</Label>
 
 			<InputOTP.Root
@@ -61,10 +62,8 @@
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
-		<Dialog.Trigger asChild>
-			<Button variant="outline">
-				{m.nav_add()}
-			</Button>
+		<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
+			{m.nav_add()}
 		</Dialog.Trigger>
 		<Dialog.Content class="">
 			<Dialog.Header>
@@ -72,27 +71,15 @@
 				<!-- <Dialog.Description> -->
 			</Dialog.Header>
 			{@render form()}
-			<Dialog.Footer>
-				<Dialog.Close>{m.nav_add_cancel()}</Dialog.Close>
-			</Dialog.Footer>
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
-		<Drawer.Trigger asChild>
-			<Button variant="outline">
-				{m.nav_add()}
-			</Button>
+		<Drawer.Trigger class={buttonVariants({ variant: 'outline' })}>
+			{m.nav_add()}
 		</Drawer.Trigger>
 		<Drawer.Content class="">
-			<Drawer.Header class="text-center">
-				<Drawer.Title>{m.nav_add()}</Drawer.Title>
-				<!-- <Drawer.Description> -->
-			</Drawer.Header>
 			{@render form()}
-			<Drawer.Footer>
-				<Drawer.Close>{m.nav_add_cancel()}</Drawer.Close>
-			</Drawer.Footer>
 		</Drawer.Content>
 	</Drawer.Root>
 {/if}
