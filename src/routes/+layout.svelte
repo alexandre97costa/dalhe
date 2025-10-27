@@ -68,7 +68,7 @@
 </div>
 
 
-<div class="container mx-auto mt-14 h-full p-4">
+<div class="container mx-auto mt-14 h- p-4">
 	{@render children?.()}
 </div>
 

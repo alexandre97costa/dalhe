@@ -11,8 +11,11 @@
 	import IconPlus from '@lucide/svelte/icons/plus';
 
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
+	import New from '$lib/components/New.svelte';
 
 	import { m } from '$lib/paraglide/messages.js';
+
+	let open = $state(false);
 
 	const links = [
 		{
@@ -41,14 +44,15 @@
 	];
 </script>
 
+<New bind:open />
 <NavigationMenu.Root
 	viewport={false}
-	class="bg-popover/20 backdrop-blur-sm dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl "
+	class="bg-popover/20 dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl backdrop-blur-sm "
 >
-	<NavigationMenu.List class="grid grid-cols-10 gap-3 min-w-[100vw] md:min-w-full">
+	<NavigationMenu.List class="grid min-w-[100vw] grid-cols-10 gap-3 md:min-w-full">
 		{#each links as link, i (i)}
 			{#if i == 0 || i == 1}
-				<NavigationMenu.Item class="flex justify-center col-span-2">
+				<NavigationMenu.Item class="col-span-2 flex justify-center">
 					<NavigationMenu.Link href={link.href}>
 						{link.title}
 					</NavigationMenu.Link>
@@ -56,32 +60,33 @@
 			{/if}
 		{/each}
 
-		<NavigationMenuItem class="relative h-4  col-span-2 flex justify-center">
+		<NavigationMenuItem class="relative col-span-2  flex h-4 justify-center">
 			<NavigationMenu.Link asChild>
 				{#snippet child()}
 					<Button
-						href="/new"
+						onclick={() => (open = !open)}
 						variant=""
 						class="
-								absolute 
-								bottom-1
+								absolute
+								bottom-1 
+								mx-2.5
 								aspect-square
 								scale-125
-								mx-2.5
-
-								backdrop-blur-sm
-								shadow-lg
-								shadow-purple-500/20 
-								dark:shadow-purple-400/20 
+								cursor-pointer
 
 								rounded-4xl
-								border-1 
-								border-purple-300
-								dark:border-purple-400
-								bg-purple-400/20
+								border-1
+								border-purple-300 
+								bg-purple-400/20 
+
 								py-5
 								text-purple-600 
-								dark:text-purple-400  
+								shadow-lg
+								shadow-purple-500/20
+								backdrop-blur-sm
+								dark:border-purple-400
+								dark:text-purple-400 
+								dark:shadow-purple-400/20  
 							"
 					>
 						<IconPlus size="48" />
@@ -93,7 +98,7 @@
 
 		{#each links as link, i (i)}
 			{#if i == 2 || i == 3}
-				<NavigationMenu.Item class="flex justify-center col-span-2">
+				<NavigationMenu.Item class="col-span-2 flex justify-center">
 					<NavigationMenu.Link href={link.href}>
 						{link.title}
 					</NavigationMenu.Link>

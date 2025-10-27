@@ -7,15 +7,11 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
-	import New from '$lib/components/New.svelte';
 
 	title.set(m.nav_add());
 
 	const id = $props.id();
 </script>
-
-
-<New/>
 
 <div class="flex w-full max-w-sm flex-col gap-3">
 	<Label for="input-laptime-{id}">Tempo</Label>

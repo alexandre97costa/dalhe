@@ -9,9 +9,9 @@
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 
-	let open = $state(false);
+	
+	let { open = $bindable(false) } = $props();
 	const isDesktop = new MediaQuery('(min-width: 768px)');
-
 	const id = $props.id();
 </script>
 
@@ -62,9 +62,9 @@
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
-		<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
+		<!-- <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
 			{m.nav_add()}
-		</Dialog.Trigger>
+		</Dialog.Trigger> -->
 		<Dialog.Content class="">
 			<Dialog.Header>
 				<Dialog.Title>{m.nav_add()}</Dialog.Title>
@@ -75,9 +75,9 @@
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
-		<Drawer.Trigger class={buttonVariants({ variant: 'outline' })}>
+		<!-- <Drawer.Trigger class={buttonVariants({ variant: 'outline' })}>
 			{m.nav_add()}
-		</Drawer.Trigger>
+		</Drawer.Trigger> -->
 		<Drawer.Content class="">
 			{@render form()}
 		</Drawer.Content>
