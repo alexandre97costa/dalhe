@@ -1,38 +1,63 @@
-<script>
+<script lang="ts">
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import * as Form from '$lib/components/ui/form/index.js';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
+	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
 
-	
-	let { open = $bindable(false) } = $props();
 	const isDesktop = new MediaQuery('(min-width: 768px)');
-	const id = $props.id();
+
+	let {
+		data,
+		open = $bindable(false)
+	}: {
+		data: { form: SuperValidated<Infer<LaptimeSchema>> };
+		open: boolean;
+	} = $props();
+
+	const form = superForm(data.form, {
+		validators: zod4(laptimeSchema),
+		SPA: true,
+		onUpdate: ({ form }) => {
+			if (form.valid) {
+				console.log(form);
+			} else {
+				console.error('Please fix the errors in the form.');
+			}
+		}
+	});
+
+	const { form: formData, enhance } = form;
 </script>
 
 <!-- Form -->
-{#snippet form()}
-	<form class="grid items-start gap-4">
-		<div class="grid gap-2">
-			<Label for="email-{id}">Email</Label>
-			<Input type="email" id="email-{id}" value="shadcn@example.com" />
-		</div>
-		<div class="grid gap-2">
-			<Label for="username-{id}">Username</Label>
-			<Input id="username-{id}" value="@shadcn" />
-		</div>
+{#snippet laptimeForm()}
+	<form method="POST" use:enhance class="grid items-start gap-4">
+		<Form.Field {form} name="username">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Username</Form.Label>
+					<Input {...props} bind:value={$formData.username} />
+				{/snippet}
+			</Form.Control>
+			<Form.Description>This is your public display name.</Form.Description>
+			<Form.FieldErrors />
+		</Form.Field>
 		<div class="flex w-full flex-col gap-4">
 			<Label for="input-laptime">Tempo</Label>
 
 			<InputOTP.Root
 				maxlength={7}
 				pattern={REGEXP_ONLY_DIGITS}
-				on:change={(e) => console.log(e)}
+				onchange={(e) => console.log(e)}
 				id="input-laptime"
 			>
 				{#snippet children({ cells })}
@@ -62,24 +87,17 @@
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
-		<!-- <Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
-			{m.nav_add()}
-		</Dialog.Trigger> -->
 		<Dialog.Content class="">
 			<Dialog.Header>
 				<Dialog.Title>{m.nav_add()}</Dialog.Title>
-				<!-- <Dialog.Description> -->
 			</Dialog.Header>
-			{@render form()}
+			{@render laptimeForm()}
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
-		<!-- <Drawer.Trigger class={buttonVariants({ variant: 'outline' })}>
-			{m.nav_add()}
-		</Drawer.Trigger> -->
 		<Drawer.Content class="">
-			{@render form()}
+			{@render laptimeForm()}
 		</Drawer.Content>
 	</Drawer.Root>
 {/if}
