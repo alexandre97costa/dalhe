@@ -1,6 +1,8 @@
 <script>
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index';
+	import IconPlus from '@lucide/svelte/icons/plus';
+	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
 	import { navigationMenuTriggerStyle } from '$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { cn } from '$lib/utils.js';
@@ -8,15 +10,10 @@
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import CircleCheckIcon from '@lucide/svelte/icons/circle-check';
 	import IconClockPlus from '@lucide/svelte/icons/clock-plus';
-	import IconPlus from '@lucide/svelte/icons/plus';
-
-	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
-	import New from '$lib/components/New.svelte';
 
 	import { m } from '$lib/paraglide/messages.js';
 
-	let open = $state(false);
-	let { data } = $props();
+	let { open = $bindable(false) } = $props();
 
 	const links = [
 		{
@@ -45,7 +42,6 @@
 	];
 </script>
 
-<New bind:open {data} />
 <NavigationMenu.Root
 	viewport={false}
 	class="bg-popover/20 dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl backdrop-blur-sm "

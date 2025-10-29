@@ -12,19 +12,17 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
-	import { load } from '$lib/server/New.server'
-
-	const isDesktop = new MediaQuery('(min-width: 768px)');
 
 	let {
 		data,
 		open = $bindable(false)
 	}: {
-		data: { form: SuperValidated<Infer<LaptimeSchema>> };
+		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>> };
 		open: boolean;
 	} = $props();
+	const isDesktop = new MediaQuery('(min-width: 768px)');
 
-	const form = superForm(data.form, {
+	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
 		SPA: true,
 		onUpdate: ({ form }) => {

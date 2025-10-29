@@ -3,20 +3,18 @@
 	import { Button } from '$lib/components/ui/button/index';
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import Nav from '$lib/components/Nav.svelte';
+	import New from '$lib/components/New.svelte';
 	import { ModeWatcher } from 'mode-watcher';
 	import LogoImg from '$lib/500w.png';
 	
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { title } from "$lib/store.js";
-	import type { LayoutData } from "./$types.js";
+	import type { LayoutProps } from './$types';
 
-	let {
-		data,
-		children
-	} = $props();
+	let { data, children }: LayoutProps = $props();
 
-
+	let open = $state(false);
 	let language = $state(getLocale());
 
 	function toggleLanguage() {
@@ -78,5 +76,6 @@
 </div>
 
 <div class="fixed w-full right-0 bottom-0 left-0 flex justify-center">
-	<Nav {data} />
+	<Nav bind:open />
+	<New bind:open {data} />
 </div>
