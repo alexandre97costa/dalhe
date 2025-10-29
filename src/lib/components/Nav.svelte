@@ -16,6 +16,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 
 	let open = $state(false);
+	let { data } = $props();
 
 	const links = [
 		{
@@ -44,7 +45,7 @@
 	];
 </script>
 
-<New bind:open />
+<New bind:open {data} />
 <NavigationMenu.Root
 	viewport={false}
 	class="bg-popover/20 dark:border-input max-w-full border-t-1 px-4 py-4 shadow-xl backdrop-blur-sm "
