@@ -12,6 +12,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
+	import { Field } from 'formsnap';
 
 	let {
 		data,
@@ -20,6 +21,7 @@
 		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>> };
 		open: boolean;
 	} = $props();
+
 	const isDesktop = new MediaQuery('(min-width: 768px)');
 
 	const form = superForm(data.laptimeForm, {
@@ -27,7 +29,7 @@
 		SPA: true,
 		onUpdate: ({ form }) => {
 			if (form.valid) {
-				console.log(form);
+				console.table(form.data);
 			} else {
 				console.error('Please fix the errors in the form.');
 			}
@@ -35,51 +37,50 @@
 	});
 
 	const { form: formData, enhance } = form;
+
+	$effect(() => {
+		console.log($formData);
+	});
 </script>
 
 <!-- Form -->
 {#snippet laptimeForm()}
 	<form method="POST" use:enhance class="grid items-start gap-4">
-		<Form.Field {form} name="username">
+		<Form.Field {form} name="laptime">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Username</Form.Label>
-					<Input {...props} bind:value={$formData.username} />
+					<Form.Label>{m.formadd_laptime_label()}</Form.Label>
+					<InputOTP.Root
+						maxlength={7}
+						pattern={REGEXP_ONLY_DIGITS}
+						{...props}
+						bind:value={$formData.laptime}
+					>
+						{#snippet children({ cells })}
+							<InputOTP.Group>
+								{#each cells.slice(0, 2) as cell}
+									<InputOTP.Slot {cell} />
+								{/each}
+							</InputOTP.Group>
+							<InputOTP.Separator>:</InputOTP.Separator>
+							<InputOTP.Group>
+								{#each cells.slice(2, 4) as cell}
+									<InputOTP.Slot {cell} />
+								{/each}
+							</InputOTP.Group>
+							<InputOTP.Separator>.</InputOTP.Separator>
+							<InputOTP.Group>
+								{#each cells.slice(4, 7) as cell}
+									<InputOTP.Slot {cell} />
+								{/each}
+							</InputOTP.Group>
+						{/snippet}
+					</InputOTP.Root>
 				{/snippet}
 			</Form.Control>
-			<Form.Description>This is your public display name.</Form.Description>
+			<Form.Description>{m.formadd_laptime_placeholder()}</Form.Description>
 			<Form.FieldErrors />
 		</Form.Field>
-		<div class="flex w-full flex-col gap-4">
-			<Label for="input-laptime">Tempo</Label>
-
-			<InputOTP.Root
-				maxlength={7}
-				pattern={REGEXP_ONLY_DIGITS}
-				onchange={(e) => console.log(e)}
-				id="input-laptime"
-			>
-				{#snippet children({ cells })}
-					<InputOTP.Group>
-						{#each cells.slice(0, 2) as cell}
-							<InputOTP.Slot {cell} />
-						{/each}
-					</InputOTP.Group>
-					<InputOTP.Separator>:</InputOTP.Separator>
-					<InputOTP.Group>
-						{#each cells.slice(2, 4) as cell}
-							<InputOTP.Slot {cell} />
-						{/each}
-					</InputOTP.Group>
-					<InputOTP.Separator>.</InputOTP.Separator>
-					<InputOTP.Group>
-						{#each cells.slice(4, 7) as cell}
-							<InputOTP.Slot {cell} />
-						{/each}
-					</InputOTP.Group>
-				{/snippet}
-			</InputOTP.Root>
-		</div>
 		<Button type="submit">{m.nav_add_save()}</Button>
 	</form>
 {/snippet}

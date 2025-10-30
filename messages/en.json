@@ -7,5 +7,11 @@
     "nav_tournaments": "Tournaments",
     "nav_profile": "Profile",
     "nav_add_cancel": "Cancel",
-    "nav_add_save": "Create Laptime"
+    "nav_add_save": "Create Laptime",
+    "formadd_laptime_label": "Laptime",
+    "formadd_laptime_placeholder": "Enter your best laptime!",
+    "formadd_laptime_error_required": "Laptime is required",
+    "formadd_laptime_error_pattern": "Laptime must be in the format MMSSMMM",
+    "mode_light": "Light Mode",
+    "mode_dark": "Dark Mode"
 }
