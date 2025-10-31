@@ -13,6 +13,7 @@
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
 	import { Field } from 'formsnap';
+	import { PUBLIC_SHOW_DESCRIPTIONS } from '$env/static/public';
 
 	let {
 		data,
@@ -78,7 +79,9 @@
 					</InputOTP.Root>
 				{/snippet}
 			</Form.Control>
-			<Form.Description>{m.formadd_laptime_placeholder()}</Form.Description>
+			{#if PUBLIC_SHOW_DESCRIPTIONS}
+				<Form.Description>{m.formadd_laptime_placeholder()}</Form.Description>
+			{/if}
 			<Form.FieldErrors />
 		</Form.Field>
 		<Button type="submit">{m.nav_add_save()}</Button>

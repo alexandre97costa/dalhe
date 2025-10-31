@@ -24,7 +24,7 @@
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/leaders',
+			href: '/demo/supa',
 			description: 'For sighted users to preview content available behind a link.'
 		},
 		{
