@@ -9,11 +9,13 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Field } from 'formsnap';
-	import { PUBLIC_SHOW_DESCRIPTIONS } from '$env/static/public';
+	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
+	import FormField from './ui/form/form-field.svelte';
 
 	let {
 		data,
@@ -79,10 +81,26 @@
 					</InputOTP.Root>
 				{/snippet}
 			</Form.Control>
-			{#if PUBLIC_SHOW_DESCRIPTIONS}
-				<Form.Description>{m.formadd_laptime_placeholder()}</Form.Description>
-			{/if}
+			<!-- <Form.Description>{m.formadd_laptime_placeholder()}</Form.Description> -->
 			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field {form} name="car_make">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Marca</Form.Label>
+
+					<Select.Root type="single" bind:value={$formData.car_make}>
+						<Select.Trigger class="w-full">
+							{$formData.car_make ? $formData.car_make : 'Marca do carro'}
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="light">Light</Select.Item>
+							<Select.Item value="dark">Dark</Select.Item>
+							<Select.Item value="system">System</Select.Item>
+						</Select.Content>
+					</Select.Root>
+				{/snippet}
+			</Form.Control>
 		</Form.Field>
 		<Button type="submit">{m.nav_add_save()}</Button>
 	</form>
