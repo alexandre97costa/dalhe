@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { type LayoutServerLoad } from '../../routes/$types';
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
@@ -21,7 +22,7 @@
 		data,
 		open = $bindable(false)
 	}: {
-		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>> };
+		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>; car_make: [] };
 		open: boolean;
 	} = $props();
 
@@ -94,9 +95,9 @@
 							{$formData.car_make ? $formData.car_make : 'Marca do carro'}
 						</Select.Trigger>
 						<Select.Content>
-							<Select.Item value="light">Light</Select.Item>
-							<Select.Item value="dark">Dark</Select.Item>
-							<Select.Item value="system">System</Select.Item>
+							{#each data.car_make as make}
+								<Select.Item value={make.name}>{make.name}</Select.Item>
+							{/each}
 						</Select.Content>
 					</Select.Root>
 				{/snippet}
