@@ -13,5 +13,8 @@
     "formadd_laptime_error_required": "Laptime is required",
     "formadd_laptime_error_pattern": "Laptime must be in the format MMSSMMM",
     "mode_light": "Light Mode",
-    "mode_dark": "Dark Mode"
+    "mode_dark": "Dark Mode",
+    "formadd_car_make_label": "Car Make",
+    "formadd_car_make_placeholder": "Select your car make",
+    "formadd_car_make_error_required": "Car make is required"
 }

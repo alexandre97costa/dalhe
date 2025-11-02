@@ -18,14 +18,24 @@
 	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	import FormField from './ui/form/form-field.svelte';
 
+	type CarMake = {
+		id: number;
+		name: string;
+	};
+
 	let {
 		data,
 		open = $bindable(false)
 	}: {
-		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>; car_make: [] };
+		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>; car_make: CarMake[] };
 		open: boolean;
 	} = $props();
 
+	$effect(() => {
+		console.log('New.svelte data:', data);
+	});
+
+	let selectedMake = $state<string | null>(null);
 	const isDesktop = new MediaQuery('(min-width: 768px)');
 
 	const form = superForm(data.laptimeForm, {
@@ -50,6 +60,7 @@
 <!-- Form -->
 {#snippet laptimeForm()}
 	<form method="POST" use:enhance class="grid items-start gap-4">
+		<!-- Laptime -->
 		<Form.Field {form} name="laptime">
 			<Form.Control>
 				{#snippet children({ props })}
@@ -85,18 +96,18 @@
 			<!-- <Form.Description>{m.formadd_laptime_placeholder()}</Form.Description> -->
 			<Form.FieldErrors />
 		</Form.Field>
+		<!-- Car make -->
 		<Form.Field {form} name="car_make">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Marca</Form.Label>
-
+					<Form.Label>{m.formadd_car_make_label()}</Form.Label>
 					<Select.Root type="single" bind:value={$formData.car_make}>
 						<Select.Trigger class="w-full">
-							{$formData.car_make ? $formData.car_make : 'Marca do carro'}
+							{$formData.car_make ? selectedMake : m.formadd_car_make_placeholder()}
 						</Select.Trigger>
 						<Select.Content>
 							{#each data.car_make as make}
-								<Select.Item value={make.name}>{make.name}</Select.Item>
+								<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>

@@ -14,7 +14,10 @@ export const load: LayoutServerLoad = async () => {
 
     if (error) {
 		console.error('Error loading car makes:', error.message);
-		return { car_make: [] };
+		return { 
+            laptimeForm: await superValidate(zod4(laptimeSchema)),
+            car_make: [] 
+        };
 	}
     
     return {

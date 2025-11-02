@@ -6,8 +6,7 @@
 	import New from '$lib/components/New.svelte';
 	import { ModeWatcher } from 'mode-watcher';
 	import LogoImg from '$lib/500w.png';
-	
-	import { m } from '$lib/paraglide/messages.js';
+
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { title } from "$lib/store.js";
 	import type { LayoutProps } from './$types';
@@ -27,7 +26,7 @@
 	<title>{$title ? $title + ' • Dá-lhe!' : 'Dá-lhe!'}</title>
 </svelte:head>
 
-<div class="bg-background/20 backdrop-blur-sm fixed top-0 right-0 left-0 flex justify-between border-b-1 px-1 py-2">
+<div class="bg-background/20 backdrop-blur-sm fixed top-0 right-0 left-0 flex justify-between border-b px-1 py-2">
 	<div class="flex items-center gap-2">
 		<Button
 			href="/"
