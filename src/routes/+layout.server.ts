@@ -4,7 +4,7 @@ import { laptimeSchema } from '$lib/schemas/laptimeSchema';
 import { zod4 } from "sveltekit-superforms/adapters";
 import { supabase } from '$lib/supabaseClient';
 
-type CarMake = {
+export type CarMake = {
 	id: number;
 	name: string;
 };

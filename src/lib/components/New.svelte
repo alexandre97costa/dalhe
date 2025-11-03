@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { type LayoutServerLoad } from '../../routes/$types';
+	import { type LayoutServerLoad, type LayoutProps } from '../../routes/$types';
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -17,27 +17,21 @@
 	import { Field } from 'formsnap';
 	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	import FormField from './ui/form/form-field.svelte';
-
-	type CarMake = {
-		id: number;
-		name: string;
-	};
+	import type { CarMake } from '../../routes/+layout.server';
 
 	let {
 		data,
 		open = $bindable(false)
 	}: {
-		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>; car_make: CarMake[] };
+		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>, car_make: CarMake[] };
 		open: boolean;
 	} = $props();
 
-	$effect(() => {
-		console.log('New.svelte data:', data);
+	let selectedMake = $derived.by(() => {
+		let pos = data.car_make.map(make => make.id).indexOf($formData.car_make);
+		return data.car_make[pos].name;
 	});
-
-	let selectedMake = $state<string | null>(null);
 	const isDesktop = new MediaQuery('(min-width: 768px)');
-
 	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
 		SPA: true,

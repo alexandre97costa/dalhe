@@ -8,8 +8,10 @@
 	import LogoImg from '$lib/500w.png';
 
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
-	import { title } from "$lib/store.js";
+	import { title } from '$lib/store.js';
 	import type { LayoutProps } from './$types';
+	import type { LayoutServerLoad } from './$types';
+	import type { WithChildren } from 'bits-ui';
 
 	let { data, children }: LayoutProps = $props();
 
@@ -26,7 +28,9 @@
 	<title>{$title ? $title + ' • Dá-lhe!' : 'Dá-lhe!'}</title>
 </svelte:head>
 
-<div class="bg-background/20 backdrop-blur-sm fixed top-0 right-0 left-0 flex justify-between border-b px-1 py-2">
+<div
+	class="bg-background/20 fixed top-0 right-0 left-0 flex justify-between border-b px-1 py-2 backdrop-blur-sm"
+>
 	<div class="flex items-center gap-2">
 		<Button
 			href="/"
@@ -43,7 +47,6 @@
 		</Button>
 
 		<div class="flex flex-col">
-
 			<h1 class="text-xl font-semibold">{$title}</h1>
 			<!-- <h2 class="text-xs text-neutral-500">alexandre97costa</h2> -->
 		</div>
@@ -69,12 +72,11 @@
 	</div>
 </div>
 
-
-<div class="container mx-auto mt-14 h- p-4">
+<div class="h- container mx-auto mt-14 p-4">
 	{@render children?.()}
 </div>
 
-<div class="fixed w-full right-0 bottom-0 left-0 flex justify-center">
+<div class="fixed right-0 bottom-0 left-0 flex w-full justify-center">
 	<Nav bind:open />
 	<New bind:open {data} />
 </div>
