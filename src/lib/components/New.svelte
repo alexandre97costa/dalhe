@@ -23,15 +23,12 @@
 		data,
 		open = $bindable(false)
 	}: {
-		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>, car_make: CarMake[] };
+		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>; car_make: CarMake[] };
 		open: boolean;
 	} = $props();
 
-	let selectedMake = $derived.by(() => {
-		let pos = data.car_make.map(make => make.id).indexOf($formData.car_make);
-		return data.car_make[pos].name;
-	});
 	const isDesktop = new MediaQuery('(min-width: 768px)');
+	let selectedCarMake = $state<string | null>(null);
 	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
 		SPA: true,
@@ -43,11 +40,11 @@
 			}
 		}
 	});
-
 	const { form: formData, enhance } = form;
 
 	$effect(() => {
-		console.log($formData);
+		let pos = data.car_make.findIndex((make) => make.id === $formData.car_make);
+		selectedCarMake = data.car_make[pos]?.name;
 	});
 </script>
 
@@ -95,9 +92,15 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{m.formadd_car_make_label()}</Form.Label>
-					<Select.Root type="single" bind:value={$formData.car_make}>
+					<Select.Root
+						type="single"
+						onValueChange={(value) => {
+							$formData.car_make = parseInt(value);
+						}}
+						{...props}
+					>
 						<Select.Trigger class="w-full">
-							{$formData.car_make ? selectedMake : m.formadd_car_make_placeholder()}
+							{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
 						</Select.Trigger>
 						<Select.Content>
 							{#each data.car_make as make}
