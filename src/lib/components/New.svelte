@@ -17,13 +17,17 @@
 	import { Field } from 'formsnap';
 	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	import FormField from './ui/form/form-field.svelte';
-	import type { CarMake } from '../../routes/+layout.server';
+	// import { type CarMake, type CarModel } from '../../routes/+layout.server';
 
 	let {
 		data,
 		open = $bindable(false)
 	}: {
-		data: { laptimeForm: SuperValidated<Infer<LaptimeSchema>>; car_make: CarMake[] };
+		data: {
+			laptimeForm: SuperValidated<Infer<LaptimeSchema>>;
+			car_makes: any[];
+			car_models: any[];
+		};
 		open: boolean;
 	} = $props();
 
@@ -44,8 +48,13 @@
 	const { form: formData, enhance } = form;
 
 	$effect(() => {
-		let pos = data.car_make.findIndex((make) => make.id.toString() === $formData.car_make);
-		selectedCarMake = data.car_make[pos]?.name;
+		console.log($formData);
+		console.log(data)
+	});
+
+	$effect(() => {
+		let pos = data.car_makes.findIndex((make) => make.id.toString() === $formData.car_make);
+		selectedCarMake = data.car_makes[pos]?.name;
 	});
 </script>
 
@@ -90,7 +99,7 @@
 		</Form.Field>
 
 		<!-- Car -->
-		<div class="grid grid-cols-2 gap-3 items-end">
+		<div class="grid grid-cols-2 items-end gap-3">
 			<Form.Field {form} name="car_make">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -100,7 +109,7 @@
 								{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
 							</Select.Trigger>
 							<Select.Content>
-								{#each data.car_make as make}
+								{#each data.car_makes as make}
 									<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
 								{/each}
 							</Select.Content>
@@ -111,14 +120,13 @@
 			<Form.Field {form} name="car_model">
 				<Form.Control>
 					{#snippet children({ props })}
-						
 						<Select.Root type="single" bind:value={$formData.car_model} {...props}>
 							<Select.Trigger class="placeholder w-full">
 								{$formData.car_model ? selectedCarModel : m.formadd_car_make_placeholder()}
 							</Select.Trigger>
 							<Select.Content>
-								{#each data.car_make as make}
-									<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
+								{#each data.car_models as model}
+									<Select.Item value={model.id.toString()}>{model.name}</Select.Item>
 								{/each}
 							</Select.Content>
 						</Select.Root>
