@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { type LayoutServerLoad, type LayoutProps } from '../../routes/$types';
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
@@ -7,16 +6,17 @@
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
 	import { Field } from 'formsnap';
-	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	import FormField from './ui/form/form-field.svelte';
+	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	// import { type CarMake, type CarModel } from '../../routes/+layout.server';
 
 	let {
@@ -34,6 +34,7 @@
 	const isDesktop = new MediaQuery('(min-width: 768px)');
 	let selectedCarMake = $state<string | null>(null);
 	let selectedCarModel = $state<string | null>(null);
+	let selectedCarMakeModels = $state<any[]>([]);
 	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
 		SPA: true,
@@ -49,12 +50,20 @@
 
 	$effect(() => {
 		console.log($formData);
-		console.log(data)
+		console.log(data);
 	});
 
 	$effect(() => {
 		let pos = data.car_makes.findIndex((make) => make.id.toString() === $formData.car_make);
 		selectedCarMake = data.car_makes[pos]?.name;
+		selectedCarMakeModels = data.car_models.filter(
+			(model) => model.make_id.toString() === $formData.car_make
+		);
+	});
+
+	$effect(() => {
+		let pos = data.car_models.findIndex((model) => model.id.toString() === $formData.car_model);
+		selectedCarModel = data.car_models[pos]?.name;
 	});
 </script>
 
@@ -104,34 +113,58 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>{m.formadd_car_make_label()}</Form.Label>
-						<Select.Root type="single" bind:value={$formData.car_make} {...props}>
+						<Select.Root
+							type="single"
+							bind:value={$formData.car_make}
+							onValueChange={() => {
+								$formData.car_model = '';
+								selectedCarModel = null;
+							}}
+							{...props}
+						>
 							<Select.Trigger class="placeholder w-full">
 								{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
 							</Select.Trigger>
 							<Select.Content>
 								{#each data.car_makes as make}
-									<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
+									<Select.Item value={make.id.toString()}>
+										{make.name}
+									</Select.Item>
 								{/each}
 							</Select.Content>
 						</Select.Root>
 					{/snippet}
 				</Form.Control>
+				<Form.FieldErrors />
 			</Form.Field>
 			<Form.Field {form} name="car_model">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Select.Root type="single" bind:value={$formData.car_model} {...props}>
+						<Select.Root
+							type="single"
+							bind:value={$formData.car_model}
+							{...props}
+							disabled={!$formData.car_make}
+						>
 							<Select.Trigger class="placeholder w-full">
-								{$formData.car_model ? selectedCarModel : m.formadd_car_make_placeholder()}
+								{$formData.car_model ? selectedCarModel : m.formadd_car_model_placeholder()}
 							</Select.Trigger>
 							<Select.Content>
-								{#each data.car_models as model}
-									<Select.Item value={model.id.toString()}>{model.name}</Select.Item>
+								{#each selectedCarMakeModels as model}
+									<Select.Item value={model.id.toString()} class="">
+										<Badge
+											class="h-4 min-w-5 rounded-full bg-purple-600 px-1 font-mono text-[0.6rem] tabular-nums"
+											variant="secondary">{model.category.name}</Badge
+										>
+										<div class="">{model.name}</div>
+										<div class="text-gray-500">{model.year}</div>
+									</Select.Item>
 								{/each}
 							</Select.Content>
 						</Select.Root>
 					{/snippet}
 				</Form.Control>
+				<Form.FieldErrors />
 			</Form.Field>
 		</div>
 		<Button type="submit">{m.nav_add_save()}</Button>
