@@ -29,6 +29,7 @@
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
 	let selectedCarMake = $state<string | null>(null);
+	let selectedCarModel = $state<string | null>(null);
 	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
 		SPA: true,
@@ -43,7 +44,7 @@
 	const { form: formData, enhance } = form;
 
 	$effect(() => {
-		let pos = data.car_make.findIndex((make) => make.id === $formData.car_make);
+		let pos = data.car_make.findIndex((make) => make.id.toString() === $formData.car_make);
 		selectedCarMake = data.car_make[pos]?.name;
 	});
 </script>
@@ -87,30 +88,44 @@
 			<!-- <Form.Description>{m.formadd_laptime_placeholder()}</Form.Description> -->
 			<Form.FieldErrors />
 		</Form.Field>
-		<!-- Car make -->
-		<Form.Field {form} name="car_make">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label>{m.formadd_car_make_label()}</Form.Label>
-					<Select.Root
-						type="single"
-						onValueChange={(value) => {
-							$formData.car_make = parseInt(value);
-						}}
-						{...props}
-					>
-						<Select.Trigger class="w-full">
-							{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
-						</Select.Trigger>
-						<Select.Content>
-							{#each data.car_make as make}
-								<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
-							{/each}
-						</Select.Content>
-					</Select.Root>
-				{/snippet}
-			</Form.Control>
-		</Form.Field>
+
+		<!-- Car -->
+		<div class="grid grid-cols-2 gap-3 items-end">
+			<Form.Field {form} name="car_make">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>{m.formadd_car_make_label()}</Form.Label>
+						<Select.Root type="single" bind:value={$formData.car_make} {...props}>
+							<Select.Trigger class="placeholder w-full">
+								{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
+							</Select.Trigger>
+							<Select.Content>
+								{#each data.car_make as make}
+									<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					{/snippet}
+				</Form.Control>
+			</Form.Field>
+			<Form.Field {form} name="car_model">
+				<Form.Control>
+					{#snippet children({ props })}
+						
+						<Select.Root type="single" bind:value={$formData.car_model} {...props}>
+							<Select.Trigger class="placeholder w-full">
+								{$formData.car_model ? selectedCarModel : m.formadd_car_make_placeholder()}
+							</Select.Trigger>
+							<Select.Content>
+								{#each data.car_make as make}
+									<Select.Item value={make.id.toString()}>{make.name}</Select.Item>
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					{/snippet}
+				</Form.Control>
+			</Form.Field>
+		</div>
 		<Button type="submit">{m.nav_add_save()}</Button>
 	</form>
 {/snippet}

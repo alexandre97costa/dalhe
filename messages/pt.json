@@ -14,7 +14,7 @@
     "formadd_laptime_error_pattern": "A volta tem que estar no formato MMSSMMM",
     "mode_light": "Modo Claro",
     "mode_dark": "Modo Escuro",
-    "formadd_car_make_label": "Marca do Carro",
-    "formadd_car_make_placeholder": "Seleciona a marca do teu carro",
+    "formadd_car_make_label": "Carro",
+    "formadd_car_make_placeholder": "Marca",
     "formadd_car_make_error_required": "A marca do carro é obrigatória"
 }
