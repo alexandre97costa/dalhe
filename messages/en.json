@@ -1,4 +1,20 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from en!"
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "hello_world": "Hello, {name} from en!",
+    "nav_home": "Home",
+    "nav_leaders": "Leaders",
+    "nav_add": "New Laptime",
+    "nav_tournaments": "Tournaments",
+    "nav_profile": "Profile",
+    "nav_add_cancel": "Cancel",
+    "nav_add_save": "Create Laptime",
+    "formadd_laptime_label": "Laptime",
+    "formadd_laptime_placeholder": "Enter your best laptime!",
+    "formadd_laptime_error_required": "Laptime is required",
+    "formadd_laptime_error_pattern": "Laptime must be in the format MMSSMMM",
+    "mode_light": "Light Mode",
+    "mode_dark": "Dark Mode",
+    "formadd_car_make_label": "Car",
+    "formadd_car_make_placeholder": "Make",
+    "formadd_car_make_error_required": "Car make is required"
 }

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { NavigationMenu as NavigationMenuPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils.js";
 
@@ -6,7 +6,7 @@
 		ref = $bindable(null),
 		class: className,
 		...restProps
-	} = $props();
+	}: NavigationMenuPrimitive.IndicatorProps = $props();
 </script>
 
 <NavigationMenuPrimitive.Indicator
