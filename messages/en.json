@@ -17,5 +17,7 @@
     "formadd_car_make_label": "Car",
     "formadd_car_make_placeholder": "Make",
     "formadd_car_make_error_required": "Car make is required",
-    "formadd_car_model_placeholder": "Model"
+    "formadd_car_model_placeholder": "Model",
+    "formadd_race_track_label": "Track",
+    "formadd_race_track_placeholder": "Track"
 }

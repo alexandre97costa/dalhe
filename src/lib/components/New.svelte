@@ -27,6 +27,7 @@
 			laptimeForm: SuperValidated<Infer<LaptimeSchema>>;
 			car_makes: any[];
 			car_models: any[];
+			race_tracks: any[];
 		};
 		open: boolean;
 	} = $props();
@@ -35,6 +36,7 @@
 	let selectedCarMake = $state<string | null>(null);
 	let selectedCarModel = $state<string | null>(null);
 	let selectedCarMakeModels = $state<any[]>([]);
+	let selectedTrack = $state<string | null>(null);
 	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
 		SPA: true,
@@ -53,6 +55,7 @@
 		console.log(data);
 	});
 
+	// car makes select
 	$effect(() => {
 		let pos = data.car_makes.findIndex((make) => make.id.toString() === $formData.car_make);
 		selectedCarMake = data.car_makes[pos]?.name;
@@ -61,9 +64,16 @@
 		);
 	});
 
+	// car models select
 	$effect(() => {
 		let pos = data.car_models.findIndex((model) => model.id.toString() === $formData.car_model);
 		selectedCarModel = data.car_models[pos]?.name;
+	});
+
+	// race track select
+	$effect(() => {
+		let pos = data.race_tracks.findIndex((track) => track.id.toString() === $formData.race_track);
+		selectedTrack = data.race_tracks[pos]?.name;
 	});
 </script>
 
@@ -167,6 +177,33 @@
 				<Form.FieldErrors />
 			</Form.Field>
 		</div>
+
+		<!-- Race Track -->
+		<Form.Field {form} name="race_track">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>{m.formadd_race_track_label()}</Form.Label>
+					<Select.Root
+						type="single"
+						bind:value={$formData.race_track}
+						{...props}
+					>
+						<Select.Trigger class="w-full">
+							{$formData.race_track ? selectedTrack : m.formadd_race_track_placeholder()}
+						</Select.Trigger>
+						<Select.Content>
+							{#each data.race_tracks as track}
+								<Select.Item value={track.id.toString()}>
+									{track.name}
+								</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+
 		<Button type="submit">{m.nav_add_save()}</Button>
 	</form>
 {/snippet}

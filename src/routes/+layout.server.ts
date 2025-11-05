@@ -28,19 +28,27 @@ export const load: LayoutServerLoad = async () => {
     const carMakes: CarMakes = carMakeData;
     
     const carModelsQuery = supabase
-    .from('car')
-    .select(`id, name:model, make_id, year, category:category_id(name)`);
+        .from('car')
+        .select(`id, name:model, make_id, year, category:category_id(name)`);
     type CarModels = QueryData<typeof carModelsQuery> | null;
     const { data: carModelData, error: carModelError } = await carModelsQuery;
     const carModels: CarModels = carModelData;
 
-    const error = carMakeError || carModelError;
+    const raceTracksQuery = supabase
+        .from('race_track')
+        .select(`id, name`);
+    type RaceTracks = QueryData<typeof raceTracksQuery> | null;
+    const { data: raceTrackData, error: raceTrackError } = await raceTracksQuery;
+    const raceTracks: RaceTracks = raceTrackData;
+
+    const error = carMakeError || carModelError || raceTrackError;
     if (error) {
-        console.error('Error fetching car makes or models:', error.message);
+        console.error('Error fetching car makes, car models, or race tracks:', error.message);
         return {
             laptimeForm: await superValidate(zod4(laptimeSchema)),
             car_makes: [],
             car_models: [],
+            race_tracks: []
         };
     }
 
@@ -48,6 +56,7 @@ export const load: LayoutServerLoad = async () => {
         laptimeForm: await superValidate(zod4(laptimeSchema)),
         car_makes: carMakes ?? [],
         car_models: carModels ?? [],
+        race_tracks: raceTracks ?? []
     };
 };
 
