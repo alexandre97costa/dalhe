@@ -16,5 +16,6 @@
     "mode_dark": "Modo Escuro",
     "formadd_car_make_label": "Carro",
     "formadd_car_make_placeholder": "Marca",
-    "formadd_car_make_error_required": "A marca do carro é obrigatória"
+    "formadd_car_make_error_required": "A marca do carro é obrigatória",
+    "formadd_car_model_placeholder": "Modelo"
 }
