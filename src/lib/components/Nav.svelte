@@ -76,11 +76,10 @@
 		{/each}
 
 		<NavigationMenuItem class="relative col-span-2 flex h-3 justify-center ">
-			<NavigationMenu.Link asChild>
+			<NavigationMenu.Link >
 				{#snippet child()}
 					<Button
 						onclick={() => (open = !open)}
-						variant=""
 						class="
 								absolute
 								bottom-0.5 

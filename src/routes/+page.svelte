@@ -6,8 +6,11 @@
 </script>
 
 <div class="">
-	<h1>Welcome to SvelteKit</h1>
-	<p>
-		Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation
-	</p>
+	<p class="text-xl font-medium">{m.hello_world()}</p>
+
+	<br>
+	<p>Current challenge:</p>
+	<ul class="list-disc list-inside">
+		<li>User Session</li>
+	</ul>
 </div>

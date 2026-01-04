@@ -1,17 +1,29 @@
 <script lang="ts">
 	import '../app.css';
-	import { Button } from '$lib/components/ui/button/index';
-	import LightSwitch from '$lib/components/LightSwitch.svelte';
-	import Nav from '$lib/components/Nav.svelte';
-	import New from '$lib/components/New.svelte';
-	import { ModeWatcher } from 'mode-watcher';
-	import LogoImg from '$lib/500w.png';
-
+	import { onMount } from 'svelte';
+	import { supabase } from '$lib/supabaseClient';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { title } from '$lib/store.js';
 	import type { LayoutProps } from './$types';
 	import type { LayoutServerLoad } from './$types';
 	import type { WithChildren } from 'bits-ui';
+	import { ModeWatcher } from 'mode-watcher';
+	
+	import { Button } from '$lib/components/ui/button/index';
+	import LightSwitch from '$lib/components/LightSwitch.svelte';
+	import Nav from '$lib/components/Nav.svelte';
+	import New from '$lib/components/New.svelte';
+	import LogoImg from '$lib/500w.png';
+
+
+	onMount(async () => {
+		const { data: { session }, error } = await supabase.auth.getSession();
+		if (error) {
+			console.error('Error getting session:', error.message);
+		} else {
+			console.log('Session data:', session);
+		}
+	});
 
 	let { data, children }: LayoutProps = $props();
 
@@ -25,7 +37,7 @@
 </script>
 
 <svelte:head>
-	<title>{$title ? $title + ' • Dá-lhe!' : 'Dá-lhe!'}</title>
+	<title>{$title ? $title + ' | Dá-lhe!' : 'Dá-lhe!'}</title>
 </svelte:head>
 
 <div

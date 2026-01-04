@@ -1,6 +1,6 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
-    "hello_world": "Hello, {name} from pt!",
+    "hello_world": "Bem-vindo ao Dá-lhe! 🚗💨",
     "nav_home": "Início",
     "nav_leaders": "Líderes",
     "nav_add": "Nova volta",
