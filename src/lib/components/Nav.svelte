@@ -68,7 +68,7 @@
 
 <NavigationMenu.Root
 	viewport={false}
-	class="bg-popover/20 dark:border-input max-w-full border-t px-4 py-2 shadow-xl backdrop-blur-sm "
+	class="dark:bg-zinc-900 bg-zinc-100 dark:border-input max-w-full border-t px-4 py-2 shadow-xl backdrop-blur-sm "
 >
 	<NavigationMenu.List class="grid min-w-screen grid-cols-10 gap-3 md:min-w-full">
 		{#each menuItems as item, i}
@@ -90,7 +90,7 @@
 								rounded-4xl
 								border-[1.5px]
 								border-purple-300 
-								bg-purple-400/20
+								bg-zinc-50
 
 								text-purple-600 
 								shadow-lg
@@ -99,6 +99,8 @@
 								dark:border-purple-400
 								dark:text-purple-400 
 								dark:shadow-purple-400/20  
+								dark:bg-zinc-900
+
 							"
 					>
 					<div class="scale-[180%]">
@@ -112,3 +114,4 @@
 		</NavigationMenuItem>
 	</NavigationMenu.List>
 </NavigationMenu.Root>
+

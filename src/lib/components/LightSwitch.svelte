@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components/ui/button/index';
 </script>
 
-<Button onclick={toggleMode} variant="outline" size="icon" class="dark:bg-popover cursor-pointer">
+<Button onclick={toggleMode} variant="outline" size="icon" class="dark:bg-background cursor-pointer">
 	<SunIcon
 		class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
 	/>

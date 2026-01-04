@@ -41,7 +41,7 @@
 </svelte:head>
 
 <div
-	class="bg-background/20 fixed top-0 right-0 left-0 flex justify-between border-b px-1 py-2 backdrop-blur-sm"
+	class="dark:bg-zinc-900 bg-zinc-100 fixed top-0 right-0 left-0 flex justify-between border-b px-1 py-2 backdrop-blur-sm"
 >
 	<div class="flex items-center gap-2">
 		<Button
@@ -63,12 +63,12 @@
 			<!-- <h2 class="text-xs text-neutral-500">alexandre97costa</h2> -->
 		</div>
 	</div>
-	<div class="flex items-center gap-2 pr-3">
+	<div class="flex items-center gap-1.5 pr-1">
 		<Button
 			onclick={toggleLanguage}
 			variant="outline"
 			size="icon"
-			class="dark:bg-popover cursor-pointer"
+			class="dark:bg-background  cursor-pointer"
 		>
 			<span class="h-[1.2rem] w-[1.2rem] scale-100">
 				{#if language == 'en'}
