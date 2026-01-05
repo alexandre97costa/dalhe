@@ -6,11 +6,12 @@
 	import { title } from '$lib/store.js';
 	import type { LayoutProps } from './$types';
 	import type { LayoutServerLoad } from './$types';
-	import type { WithChildren } from 'bits-ui';
 	import { ModeWatcher } from 'mode-watcher';
 	
+	import { Toaster } from "$lib/components/ui/sonner/index.js";
 	import { Button } from '$lib/components/ui/button/index';
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
+	import UserSession from '$lib/components/UserSession.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import New from '$lib/components/New.svelte';
 	import LogoImg from '$lib/500w.png';
@@ -40,6 +41,7 @@
 	<title>{$title ? $title + ' | Dá-lhe!' : 'Dá-lhe!'}</title>
 </svelte:head>
 
+<Toaster />
 <div
 	class="dark:bg-zinc-900 bg-zinc-100 fixed top-0 right-0 left-0 flex justify-between border-b px-1 py-2 backdrop-blur-sm"
 >
@@ -80,6 +82,7 @@
 			<span class="sr-only">Toggle language</span>
 		</Button>
 		<LightSwitch />
+		<UserSession />
 		<ModeWatcher />
 	</div>
 </div>

@@ -5,7 +5,7 @@
     "nav_leaders": "Leaders",
     "nav_add": "New Laptime",
     "nav_tournaments": "Tournaments",
-    "nav_profile": "Profile",
+    "nav_profile": "Career",
     "nav_add_cancel": "Cancel",
     "nav_add_save": "Create Laptime",
     "formadd_laptime_label": "Laptime",
@@ -19,5 +19,6 @@
     "formadd_car_make_error_required": "Car make is required",
     "formadd_car_model_placeholder": "Model",
     "formadd_race_track_label": "Track",
-    "formadd_race_track_placeholder": "Track"
+    "formadd_race_track_placeholder": "Track",
+    "login_button": "Login"
 }
