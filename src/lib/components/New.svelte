@@ -19,15 +19,16 @@
 	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	// import { type CarMake, type CarModel } from '../../routes/+layout.server';
 
+	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
+	type FormDataRecord = Record<string, QueryData<any> | null>;
+
 	let {
 		data,
 		open = $bindable(false)
 	}: {
 		data: {
 			laptimeForm: SuperValidated<Infer<LaptimeSchema>>;
-			car_makes: any[];
-			car_models: any[];
-			race_tracks: any[];
+			formDataRecord: FormDataRecord;
 		};
 		open: boolean;
 	} = $props();

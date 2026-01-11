@@ -26,16 +26,16 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cooki
 
     const promises = formQueries.map(q => supabase.from(q.from).select(q.select ?? '*'));
     const results = await Promise.allSettled(promises);
-    const formData: FormDataRecord = {};
+    const formDataRecord: FormDataRecord = {};
 
     formQueries.forEach((query, index) => {
         const result = results[index];
-        formData[query.key] = result.status === 'fulfilled' ? result.value.data : null;
+        formDataRecord[query.key] = result.status === 'fulfilled' ? result.value.data : null;
     });
 
     return {
         laptimeForm: await superValidate(zod4(laptimeSchema)),
-        formData,
+        formDataRecord,
         session,
         user,
         cookies: cookies.getAll(),
