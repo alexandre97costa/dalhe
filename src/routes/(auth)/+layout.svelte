@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.css';
+	import '../../app.css';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
