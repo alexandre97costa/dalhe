@@ -4,6 +4,8 @@ import { laptimeSchema } from '$lib/schemas/laptimeSchema';
 import { zod4 } from "sveltekit-superforms/adapters";
 import { supabase } from '$lib/supabaseClient';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
+import { form } from '$app/server';
+import type { Form } from '@lucide/svelte';
 
 // export type CarMake = {
 //     id: number;
@@ -18,45 +20,41 @@ import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 //     category: string;
 // }
 
-export const load: LayoutServerLoad = async () => {
+interface formQuery {
+    from: string,
+    select: string | null,
+}
 
-    const carMakesQuery = supabase
-        .from('car_make')
-        .select();
-    type CarMakes = QueryData<typeof carMakesQuery> | null;
-    const { data: carMakeData, error: carMakeError } = await carMakesQuery;
-    const carMakes: CarMakes = carMakeData;
-    
-    const carModelsQuery = supabase
-        .from('car')
-        .select(`id, name:model, make_id, year, category:category_id(name)`);
-    type CarModels = QueryData<typeof carModelsQuery> | null;
-    const { data: carModelData, error: carModelError } = await carModelsQuery;
-    const carModels: CarModels = carModelData;
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
 
-    const raceTracksQuery = supabase
-        .from('race_track')
-        .select(`id, name`);
-    type RaceTracks = QueryData<typeof raceTracksQuery> | null;
-    const { data: raceTrackData, error: raceTrackError } = await raceTracksQuery;
-    const raceTracks: RaceTracks = raceTrackData;
+    const { session, user } = await safeGetSession()
 
-    const error = carMakeError || carModelError || raceTrackError;
-    if (error) {
-        console.error('Error fetching car makes, car models, or race tracks:', error.message);
-        return {
-            laptimeForm: await superValidate(zod4(laptimeSchema)),
-            car_makes: [],
-            car_models: [],
-            race_tracks: []
-        };
-    }
+    const formQueries: formQuery[] = [
+        { from: 'car_make', select: null },
+        { from: 'car', select: `id, name:model, make_id, year, category:category_id(name)` },
+        { from: 'race_track', select: `id, name` },
+    ]
+
+    let formData: QueryData<any>[] = [];
+
+    formQueries.forEach(async (query) => {
+        const formQuery = supabase
+            .from(query.from)
+            .select(query.select ?? '*');
+        type FormData = QueryData<typeof formQuery>; 
+
+        const { data, error } = await formQuery;
+        if (error) throw error;
+        formData.push(data as FormData);
+    });
+
 
     return {
         laptimeForm: await superValidate(zod4(laptimeSchema)),
-        car_makes: carMakes ?? [],
-        car_models: carModels ?? [],
-        race_tracks: raceTracks ?? []
+        formData,
+        session,
+        user,
+        cookies: cookies.getAll(),
     };
 };
 

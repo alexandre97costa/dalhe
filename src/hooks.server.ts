@@ -3,17 +3,8 @@ import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createServerClient } from '@supabase/ssr'
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public'
 
-export const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ request, locale }) => {
-		event.request = request;
+export const handle: Handle = async ({ event, resolve }) => {
 
-		return resolve(event, {
-			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale)
-		});
-	});
-
-
-export const handleSupabase: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
 		cookies: {
 			getAll: () => event.cookies.getAll(),
@@ -48,9 +39,15 @@ export const handleSupabase: Handle = async ({ event, resolve }) => {
 		} = await event.locals.supabase.auth.getSession()
 		return { session, user }
 	}
-	return resolve(event, {
-		filterSerializedResponseHeaders(name: string) {
-			return name === 'content-range' || name === 'x-supabase-api-version'
-		},
-	})
+
+	return paraglideMiddleware(event.request, ({ request, locale }) => {
+		event.request = request;
+
+		return resolve(event, {
+			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
+			filterSerializedResponseHeaders(name: string) {
+				return name === 'content-range' || name === 'x-supabase-api-version'
+			},
+		});
+	});
 }
