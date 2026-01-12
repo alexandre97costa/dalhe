@@ -1,6 +1,7 @@
 <!-- src/routes/login/+layout.svelte -->
 <script lang="ts">
-	import '../styles.css'
+	import '../../app.css'
+	// import '../styles.css'
 	import { invalidate } from '$app/navigation'
 	import { onMount } from 'svelte'
 
