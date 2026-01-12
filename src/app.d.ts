@@ -2,6 +2,7 @@
 // for information about these interfaces
 // and what to do when importing types
 import { SupabaseClient, Session } from '@supabase/supabase-js'
+import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 
 declare global {
     namespace App {
@@ -20,7 +21,14 @@ declare global {
         }
         // interface PageState {}
         // interface Platform {}
+
+        interface FormQuery {
+            key: string,
+            from: string,
+            select: string | null,
+        }
+        type FormDataRecord = Record<string, QueryData<any> | null>;
     }
 }
 
-export { };
+export { FormQuery, FormDataRecord };

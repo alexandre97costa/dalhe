@@ -27,7 +27,7 @@
 	})
 
 	let { data, children }: LayoutProps = $props();
-	let { supabase, session, laptimeForm,  } = $derived(data)
+	let { supabase, session, laptimeForm, formDataRecord } = $derived(data)
 
 	let open = $state(false);
 	let language = $state(getLocale());
@@ -94,5 +94,5 @@
 
 <div class="fixed right-0 bottom-0 left-0 flex w-full justify-center">
 	<Nav bind:open />
-	<New bind:open data={ laptimeForm, formDataRecord } />
+	<New bind:open data={{ laptimeForm, formDataRecord }} />
 </div>
