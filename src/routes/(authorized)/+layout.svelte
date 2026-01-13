@@ -32,6 +32,10 @@
 	let open = $state(false);
 	let language = $state(getLocale());
 
+	$effect(() => {
+		console.log(data);
+	});
+
 	function toggleLanguage() {
 		language = language == 'en' ? 'pt' : 'en';
 		setLocale(language);

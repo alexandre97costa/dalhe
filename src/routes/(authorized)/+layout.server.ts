@@ -2,7 +2,7 @@ import type { LayoutServerLoad } from './$types';
 import { superValidate } from "sveltekit-superforms";
 import { laptimeSchema } from '$lib/schemas/laptimeSchema';
 import { zod4 } from "sveltekit-superforms/adapters";
-import { supabase } from '$lib/supabaseClient';
+// import { supabase } from '$lib/supabaseClient';
 import type { FormDataRecord, FormQuery } from '../../app.d.ts';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import { form } from '$app/server';
@@ -13,7 +13,7 @@ const formQueries: FormQuery[] = [
     { key: 'raceTracks', from: 'race_track', select: 'id, name' },
 ]
 
-export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
+export const load: LayoutServerLoad = async ({ locals: { safeGetSession, supabase }, cookies }) => {
 
     const { session, user } = await safeGetSession()
 
