@@ -12,6 +12,7 @@
 	import ChevronUpIcon from '@lucide/svelte/icons/chevron-up';
 	import { m } from '$lib/paraglide/messages.js';
 	import { toast } from 'svelte-sonner';
+	import { redirect } from '@sveltejs/kit';
 
 	let sessionData = $state<Session | null>(null);
 	let testing = $state(false);
@@ -37,7 +38,8 @@
 		variant="cta"
 		size="sm"
 		onclick={() => {
-			testing = true;
+			// testing = true;
+			redirect(303, '/login');
 		}}
 	>
 		{m.login_button()}

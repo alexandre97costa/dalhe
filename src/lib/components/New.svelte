@@ -16,8 +16,11 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Field } from 'formsnap';
 	import FormField from './ui/form/form-field.svelte';
+	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	// import { type CarMake, type CarModel } from '../../routes/+layout.server';
+	import type  {  FormDataRecord } from '../../app.d.ts';
+
 
 	let {
 		data,
@@ -25,12 +28,14 @@
 	}: {
 		data: {
 			laptimeForm: SuperValidated<Infer<LaptimeSchema>>;
-			car_makes: any[];
-			car_models: any[];
-			race_tracks: any[];
+			formDataRecord: FormDataRecord;
 		};
 		open: boolean;
 	} = $props();
+
+	let car_makes = $derived(data.formDataRecord.carMakes ?? []);
+	let car_models = $derived(data.formDataRecord.cars ?? []);
+	let race_tracks = $derived(data.formDataRecord.raceTracks ?? []);
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
 	let selectedCarMake = $state<string | null>(null);
@@ -57,23 +62,23 @@
 
 	// car makes select
 	$effect(() => {
-		let pos = data.car_makes.findIndex((make) => make.id.toString() === $formData.car_make);
-		selectedCarMake = data.car_makes[pos]?.name;
-		selectedCarMakeModels = data.car_models.filter(
-			(model) => model.make_id.toString() === $formData.car_make
+		let pos = car_makes.findIndex((make: any) => make.id.toString() === $formData.car_make);
+		selectedCarMake = car_makes[pos]?.name;
+		selectedCarMakeModels = car_models.filter(
+			(model: any) => model.make_id.toString() === $formData.car_make
 		);
 	});
 
 	// car models select
 	$effect(() => {
-		let pos = data.car_models.findIndex((model) => model.id.toString() === $formData.car_model);
-		selectedCarModel = data.car_models[pos]?.name;
+		let pos = car_models.findIndex((model: any) => model.id.toString() === $formData.car_model);
+		selectedCarModel = car_models[pos]?.name;
 	});
 
 	// race track select
 	$effect(() => {
-		let pos = data.race_tracks.findIndex((track) => track.id.toString() === $formData.race_track);
-		selectedTrack = data.race_tracks[pos]?.name;
+		let pos = race_tracks.findIndex((track: any) => track.id.toString() === $formData.race_track);
+		selectedTrack = race_tracks[pos]?.name;
 	});
 </script>
 
@@ -136,7 +141,7 @@
 								{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
 							</Select.Trigger>
 							<Select.Content>
-								{#each data.car_makes as make}
+							{#each car_makes as make}
 									<Select.Item value={make.id.toString()}>
 										{make.name}
 									</Select.Item>
@@ -192,7 +197,7 @@
 							{$formData.race_track ? selectedTrack : m.formadd_race_track_placeholder()}
 						</Select.Trigger>
 						<Select.Content>
-							{#each data.race_tracks as track}
+						{#each race_tracks as track}
 								<Select.Item value={track.id.toString()}>
 									{track.name}
 								</Select.Item>
