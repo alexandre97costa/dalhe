@@ -91,6 +91,7 @@
 								border-[1.5px]
 								border-purple-300 
 								bg-zinc-50
+								hover:bg-white
 
 								text-purple-600 
 								shadow-lg
@@ -100,6 +101,7 @@
 								dark:text-purple-400 
 								dark:shadow-purple-400/20  
 								dark:bg-zinc-900
+								dark:hover:bg-zinc-800
 
 							"
 					>
