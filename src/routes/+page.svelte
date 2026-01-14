@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { LayoutProps } from './$types';
-	import type { LayoutServerLoad } from './$types';
 	import { onMount } from 'svelte';
-	import { invalidate } from '$app/navigation'
+	import { invalidate } from '$app/navigation';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { title } from '$lib/store.js';
-	
-	import '../../app.css';
+	import { m } from '$lib/paraglide/messages.js';
+
+	import '../app.css';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { Button } from '$lib/components/ui/button/index';
@@ -15,49 +14,29 @@
 	import Nav from '$lib/components/Nav.svelte';
 	import New from '$lib/components/New.svelte';
 	import LogoImg from '$lib/images/500w.png';
+	import LogoTypeImg from '$lib/images/dalhe.svg';
 
+	title.clear();
 
-	onMount(() => {
-		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
-			if (_session?.expires_at !== session?.expires_at) {
-				invalidate('supabase:auth')
-			}
-		})
-		return () => data.subscription.unsubscribe()
-	})
-
-	let { data, children }: LayoutProps = $props();
-	let { supabase, session, laptimeForm, formDataRecord } = $derived(data)
-
-	let open = $state(false);
 	let language = $state(getLocale());
-
-	$effect(() => {
-		console.log(data);
-	});
-
 	function toggleLanguage() {
 		language = language == 'en' ? 'pt' : 'en';
 		setLocale(language);
 	}
 </script>
 
-<svelte:head>
-	<title>{$title ? $title + ' | Dá-lhe!' : 'Dá-lhe!'}</title>
-</svelte:head>
-
-<Toaster />
 <div
-	class="fixed top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
+	class="fixed top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 px-4 py-4 backdrop-blur-sm dark:bg-zinc-900"
 >
-	<div class="flex items-center gap-2">
+	<div class="flex items-center gap-8">
 		<Button
 			href="/"
 			variant="ghost"
 			size="lg"
-			class="group hover:bg-popover hover:dark:bg-popover p-2"
+			class="group hover:bg-popover hover:dark:bg-popover flex gap-8 p-2"
 		>
-			<img src={LogoImg} alt="logo" class=" max-w-8" />
+			<img src={LogoImg} alt="logo" class=" max-h-8" />
+			<img src={LogoTypeImg} alt="logo" class="h-8" />
 			<!-- <div class="h-[36px] w-[36px] flex items-center justify-center bg-neutral-950 p-1.5 rounded-md border-1 border-neutral-500">
 			</div> -->
 			<!-- <span class="hidden group-hover:inline">
@@ -70,7 +49,7 @@
 			<!-- <h2 class="text-xs text-neutral-500">alexandre97costa</h2> -->
 		</div>
 	</div>
-	<div class="flex items-center gap-1.5 pr-1">
+	<div class="flex items-center gap-2">
 		<Button
 			onclick={toggleLanguage}
 			variant="outline"
@@ -92,11 +71,24 @@
 	</div>
 </div>
 
-<div class="h- container mx-auto mt-14 p-4">
-	{@render children?.()}
+<div class="h- container mx-auto mt-40 p-4">
+	<div class="scroll-m-20 pb-4 text-6xl font-bold tracking-normal text-balance">
+		Keep yourself <span class="gradient-text">on track.</span>
+	</div>
+
+	<p class="text-xl font-medium">{m.hello_world()}</p>
+
+	<br />
+	<p>Current challenge:</p>
+	<ul class="list-inside list-disc">
+		<li>User Session</li>
+	</ul>
 </div>
 
-<div class="fixed right-0 bottom-0 left-0 flex w-full justify-center">
-	<Nav bind:open />
-	<New bind:open data={{ laptimeForm, formDataRecord }} />
-</div>
+<style>
+	.gradient-text {
+		background: linear-gradient(to right, #e9d5ff, #923ce2);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+</style>
