@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
     import type { ActionData, SubmitFunction } from './$types.js';
+    import { Button } from '$lib/components/ui/button/index';
 
     interface Props {
         form: ActionData;
@@ -43,10 +44,9 @@
                 {form?.errors?.email}
             </span>
         {/if}
-        <div>
-            <button class="button primary block">
-                {loading ? 'Loading' : 'Send magic link'}
-            </button>
-        </div>
+        <Button type="submit" class="mt-4 w-full" disabled={loading}>
+            {loading ? 'Loading' : 'Send magic link'}
+        </Button>
+
     </div>
 </form>
