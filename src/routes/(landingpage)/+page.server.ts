@@ -1,16 +1,17 @@
 // src/routes/+page.server.ts
 import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
+import { m } from '$lib/paraglide/messages.js';
 
 export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
-  const { session } = await safeGetSession()
+	const { session } = await safeGetSession()
 
-  // if the user is already logged in return them to the account page
-  if (session) {
-    redirect(303, '/account')
-  }
+	// if the user is already logged in return them to the account page
+	if (session) {
+		redirect(303, '/account')
+	}
 
-  return { url: url.origin }
+	return { url: url.origin }
 }
 
 export const actions: Actions = {
@@ -22,10 +23,10 @@ export const actions: Actions = {
 		} = event
 		const formData = await request.formData()
 		const email = formData.get('email') as string
-    const validEmail = /^[\w-\.+]+@([\w-]+\.)+[\w-]{2,8}$/.test(email)
-    
+		const validEmail = /^[\w-\.+]+@([\w-]+\.)+[\w-]{2,8}$/.test(email)
+
 		if (!validEmail) {
-			return fail(400, { errors: { email: "Please enter a valid email address" }, email })
+			return fail(400, { errors: { email: m.formlogin_email_error_pattern()}, email })
 		}
 
 		const { error } = await supabase.auth.signInWithOtp({ email })
@@ -34,13 +35,13 @@ export const actions: Actions = {
 			return fail(400, {
 				success: false,
 				email,
-				message: `There was an issue, Please contact support.`
+				message: m.formlogin_submit_error()
 			})
 		}
 
 		return {
 			success: true,
-			message: 'Please check your email for a magic link to log into the website.'
+			message: m.formlogin_submit_success()
 		}
 	}
 }

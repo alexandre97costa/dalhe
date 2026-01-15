@@ -20,5 +20,12 @@
     "formadd_car_model_placeholder": "Model",
     "formadd_race_track_label": "Track",
     "formadd_race_track_placeholder": "Track",
-    "login_button": "Login"
+    "login_button": "Login",
+    "formlogin_email_label": "Email",
+    "formlogin_email_placeholder": "Enter your email",
+    "formlogin_email_error_required": "Email is required",
+    "formlogin_email_error_pattern": "Enter a valid email",
+    "formlogin_submit_error": "An error occurred while logging in. Please try again.",
+    "formlogin_submit_success": "Login link sent! Check your email.",
+    "formlogin_submit_button": "Send login link"
 }

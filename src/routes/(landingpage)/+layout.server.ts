@@ -3,7 +3,7 @@ import { superValidate } from "sveltekit-superforms";
 import { laptimeSchema } from '$lib/schemas/laptimeSchema';
 import { zod4 } from "sveltekit-superforms/adapters";
 import { supabase } from '$lib/supabaseClient';
-import type { FormDataRecord, FormQuery } from '../../app.d.ts';
+import type { FormDataRecord, FormQuery } from '../../app';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import { form } from '$app/server';
 
