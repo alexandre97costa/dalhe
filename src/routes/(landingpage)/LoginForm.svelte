@@ -1,52 +1,74 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import type { ActionData, SubmitFunction } from './$types.js';
-    import { Button } from '$lib/components/ui/button/index';
+	import { enhance } from '$app/forms';
+	import type { ActionData, SubmitFunction } from './$types.js';
+	import { m } from '$lib/paraglide/messages.js';
 
-    interface Props {
-        form: ActionData;
-    }
+	import { Button } from '$lib/components/ui/button/index';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import * as Field from '$lib/components/ui/field/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
 
-    let { form }: Props = $props();
-    let loading = $state(false);
+	interface Props {
+		form: ActionData;
+	}
 
-    const handleSubmit: SubmitFunction = () => {
-        loading = true;
-        return async ({ update }) => {
-            update();
-            loading = false;
-        };
-    };
+	let { form }: Props = $props();
+	let loading = $state(false);
+
+	const handleSubmit: SubmitFunction = () => {
+		loading = true;
+		return async ({ update }) => {
+			update();
+			loading = false;
+		};
+	};
 </script>
 
-<form class="row flex-center flex" method="POST" use:enhance={handleSubmit}>
-    <div class="form-widget col-6">
-        <h1 class="header">Supabase + SvelteKit</h1>
-        <p class="description">Sign in via magic link with your email below</p>
-        {#if form?.message !== undefined}
-            <div class="success {form?.success ? '' : 'fail'}">
-                {form?.message}
-            </div>
-        {/if}
-        <div>
-            <label for="email">Email address</label>
-            <input
-                id="email"
-                name="email"
-                class="inputField"
-                type="email"
-                placeholder="Your email"
-                value={form?.email ?? ''}
-            />
-        </div>
-        {#if form?.errors?.email}
-            <span class="error flex items-center text-sm">
-                {form?.errors?.email}
-            </span>
-        {/if}
-        <Button type="submit" class="mt-4 w-full" disabled={loading}>
-            {loading ? 'Loading' : 'Send magic link'}
-        </Button>
+<form class="" method="POST" use:enhance={handleSubmit}>
+	<Field.Group>
+		<Field.Set>
+			<Field.Legend>Login/Signup</Field.Legend>
+			<Field.Description>{m.formlogin_description()}</Field.Description>
 
-    </div>
+			{#if form?.message !== undefined}
+				{#if form?.success === true}
+					<Card.Root class="rounded-md border-0 bg-lime-500/15 px-3 py-2 text-sm text-lime-100">
+						<Card.Content class="p-0">
+							<p>{form?.message ?? 'Success'}</p>
+						</Card.Content>
+					</Card.Root>
+				{:else}
+					<Card.Root class="rounded-md border-0 bg-red-500/10 px-3 py-2 text-sm text-rose-100">
+						<Card.Content class="p-0">
+							<p>{form?.message ?? 'Error'}</p>
+						</Card.Content>
+					</Card.Root>
+				{/if}
+			{/if}
+
+			<Field.Field>
+				<Field.Label for="email">Email</Field.Label>
+				<Input
+					id="email"
+					name="email"
+					type="email"
+					placeholder="verstappen@redbull.com"
+					required
+					value={form?.email ?? ''}
+				/>
+				{#if form?.errors?.email}
+					<Field.Error>{form?.errors?.email}</Field.Error>
+				{/if}
+			</Field.Field>
+		</Field.Set>
+		<Button type="submit" class="w-full" disabled={loading || form?.success}>
+			{#if loading}
+				<Spinner />
+				{m.loading()}
+			{:else}
+				{m.formlogin_submit_button()}
+			{/if}
+		</Button>
+	</Field.Group>
 </form>
