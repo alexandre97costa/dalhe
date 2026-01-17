@@ -93,10 +93,10 @@
 
 		{#if isDesktop.current}
 			<Popover.Root bind:open>
-				<!-- todo: hover e dark e resto dos states do botão de login -->
 				<Popover.Trigger
-					class={buttonVariants({ variant: 'default', size: 'sm' }) + ' border text-foreground' + 
-						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' + 
+					class={buttonVariants({ variant: 'default', size: 'sm' }) +
+						' text-foreground border' +
+						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
 						' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
 				>
 					{m.login_button()}
@@ -107,8 +107,11 @@
 			</Popover.Root>
 		{:else}
 			<Dialog.Root bind:open>
-				<!-- todo: copiar para aqui o botão de login (quando estiver concluido) -->
-				<Dialog.Trigger class={buttonVariants({ variant: 'default' })}
+				<Dialog.Trigger
+					class={buttonVariants({ variant: 'default', size: 'sm' }) +
+						' text-foreground border' +
+						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
+						' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
 					>{m.login_button()}</Dialog.Trigger
 				>
 				<Dialog.Content>
