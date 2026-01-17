@@ -94,7 +94,11 @@
 		{#if isDesktop.current}
 			<Popover.Root bind:open>
 				<!-- todo: hover e dark e resto dos states do botão de login -->
-				<Popover.Trigger class={buttonVariants({ variant: 'default', size: 'sm' }) + ' border-purple-600 border bg-purple-500/20 text-white'}>
+				<Popover.Trigger
+					class={buttonVariants({ variant: 'default', size: 'sm' }) + ' border text-foreground' + 
+						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' + 
+						' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
+				>
 					{m.login_button()}
 				</Popover.Trigger>
 				<Popover.Content class="w-80 p-5">
@@ -115,16 +119,8 @@
 	</div>
 </div>
 
-<div class="h- container mx-auto mt-40 p-4">
+<div class="h-container mx-auto mt-40 p-4">
 	<div class="scroll-m-20 pb-4 text-6xl font-bold tracking-normal text-balance">
-		Keep yourself <span class="gradient-text">on track.</span>
+		Keep yourself <span class="gradient-text-to-purple">on track.</span>
 	</div>
 </div>
-
-<style>
-	.gradient-text {
-		background: linear-gradient(to right, #e9d5ff, #923ce2);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-</style>
