@@ -8,12 +8,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
 		cookies: {
 			getAll: () => event.cookies.getAll(),
-			/**
-			 * Note: You have to add the `path` variable to the
-			 * set and remove method due to sveltekit's cookie API
-			 * requiring this to be set, setting the path to `/`
-			 * will replicate previous/standard behaviour (https://kit.svelte.dev/docs/types#public-types-cookies)
-			 */
 			setAll: (cookiesToSet) => {
 				cookiesToSet.forEach(({ name, value, options }) => {
 					event.cookies.set(name, value, { ...options, path: '/' })
@@ -21,11 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			},
 		},
 	})
-	/**
-	 * Unlike `supabase.auth.getSession`, which is unsafe on the server because it
-	 * doesn't validate the JWT, this function validates the JWT by first calling
-	 * `getUser` and aborts early if the JWT signature is invalid.
-	 */
+
 	event.locals.safeGetSession = async () => {
 		const {
 			data: { user },
@@ -38,6 +28,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 			data: { session },
 		} = await event.locals.supabase.auth.getSession()
 		return { session, user }
+	}
+
+	const { session } = await event.locals.safeGetSession();
+
+	if (event.url.pathname === '/' && !session) {
+		console.log('redirecting to demo/supa');
+		return Response.redirect(`${event.url.origin}/demo/supa`, 303);
 	}
 
 	return paraglideMiddleware(event.request, ({ request, locale }) => {

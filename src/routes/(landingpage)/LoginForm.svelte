@@ -25,50 +25,46 @@
 	};
 </script>
 
-<form class="" method="POST" use:enhance={handleSubmit}>
-	<Field.Group>
-		<Field.Set>
-			<Field.Legend>Login/Signup</Field.Legend>
-			<Field.Description>{m.formlogin_description()}</Field.Description>
+<form class="flex flex-col gap-4" method="POST" use:enhance={handleSubmit}>
+	<Field.Legend class="mb-0">Login/Signup</Field.Legend>
+	<Field.Description>{m.formlogin_description()}</Field.Description>
 
-			{#if form?.message !== undefined}
-				{#if form?.success === true}
-					<Card.Root class="rounded-md border-0 bg-lime-500/15 px-3 py-2 text-sm text-lime-100">
-						<Card.Content class="p-0">
-							<p>{form?.message ?? 'Success'}</p>
-						</Card.Content>
-					</Card.Root>
-				{:else}
-					<Card.Root class="rounded-md border-0 bg-red-500/10 px-3 py-2 text-sm text-rose-100">
-						<Card.Content class="p-0">
-							<p>{form?.message ?? 'Error'}</p>
-						</Card.Content>
-					</Card.Root>
-				{/if}
-			{/if}
+	<Field.Field>
+		<Field.Label for="email">Email</Field.Label>
+		<Input
+			id="email"
+			name="email"
+			type="email"
+			placeholder="verstappen@redbull.com"
+			required
+			value={form?.email ?? ''}
+		/>
+		{#if form?.errors?.email}
+			<Field.Error>{form?.errors?.email}</Field.Error>
+		{/if}
+	</Field.Field>
+	<Button type="submit" class="w-full" size="lg" disabled={loading || form?.success}>
+		{#if loading}
+			<Spinner />
+			{m.loading()}
+		{:else}
+			{m.formlogin_submit_button()}
+		{/if}
+	</Button>
 
-			<Field.Field>
-				<Field.Label for="email">Email</Field.Label>
-				<Input
-					id="email"
-					name="email"
-					type="email"
-					placeholder="verstappen@redbull.com"
-					required
-					value={form?.email ?? ''}
-				/>
-				{#if form?.errors?.email}
-					<Field.Error>{form?.errors?.email}</Field.Error>
-				{/if}
-			</Field.Field>
-		</Field.Set>
-		<Button type="submit" class="w-full" disabled={loading || form?.success}>
-			{#if loading}
-				<Spinner />
-				{m.loading()}
-			{:else}
-				{m.formlogin_submit_button()}
-			{/if}
-		</Button>
-	</Field.Group>
+	{#if form?.message !== undefined}
+		{#if form?.success === true}
+			<Card.Root class="rounded-md border-0 bg-lime-500/15 px-3 py-2 text-sm text-lime-100">
+				<Card.Content class="p-0">
+					<p>{form?.message ?? 'Success'}</p>
+				</Card.Content>
+			</Card.Root>
+		{:else}
+			<Card.Root class="rounded-md border-0 bg-red-500/10 px-3 py-2 text-sm text-rose-100">
+				<Card.Content class="p-0">
+					<p>{form?.message ?? 'Error'}</p>
+				</Card.Content>
+			</Card.Root>
+		{/if}
+	{/if}
 </form>

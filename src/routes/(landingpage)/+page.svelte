@@ -48,7 +48,7 @@
 </svelte:head>
 
 <div
-	class="fixed top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 p-3 backdrop-blur-sm dark:bg-zinc-950"
+	class="fixed top-0 right-0 left-0 flex justify-between border-b bg-zinc-50 p-3 backdrop-blur-sm dark:bg-zinc-950"
 >
 	<div class="flex items-center gap-8">
 		<Button
@@ -68,7 +68,6 @@
 
 		<div class="flex flex-col">
 			<h1 class="text-xl font-semibold">{$title}</h1>
-			<!-- <h2 class="text-xs text-neutral-500">alexandre97costa</h2> -->
 		</div>
 	</div>
 	<div class="flex items-center gap-2">
@@ -88,7 +87,6 @@
 			<span class="sr-only">Toggle language</span>
 		</Button>
 		<LightSwitch />
-		<!-- <UserSession /> -->
 		<ModeWatcher />
 
 		{#if isDesktop.current}
@@ -101,7 +99,7 @@
 				>
 					{m.login_button()}
 				</Popover.Trigger>
-				<Popover.Content class="w-80 p-5">
+				<Popover.Content class="w-80 p-5 mx-3 my-1 rounded-xl">
 					<LoginForm {form} />
 				</Popover.Content>
 			</Popover.Root>
@@ -109,12 +107,12 @@
 			<Dialog.Root bind:open>
 				<Dialog.Trigger
 					class={buttonVariants({ variant: 'default', size: 'sm' }) +
-						' text-foreground border' +
+						' text-foreground! border' +
 						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
 						' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
 					>{m.login_button()}</Dialog.Trigger
 				>
-				<Dialog.Content>
+				<Dialog.Content class="w-11/12 max-w-md p-5 rounded-xl bg-popover">
 					<LoginForm {form} />
 				</Dialog.Content>
 			</Dialog.Root>

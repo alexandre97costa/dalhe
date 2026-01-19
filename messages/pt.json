@@ -27,7 +27,7 @@
     "formlogin_email_placeholder": "Insere o teu email",
     "formlogin_email_error_required": "O email é obrigatório",
     "formlogin_email_error_pattern": "Insere um email válido",
-    "formlogin_submit_error": "Occoreu um erro ao fazer login. Tenta novamente.",
+    "formlogin_submit_error": "Ocorreu um erro ao fazer login. Tenta novamente.",
     "formlogin_submit_success": "Link de login enviado! Verifica o teu email.",
     "formlogin_submit_button": "Enviar link de login"
 
