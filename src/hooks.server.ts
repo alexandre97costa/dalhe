@@ -32,9 +32,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const { session } = await event.locals.safeGetSession();
 
-	if (event.url.pathname === '/' && !session) {
-		console.log('redirecting to demo/supa');
-		return Response.redirect(`${event.url.origin}/demo/supa`, 303);
+	if (event.url.pathname !== "/" && !session) {
+		console.log('redirecting to homepage');
+		return Response.redirect(`${event.url.origin}/`, 303);
 	}
 
 	return paraglideMiddleware(event.request, ({ request, locale }) => {
