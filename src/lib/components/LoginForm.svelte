@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { ActionData, SubmitFunction } from './$types.js';
+	import type { ActionData, SubmitFunction } from '../../routes/(landingpage)/$types.js';
 	import { m } from '$lib/paraglide/messages.js';
 
 	import { Button } from '$lib/components/ui/button/index';

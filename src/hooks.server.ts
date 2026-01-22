@@ -32,9 +32,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const { session } = await event.locals.safeGetSession();
 
-	if (event.url.pathname !== "/" && !session) {
-		console.log('redirecting to homepage');
-		return Response.redirect(`${event.url.origin}/`, 303);
+	if (event.url.pathname !== "/" && !event.url.pathname.startsWith("/login") && !session) {
+		console.log(event.url.pathname + ': user not logged in, redirecting to login');
+		const redirectUrl = new URL('/login', event.url.origin);
+        redirectUrl.searchParams.set('redirectTo', event.url.pathname + event.url.search);
+		return Response.redirect(redirectUrl, 303);
 	}
 
 	return paraglideMiddleware(event.request, ({ request, locale }) => {
