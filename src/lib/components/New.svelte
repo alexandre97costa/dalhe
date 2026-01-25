@@ -93,25 +93,26 @@
 					<InputOTP.Root
 						maxlength={7}
 						pattern={REGEXP_ONLY_DIGITS}
+						class="grid grid-cols-[2fr_min-content_2fr_min-content_3fr] gap-1"
 						{...props}
 						bind:value={$formData.laptime}
 					>
 						{#snippet children({ cells })}
-							<InputOTP.Group>
+							<InputOTP.Group class="grid grid-cols-2">
 								{#each cells.slice(0, 2) as cell}
-									<InputOTP.Slot {cell} />
+									<InputOTP.Slot {cell} class="size-full h-14 text-3xl font-semibold text-purple-300 font-mono" />
 								{/each}
 							</InputOTP.Group>
-							<InputOTP.Separator>:</InputOTP.Separator>
-							<InputOTP.Group>
+							<InputOTP.Separator class="text-5xl text-purple-400 font-light">:</InputOTP.Separator>
+							<InputOTP.Group class="grid grid-cols-2">
 								{#each cells.slice(2, 4) as cell}
-									<InputOTP.Slot {cell} />
+									<InputOTP.Slot {cell} class="size-full h-14 text-3xl font-semibold text-purple-300 font-mono" />
 								{/each}
 							</InputOTP.Group>
-							<InputOTP.Separator>.</InputOTP.Separator>
-							<InputOTP.Group>
+							<InputOTP.Separator class="text-5xl text-purple-400 font-light">.</InputOTP.Separator>
+							<InputOTP.Group class="grid grid-cols-3">
 								{#each cells.slice(4, 7) as cell}
-									<InputOTP.Slot {cell} />
+									<InputOTP.Slot {cell} class="size-full h-14 text-3xl font-semibold text-purple-300 font-mono" />
 								{/each}
 							</InputOTP.Group>
 						{/snippet}
