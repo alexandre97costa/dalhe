@@ -58,8 +58,8 @@
 		class={cn('col-span-2 flex justify-center', i < 2 ? 'order-first' : 'order-last')}
 	>
 		<NavigationMenu.Link href={item.href} class="flex flex-col items-center gap-2">
-			<Icon strokeWidth=2.5 />
-			<span class="text-sm font-medium">
+			<Icon strokeWidth=2 />
+			<span class="text-sm font-light">
 				{item.title}
 			</span>
 		</NavigationMenu.Link>

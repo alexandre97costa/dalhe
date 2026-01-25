@@ -1,14 +1,20 @@
 <script lang="ts">
+	// types
+	import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
+	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
+	import type { FormDataRecord } from '../../app.d.ts';
+	//form & utils
+	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
+	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
+	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
+	import { mode } from 'mode-watcher';
+	// components
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
-	import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
-	import { zod4 } from 'sveltekit-superforms/adapters';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
-	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
-	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
@@ -16,10 +22,8 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Field } from 'formsnap';
 	import FormField from './ui/form/form-field.svelte';
-	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
-	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
-	// import { type CarMake, type CarModel } from '../../routes/+layout.server';
-	import type { FormDataRecord } from '../../app.d.ts';
+	import { type Icon as IconType, MapPin, Timer, Car } from '@lucide/svelte';
+	import { Cell } from './ui/table/index.js';
 
 	let {
 		data,
@@ -81,6 +85,22 @@
 	});
 </script>
 
+{#snippet formIcon(name: typeof IconType)}
+	{@const Icon = name}
+	<Icon size="18" color="oklch(0.714 0.203 305.504)" />
+	<!-- {#if mode.current === 'dark'}
+		<Icon size="18" color="oklch(0.214 0.203 305.504)" />
+	{:else}
+	{/if} -->
+{/snippet}
+
+{#snippet InputOTPSlot(cell: any)}
+	<InputOTP.Slot
+		{cell}
+		class="size-full h-14 font-mono text-3xl font-normal text-purple-800 dark:text-purple-300"
+	/>
+{/snippet}
+
 <!-- Form -->
 {#snippet laptimeForm()}
 	<form method="POST" use:enhance class="grid items-start gap-4">
@@ -88,7 +108,10 @@
 		<Form.Field {form} name="laptime">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>{m.formadd_laptime_label()}</Form.Label>
+					<Form.Label>
+						{@render formIcon(Timer)}
+						{m.formadd_laptime_label()}
+					</Form.Label>
 					<InputOTP.Root
 						maxlength={7}
 						pattern={REGEXP_ONLY_DIGITS}
@@ -99,28 +122,19 @@
 						{#snippet children({ cells })}
 							<InputOTP.Group class="grid grid-cols-2">
 								{#each cells.slice(0, 2) as cell}
-									<InputOTP.Slot
-										{cell}
-										class="size-full h-14 font-mono text-3xl text-purple-300"
-									/>
+									{@render InputOTPSlot(cell)}
 								{/each}
 							</InputOTP.Group>
 							<InputOTP.Separator class="text-5xl font-light text-purple-400">:</InputOTP.Separator>
 							<InputOTP.Group class="grid grid-cols-2">
 								{#each cells.slice(2, 4) as cell}
-									<InputOTP.Slot
-										{cell}
-										class="size-full h-14 font-mono text-3xl text-purple-300"
-									/>
+									{@render InputOTPSlot(cell)}
 								{/each}
 							</InputOTP.Group>
 							<InputOTP.Separator class="text-5xl font-light text-purple-400">.</InputOTP.Separator>
 							<InputOTP.Group class="grid grid-cols-3">
 								{#each cells.slice(4, 7) as cell}
-									<InputOTP.Slot
-										{cell}
-										class="size-full h-14 font-mono text-3xl text-purple-300"
-									/>
+									{@render InputOTPSlot(cell)}
 								{/each}
 							</InputOTP.Group>
 						{/snippet}
@@ -131,12 +145,40 @@
 			<Form.FieldErrors />
 		</Form.Field>
 
+		<!-- Race Track -->
+		<Form.Field {form} name="race_track">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>
+						{@render formIcon(MapPin)}
+						{m.formadd_race_track_label()}
+					</Form.Label>
+					<Select.Root type="single" bind:value={$formData.race_track} {...props}>
+						<Select.Trigger class="w-full">
+							{$formData.race_track ? selectedTrack : m.formadd_race_track_placeholder()}
+						</Select.Trigger>
+						<Select.Content>
+							{#each race_tracks as track}
+								<Select.Item value={track.id.toString()}>
+									{track.name}
+								</Select.Item>
+							{/each}
+						</Select.Content>
+					</Select.Root>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+
 		<!-- Car -->
 		<div class="grid grid-cols-2 items-end gap-3">
 			<Form.Field {form} name="car_make">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label>{m.formadd_car_make_label()}</Form.Label>
+						<Form.Label>
+							{@render formIcon(Car)}
+							{m.formadd_car_make_label()}
+						</Form.Label>
 						<Select.Root
 							type="single"
 							bind:value={$formData.car_make}
@@ -192,45 +234,23 @@
 			</Form.Field>
 		</div>
 
-		<!-- Race Track -->
-		<Form.Field {form} name="race_track">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label>{m.formadd_race_track_label()}</Form.Label>
-					<Select.Root type="single" bind:value={$formData.race_track} {...props}>
-						<Select.Trigger class="w-full">
-							{$formData.race_track ? selectedTrack : m.formadd_race_track_placeholder()}
-						</Select.Trigger>
-						<Select.Content>
-							{#each race_tracks as track}
-								<Select.Item value={track.id.toString()}>
-									{track.name}
-								</Select.Item>
-							{/each}
-						</Select.Content>
-					</Select.Root>
-				{/snippet}
-			</Form.Control>
-			<Form.FieldErrors />
-		</Form.Field>
-
 		<Button type="submit">{m.nav_add_save()}</Button>
 	</form>
 {/snippet}
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
-		<Dialog.Content class="">
+		<Dialog.Content >
 			<Dialog.Header>
-				<Dialog.Title>{m.nav_add()}</Dialog.Title>
+				<Dialog.Title>{m.formadd_header()}</Dialog.Title>
 			</Dialog.Header>
 			{@render laptimeForm()}
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
 	<Drawer.Root bind:open>
-		<Drawer.Content class="">
-			<Drawer.Header class="text-center text-xl pt-0 gap-0">
+		<Drawer.Content>
+			<Drawer.Header class="gap-0 pt-0 text-center text-xl">
 				<Drawer.Title>{m.formadd_header()}</Drawer.Title>
 				<!-- <Drawer.Description class="text-sm italic">{m.formadd_header_description()}</Drawer.Description> -->
 			</Drawer.Header>

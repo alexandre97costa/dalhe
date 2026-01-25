@@ -23,9 +23,22 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession, supabas
 
     formQueries.forEach((query, index) => {
         const result = results[index];
-        formDataRecord[query.key] = result.status === 'fulfilled' ? result.value.data : null;
+        type ResultQueryData = QueryData<typeof query>;
+
+        if (result.status === 'fulfilled') {
+            // console.log('result.value', result.value);
+            formDataRecord[query.key] = result.value.data;
+            if (result.value.error) {
+                throw new Error(`Failed to fetch ${query.key}: ${result.value.error.message}`);
+            }   
+        }   else {  
+            throw new Error(`Failed to fetch ${query.key}: ${(result as PromiseRejectedResult).reason}`);
+        }
+
+        // formDataRecord[query.key] = result.status === 'fulfilled' ? result.value.data : throw new Error(`Failed to fetch ${query.key}: ${(result as PromiseRejectedResult).reason}`);
     });
 
+    console.log('formDataRecord', formDataRecord);
     return {
         laptimeForm: await superValidate(zod4(laptimeSchema)),
         formDataRecord,
