@@ -101,7 +101,7 @@
 								{#each cells.slice(0, 2) as cell}
 									<InputOTP.Slot
 										{cell}
-										class="size-full h-14 font-mono text-3xl font-semibold text-purple-300"
+										class="size-full h-14 font-mono text-3xl text-purple-300"
 									/>
 								{/each}
 							</InputOTP.Group>
@@ -110,7 +110,7 @@
 								{#each cells.slice(2, 4) as cell}
 									<InputOTP.Slot
 										{cell}
-										class="size-full h-14 font-mono text-3xl font-semibold text-purple-300"
+										class="size-full h-14 font-mono text-3xl text-purple-300"
 									/>
 								{/each}
 							</InputOTP.Group>
@@ -119,7 +119,7 @@
 								{#each cells.slice(4, 7) as cell}
 									<InputOTP.Slot
 										{cell}
-										class="size-full h-14 font-mono text-3xl font-semibold text-purple-300"
+										class="size-full h-14 font-mono text-3xl text-purple-300"
 									/>
 								{/each}
 							</InputOTP.Group>
