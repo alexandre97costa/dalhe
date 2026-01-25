@@ -8,6 +8,8 @@
     "nav_profile": "Carreira",
     "nav_add_cancel": "Cancelar",
     "nav_add_save": "Criar volta",
+    "formadd_header": "Nova volta",
+    "formadd_header_description": "Insere a tua melhor volta!",
     "formadd_laptime_label": "Volta",
     "formadd_laptime_placeholder": "Insere a tua melhor volta!",
     "formadd_laptime_error_required": "A volta é obrigatória",

@@ -4,6 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space + Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 :root {
 	--radius: 0.625rem;
 	--background: oklch(1 0 0);
@@ -120,6 +122,11 @@
 	
 	body,html {
 		@apply bg-background text-foreground;
+	}
+	
+	.font-mono {
+		font-family: "Outfit", sans-serif;
+		font-optical-sizing: auto;
 	}
 }
 

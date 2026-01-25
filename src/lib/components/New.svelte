@@ -16,11 +16,10 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Field } from 'formsnap';
 	import FormField from './ui/form/form-field.svelte';
-	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
+	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
 	// import PUBLIC_SHOW_DESCRIPTIONS from '$env/static/public';
 	// import { type CarMake, type CarModel } from '../../routes/+layout.server';
-	import type  {  FormDataRecord } from '../../app.d.ts';
-
+	import type { FormDataRecord } from '../../app.d.ts';
 
 	let {
 		data,
@@ -100,19 +99,28 @@
 						{#snippet children({ cells })}
 							<InputOTP.Group class="grid grid-cols-2">
 								{#each cells.slice(0, 2) as cell}
-									<InputOTP.Slot {cell} class="size-full h-14 text-3xl font-semibold text-purple-300 font-mono" />
+									<InputOTP.Slot
+										{cell}
+										class="size-full h-14 font-mono text-3xl font-semibold text-purple-300"
+									/>
 								{/each}
 							</InputOTP.Group>
-							<InputOTP.Separator class="text-5xl text-purple-400 font-light">:</InputOTP.Separator>
+							<InputOTP.Separator class="text-5xl font-light text-purple-400">:</InputOTP.Separator>
 							<InputOTP.Group class="grid grid-cols-2">
 								{#each cells.slice(2, 4) as cell}
-									<InputOTP.Slot {cell} class="size-full h-14 text-3xl font-semibold text-purple-300 font-mono" />
+									<InputOTP.Slot
+										{cell}
+										class="size-full h-14 font-mono text-3xl font-semibold text-purple-300"
+									/>
 								{/each}
 							</InputOTP.Group>
-							<InputOTP.Separator class="text-5xl text-purple-400 font-light">.</InputOTP.Separator>
+							<InputOTP.Separator class="text-5xl font-light text-purple-400">.</InputOTP.Separator>
 							<InputOTP.Group class="grid grid-cols-3">
 								{#each cells.slice(4, 7) as cell}
-									<InputOTP.Slot {cell} class="size-full h-14 text-3xl font-semibold text-purple-300 font-mono" />
+									<InputOTP.Slot
+										{cell}
+										class="size-full h-14 font-mono text-3xl font-semibold text-purple-300"
+									/>
 								{/each}
 							</InputOTP.Group>
 						{/snippet}
@@ -142,7 +150,7 @@
 								{$formData.car_make ? selectedCarMake : m.formadd_car_make_placeholder()}
 							</Select.Trigger>
 							<Select.Content>
-							{#each car_makes as make}
+								{#each car_makes as make}
 									<Select.Item value={make.id.toString()}>
 										{make.name}
 									</Select.Item>
@@ -189,16 +197,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>{m.formadd_race_track_label()}</Form.Label>
-					<Select.Root
-						type="single"
-						bind:value={$formData.race_track}
-						{...props}
-					>
+					<Select.Root type="single" bind:value={$formData.race_track} {...props}>
 						<Select.Trigger class="w-full">
 							{$formData.race_track ? selectedTrack : m.formadd_race_track_placeholder()}
 						</Select.Trigger>
 						<Select.Content>
-						{#each race_tracks as track}
+							{#each race_tracks as track}
 								<Select.Item value={track.id.toString()}>
 									{track.name}
 								</Select.Item>
@@ -226,6 +230,10 @@
 {:else}
 	<Drawer.Root bind:open>
 		<Drawer.Content class="">
+			<Drawer.Header class="text-center text-xl pt-0 gap-0">
+				<Drawer.Title>{m.formadd_header()}</Drawer.Title>
+				<!-- <Drawer.Description class="text-sm italic">{m.formadd_header_description()}</Drawer.Description> -->
+			</Drawer.Header>
 			{@render laptimeForm()}
 		</Drawer.Content>
 	</Drawer.Root>

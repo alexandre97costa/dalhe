@@ -8,6 +8,8 @@
     "nav_profile": "Career",
     "nav_add_cancel": "Cancel",
     "nav_add_save": "Create Laptime",
+    "formadd_header": "New Laptime",
+    "formadd_header_description": "Add your best laptime!",
     "formadd_laptime_label": "Laptime",
     "formadd_laptime_placeholder": "Enter your best laptime!",
     "formadd_laptime_error_required": "Laptime is required",
