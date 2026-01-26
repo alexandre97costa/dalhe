@@ -22,7 +22,7 @@
 >
 	{#snippet children({ checked })}
 		<span
-			class="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center"
+			class="pointer-events-none absolute start-2 flex size-3.5 items-center justify-center text-purple-500"
 		>
 			{#if checked}
 				<CircleIcon class="size-2 fill-current" />

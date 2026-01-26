@@ -128,7 +128,7 @@
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		@variant dark {
-			background: linear-gradient(to right, #e9d5ff, #923ce2);
+			background: linear-gradient(to right, #efe2ff, #923ce2);
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
 		}

@@ -31,6 +31,26 @@
     "formlogin_email_error_pattern": "Insere um email válido",
     "formlogin_submit_error": "Ocorreu um erro ao fazer login. Tenta novamente.",
     "formlogin_submit_success": "Link de login enviado! Verifica o teu email.",
-    "formlogin_submit_button": "Enviar link de login"
-
+    "formlogin_submit_button": "Enviar link de login",
+    "homepage_hero_title": "Mantém-te na ",
+    "homepage_hero_title_underline": "linha de corrida.",
+    "homepage_hero_subtitle": "O Dá-lhe! é um rastreador de voltas de corrida que te ajuda a monitorizar o teu progresso e competir com amigos.",
+    "homepage_hero_cta": "Começar a dar-lhe!",
+    "homepage_features_tracking_title": "Regista as tuas voltas",
+    "homepage_features_tracking_description": "Guarda e monitoriza facilmente as tuas voltas ao longo do tempo.",
+    "homepage_features_comparison_title": "Compara com amigos",
+    "homepage_features_comparison_description": "Vê como te comparas com os teus amigos e rivais.",
+    "homepage_features_insights_title": "Ganha uma nova perspetiva",
+    "homepage_features_insights_description": "Analisa o teu desempenho e identifica áreas para melhorar.",
+    "user_dropdown_account": "Conta",
+    "user_dropdown_profile": "Perfil",
+    "user_dropdown_settings": "Definições",
+    "user_dropdown_theme": "Tema",
+    "user_dropdown_theme_light": "Claro",
+    "user_dropdown_theme_dark": "Escuro",
+    "user_dropdown_theme_system": "Sistema",
+    "user_dropdown_language": "Idioma",
+    "user_dropdown_language_pt": "Português",
+    "user_dropdown_language_en": "Inglês",
+    "user_dropdown_logout": "Sair"
 }

@@ -6,14 +6,14 @@ import { m } from '$lib/paraglide/messages.js';
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const { session } = await locals.safeGetSession();
 
-	console.log(session)
+	// console.log(session)
 
 	// if the user is already logged in return them to the account page
 	if (session) {
 		// redirect(303, '/account')
 	}
 
-	return { url: url.origin }
+	return { url: url.origin, session }
 }
 
 export const actions: Actions = {

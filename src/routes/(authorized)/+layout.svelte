@@ -2,10 +2,10 @@
 	import type { LayoutProps } from './$types';
 	import type { LayoutServerLoad } from './$types';
 	import { onMount } from 'svelte';
-	import { invalidate } from '$app/navigation'
+	import { invalidate } from '$app/navigation';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { title } from '$lib/store.js';
-	
+
 	import '../../app.css';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
@@ -16,18 +16,17 @@
 	import New from '$lib/components/New.svelte';
 	import LogoImg from '$lib/images/500w.png';
 
-
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
 			if (_session?.expires_at !== session?.expires_at) {
-				invalidate('supabase:auth')
+				invalidate('supabase:auth');
 			}
-		})
-		return () => data.subscription.unsubscribe()
-	})
+		});
+		return () => data.subscription.unsubscribe();
+	});
 
 	let { data, children }: LayoutProps = $props();
-	let { supabase, session, laptimeForm, formDataRecord } = $derived(data)
+	let { supabase, session, user, laptimeForm, formDataRecord } = $derived(data);
 
 	let open = $state(false);
 	let language = $state(getLocale());
@@ -47,6 +46,7 @@
 </svelte:head>
 
 <Toaster />
+<ModeWatcher />
 <div
 	class="fixed top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
 >
@@ -71,7 +71,7 @@
 		</div>
 	</div>
 	<div class="flex items-center gap-1.5 pr-1">
-		<Button
+		<!-- <Button
 			onclick={toggleLanguage}
 			variant="outline"
 			size="icon"
@@ -86,9 +86,8 @@
 			</span>
 			<span class="sr-only">Toggle language</span>
 		</Button>
-		<LightSwitch />
-		<UserSession />
-		<ModeWatcher />
+		<LightSwitch /> -->
+		<UserSession {user} />
 	</div>
 </div>
 

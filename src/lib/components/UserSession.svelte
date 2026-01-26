@@ -1,77 +1,86 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { supabase } from '$lib/supabaseClient';
-	import type { Session } from '@supabase/supabase-js';
+	import { redirect } from '@sveltejs/kit';
+	import { m } from '$lib/paraglide/messages.js';
+	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
+	import { resetMode, setMode } from 'mode-watcher';
+
 	import Button from './ui/button/button.svelte';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-
-	import UserIcon from '@lucide/svelte/icons/user';
-	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
-	import ChevronUpIcon from '@lucide/svelte/icons/chevron-up';
-	import { m } from '$lib/paraglide/messages.js';
 	import { toast } from 'svelte-sonner';
-	import { redirect } from '@sveltejs/kit';
 
-	let sessionData = $state<Session | null>(null);
-	let testing = $state(false);
-	let open = $state(false); // for dropdown menu
+	import { Moon, Sun, Monitor, ChevronDownIcon } from '@lucide/svelte';
 
-	onMount(async () => {
-		const {
-			data: { session },
-			error
-		} = await supabase.auth.getSession();
-		if (error) {
-			toast.error('Error getting user session');
-			console.error('Error getting user session:', error.message);
-		}
-		sessionData = session;
+	let { user = $bindable(null), open = $bindable(false) } = $props();
+	let theme: 'light' | 'dark' | 'system' = $state('system');
+	let language = $state(getLocale());
+	let testing = $state(true);
+
+	$effect(() => {
+		console.log('User session data changed:', user);
 	});
 </script>
 
-{#if !sessionData && !testing}
-	<!-- TODO: mudar o que este botao faz quando tivermos a user session pronta -->
-	<!-- <Button variant="cta" size="sm" onclick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}> -->
-	<Button
-		variant="cta"
-		size="sm"
-		onclick={() => {
-			// testing = true;
-			redirect(303, '/login');
-		}}
-	>
-		{m.login_button()}
-	</Button>
-{:else}
-	<DropdownMenu.Root bind:open>
-		<DropdownMenu.Trigger>
-			{#snippet child({ props })}
-				<Button {...props} variant="outline" class="dark:bg-background  cursor-pointer ">
-					<!-- <span>{sessionData?.user.email ?? ''}</span> -->
-					<Avatar.Root class=" scale-125 border-2 border-purple-500 dark:border-purple-600">
-						<Avatar.Image
-							src="https://avatars.githubusercontent.com/u/38655930?v=4"
-							alt="@shadcn"
-						/>
-						<Avatar.Fallback>CN</Avatar.Fallback>
-					</Avatar.Root>
-					<ChevronDownIcon class={'ml-2 h-4 w-4 duration-200 ' + (open ? '-scale-100' : '')} />
-				</Button>
-			{/snippet}
-		</DropdownMenu.Trigger>
+<!-- <Button variant="cta" size="sm" onclick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}> -->
 
-		<DropdownMenu.Content class="w-56" align="start">
-			<DropdownMenu.Label>My Account</DropdownMenu.Label>
-			<DropdownMenu.Item>Profile</DropdownMenu.Item>
-			<DropdownMenu.Item>Settings</DropdownMenu.Item>
+<DropdownMenu.Root bind:open>
+	<DropdownMenu.Trigger>
+		{#snippet child({ props })}
+			<Button {...props} variant="outline" class="dark:bg-background cursor-pointer gap-4 ">
+				<span>{testing ? 'alexandre' : user?.email ?? ''}</span>
+				<Avatar.Root class=" scale-150 border-2 border-purple-500 dark:border-purple-600 bg-purple-500">
+					<Avatar.Image src="https://avatars.githubusercontent.com/u/38655930?v=4"  alt={user?.email ?? 'user'} />
+					<Avatar.Fallback>CN</Avatar.Fallback>
+				</Avatar.Root>
+				<ChevronDownIcon class={'size-4 duration-200 ' + (open ? '-scale-100' : '')} />
+			</Button>
+		{/snippet}
+	</DropdownMenu.Trigger>
+
+	<DropdownMenu.Content class="w-56" align="start">
+		<DropdownMenu.Group>
+			<DropdownMenu.Label>{m.user_dropdown_account()}</DropdownMenu.Label>
+			<DropdownMenu.Item>{m.user_dropdown_profile()}</DropdownMenu.Item>
+			<DropdownMenu.Item>{m.user_dropdown_settings()}</DropdownMenu.Item>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Label>Preferences</DropdownMenu.Label>
-			<DropdownMenu.Item>Theme</DropdownMenu.Item>
-			<DropdownMenu.Item>Language</DropdownMenu.Item>
+			<DropdownMenu.RadioGroup bind:value={theme}>
+				<DropdownMenu.GroupHeading class="text-sm font-normal">{m.user_dropdown_theme()}</DropdownMenu.GroupHeading>
+				<DropdownMenu.RadioItem value="light" onclick={() => setMode('light')}>
+					<Sun />
+					{m.user_dropdown_theme_light()}
+				</DropdownMenu.RadioItem>
+				<DropdownMenu.RadioItem value="dark" onclick={() => setMode('dark')}>
+					<Moon />
+					{m.user_dropdown_theme_dark()}
+				</DropdownMenu.RadioItem>
+				<DropdownMenu.RadioItem value="system" onclick={() => resetMode()}>
+					<Monitor />
+					{m.user_dropdown_theme_system()}
+				</DropdownMenu.RadioItem>
+			</DropdownMenu.RadioGroup>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Log out</DropdownMenu.Item>
-		</DropdownMenu.Content>
-	</DropdownMenu.Root>
-{/if}
+			<DropdownMenu.RadioGroup bind:value={language}>
+				<DropdownMenu.GroupHeading class="text-sm font-normal">{m.user_dropdown_language()}</DropdownMenu.GroupHeading>
+				<DropdownMenu.RadioItem value="pt" onclick={() => setLocale('pt')}>
+					<img
+						src="https://flagsapi.com/PT/flat/64.png"
+						alt="Portuguese Flag"
+						class="inline size-5"
+					/>
+					{m.user_dropdown_language_pt()}					
+				</DropdownMenu.RadioItem>
+				<DropdownMenu.RadioItem value="en" onclick={() => setLocale('en')}>
+					<img
+						src="https://flagsapi.com/GB/flat/64.png"
+						alt="Great Britain Flag"
+						class="inline size-5"
+					/>
+					{m.user_dropdown_language_en()}
+				</DropdownMenu.RadioItem>
+			</DropdownMenu.RadioGroup>
+		</DropdownMenu.Group>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item class="text-destructive">{m.user_dropdown_logout()}</DropdownMenu.Item>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
