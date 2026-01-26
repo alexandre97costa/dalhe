@@ -76,10 +76,11 @@
 		</div>
 	</div>
 
-	{#if session}
-		<UserSession user={session?.user} />
-	{:else}
-		<div class="flex items-center gap-2">
+	<div class="flex items-center gap-2">
+		{#if session}
+			<Button size="sm" href="/demo/supa">Go to the app</Button>
+			<UserSession user={session?.user} />
+		{:else}
 			<Button
 				onclick={toggleLanguage}
 				variant="outline"
@@ -125,8 +126,8 @@
 					</Dialog.Content>
 				</Dialog.Root>
 			{/if}
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
 
 <div class="h-container mx-auto mt-40 p-4">
