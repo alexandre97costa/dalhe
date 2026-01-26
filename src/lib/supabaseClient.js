@@ -1,8 +1,9 @@
 // to be used in SvelteKit load functions and endpoints (server-side only)
-import { createClient } from '@supabase/supabase-js';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public';
+import { createClient } from '@supabase/supabase-js';
+import { Database } from '$lib/types/supabase.types';
 
-export const supabase = createClient(
+export const supabase = createClient<Database>(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
     // auth: {
