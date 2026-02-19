@@ -104,10 +104,11 @@ export type Database = {
           created_at: string
           driver_id: string
           id: number
-          minutes: number
-          seconds: number
-          sub_seconds: number
+          pole_rating: number
+          time_milliseconds: number
+          time_parsed: string | null
           track_id: number
+          was_podium: boolean
           wet: boolean
         }
         Insert: {
@@ -115,10 +116,11 @@ export type Database = {
           created_at?: string
           driver_id?: string
           id?: number
-          minutes: number
-          seconds: number
-          sub_seconds: number
+          pole_rating?: number
+          time_milliseconds: number
+          time_parsed?: string | null
           track_id: number
+          was_podium?: boolean
           wet?: boolean
         }
         Update: {
@@ -126,10 +128,11 @@ export type Database = {
           created_at?: string
           driver_id?: string
           id?: number
-          minutes?: number
-          seconds?: number
-          sub_seconds?: number
+          pole_rating?: number
+          time_milliseconds?: number
+          time_parsed?: string | null
           track_id?: number
+          was_podium?: boolean
           wet?: boolean
         }
         Relationships: [
@@ -138,6 +141,13 @@ export type Database = {
             columns: ["car_id"]
             isOneToOne: false
             referencedRelation: "car"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_driver_id_fkey1"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -156,7 +166,6 @@ export type Database = {
           id: string
           updated_at: string | null
           username: string | null
-          website: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -164,7 +173,6 @@ export type Database = {
           id: string
           updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -172,7 +180,6 @@ export type Database = {
           id?: string
           updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Relationships: []
       }
