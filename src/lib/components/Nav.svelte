@@ -20,9 +20,9 @@
 	const menuItems: MenuItem[] = [
 		{
 			title: m.nav_home(),
-			href: '/demo/aura-mockup',
+			href: '/home',
 			description:
-				'A modal dialog that interrupts the user with important content and expects a response.',
+				'The home page serves as the central hub for users to access various features and information related to the application.',
 			icon: Home,
 			order: 1
 		},
