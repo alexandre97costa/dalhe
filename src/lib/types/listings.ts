@@ -7,7 +7,7 @@ let laptime: Tables<'lap_time'>
 export interface RecentLaptime {
     id: Tables<'lap_time'>['id']
     laptime_ms: Tables<'lap_time'>['time_milliseconds']
-    laptime_parsed: Tables<'lap_time'>['time_parsed']
+    laptime_best: Tables<'lap_time'>['time_milliseconds']
     created_at: Tables<'lap_time'>['created_at']
     track_id: Tables<'race_track'>['id']
     track: Tables<'race_track'>['name']

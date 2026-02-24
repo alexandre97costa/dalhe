@@ -12,7 +12,7 @@ export async function getRecentLaptimes(supabaseClient: typeof supabase) {
         .select(`
             id,
             laptime_ms:time_milliseconds,
-            laptime_parsed:time_parsed,
+            laptime_ms:time_milliseconds,
             created_at,
             race_track (
                 track_id:id,
@@ -37,10 +37,11 @@ export async function getRecentLaptimes(supabaseClient: typeof supabase) {
     if (error) throw error;
 
 
+    // TODO: laptime_best should be the best laptime for that track/car/driver combo, not just the current laptime
     const flattened: RecentLaptime[] = data?.map((item) => ({
         id: item.id,
         laptime_ms: item.laptime_ms,
-        laptime_parsed: item.laptime_parsed,
+        laptime_best: item.laptime_ms, 
         created_at: item.created_at,
         track_id: item.race_track.track_id,
         track: item.race_track.track,

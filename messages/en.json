@@ -52,5 +52,46 @@
     "user_dropdown_language": "Language",
     "user_dropdown_language_pt": "Portuguese",
     "user_dropdown_language_en": "English",
-    "user_dropdown_logout": "Logout"
+    "user_dropdown_logout": "Logout",
+    "laptime_createdat_now": "Just now",
+    "laptime_createdat_minutes": [
+        {
+            "match": {
+                "minutes=1": "{minutes} minute ago",
+                "minutes>1": "{minutes} minutes ago"
+            }
+        }
+    ],
+    "laptime_createdat_hours": [
+        {
+            "match": {
+                "hours=1": "{hours} hour ago",
+                "hours>1": "{hours} hours ago"
+            }
+        }
+    ],
+    "laptime_createdat_days": [
+        {
+            "match": {
+                "days=1": "{days} day ago",
+                "days>1": "{days} days ago"
+            }
+        }
+    ],
+    "laptime_createdat_months": [
+        {
+            "match": {
+                "months=1": "{months} month ago",
+                "months>1": "{months} months ago"
+            }
+        }
+    ],
+    "laptime_createdat_years": [
+        {
+            "match": {
+                "years=1": "{years} year ago",
+                "years>1": "{years} years ago"
+            }
+        }
+    ]
 }

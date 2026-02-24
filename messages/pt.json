@@ -52,5 +52,46 @@
     "user_dropdown_language": "Idioma",
     "user_dropdown_language_pt": "Português",
     "user_dropdown_language_en": "Inglês",
-    "user_dropdown_logout": "Sair"
+    "user_dropdown_logout": "Sair",
+    "laptime_createdat_now": "Agora mesmo",
+    "laptime_createdat_minutes": [
+        {
+            "match": {
+                "minutes=1": "há {minutes} minuto",
+                "minutes>1": "há {minutes} minutos"
+            }
+        }
+    ],
+    "laptime_createdat_hours": [
+        {
+            "match": {
+                "hours=1": "há {hours} hora",
+                "hours>1": "há {hours} horas"
+            }
+        }
+    ],
+    "laptime_createdat_days": [
+        {
+            "match": {
+                "days=1": "há {days} dia",
+                "days>1": "há {days} dias"
+            }
+        }
+    ],
+    "laptime_createdat_months": [
+        {
+            "match": {
+                "months=1": "há {months} mês",
+                "months>1": "há {months} meses"
+            }
+        }
+    ],
+    "laptime_createdat_years": [
+        {
+            "match": {
+                "years=1": "há {years} ano",
+                "years>1": "há {years} anos"
+            }
+        }
+    ]
 }
