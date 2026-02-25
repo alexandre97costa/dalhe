@@ -5,52 +5,30 @@
 import { supabase } from '$lib/supabaseClient';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { RecentLaptime } from '../types/listings';
+import { it } from 'zod/locales';
 
 export async function getRecentLaptimes(supabaseClient: typeof supabase) {
     const { data, error } = await supabaseClient
-        .from("lap_time")
-        .select(`
-            id,
-            laptime_ms:time_milliseconds,
-            laptime_ms:time_milliseconds,
-            created_at,
-            race_track (
-                track_id:id,
-                track:name
-            ),
-            car (
-                car_id:id,
-                car_model:model,
-                car_make (
-                    car_make:name
-                )
-            ),
-            profiles (
-                driver_id:id,
-                driver:username,
-                driver_avatar:avatar_url
-            )
-            
-        `)
+        .from("listing_recent_laptimes")
+        .select("*")
         .order("created_at", { ascending: false })
         .limit(10);
     if (error) throw error;
 
 
+
     // TODO: laptime_best should be the best laptime for that track/car/driver combo, not just the current laptime
     const flattened: RecentLaptime[] = data?.map((item) => ({
-        id: item.id,
-        laptime_ms: item.laptime_ms,
-        laptime_best: item.laptime_ms, 
         created_at: item.created_at,
-        track_id: item.race_track.track_id,
-        track: item.race_track.track,
-        car_id: item.car.car_id,
-        car_model: item.car.car_model,
-        car_make: item.car.car_make.car_make,
-        driver_id: item.profiles.driver_id,
-        driver: item.profiles.driver,
-        driver_avatar: item.profiles.driver_avatar
+        driver: item.driver,
+        driver_avatar: item.driver_avatar,
+        car_make: item.car_make,
+        car_model: item.car_model,
+        track_name: item.track_name,
+        laptime: item.laptime,
+        previous_laptime: item.previous_laptime,
+        is_personal_best: item.is_personal_best,
+        is_track_record: item.is_track_record,
     })) ?? [];
 
     return flattened;

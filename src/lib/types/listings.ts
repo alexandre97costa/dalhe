@@ -5,16 +5,14 @@ import type { Database, Tables, Enums } from './supabase.types'
 let laptime: Tables<'lap_time'>
 
 export interface RecentLaptime {
-    id: Tables<'lap_time'>['id']
-    laptime_ms: Tables<'lap_time'>['time_milliseconds']
-    laptime_best: Tables<'lap_time'>['time_milliseconds']
-    created_at: Tables<'lap_time'>['created_at']
-    track_id: Tables<'race_track'>['id']
-    track: Tables<'race_track'>['name']
-    car_id: Tables<'car'>['id']
-    car_model: Tables<'car'>['model']
-    car_make: Tables<'car_make'>['name']
-    driver_id: Tables<'profiles'>['id']
-    driver: Tables<'profiles'>['username']
-    driver_avatar: Tables<'profiles'>['avatar_url']
+    created_at: Tables<'listing_recent_laptimes'>['created_at']
+    driver: Tables<'listing_recent_laptimes'>['driver']
+    driver_avatar: Tables<'listing_recent_laptimes'>['driver_avatar']
+    car_make: Tables<'listing_recent_laptimes'>['car_make']
+    car_model: Tables<'listing_recent_laptimes'>['car_model']
+    track_name: Tables<'listing_recent_laptimes'>['track_name']
+    laptime: Tables<'listing_recent_laptimes'>['laptime']
+    previous_laptime: Tables<'listing_recent_laptimes'>['previous_laptime'] | null
+    is_personal_best: Tables<'listing_recent_laptimes'>['is_personal_best']
+    is_track_record: Tables<'listing_recent_laptimes'>['is_track_record']
 }

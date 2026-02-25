@@ -9,59 +9,56 @@
 
 	let { laptime }: { laptime: RecentLaptime } = $props();
 
-	let IsBest = $derived(() => {
-		return compareLaptimes(laptime.laptime_ms, laptime.laptime_best).isFaster;
-	});
-
-    const test_TrackRecord: boolean = false; // TODO: replace with actual check against track record
+	const { diff, isFaster } = compareLaptimes(laptime.laptime, laptime.previous_laptime ?? null);
 </script>
 
 <div>
-    {#if test_TrackRecord}
-        <div
-            class="-mb-2 flex w-full rounded-md rounded-b-none border border-b-0 bg-purple-500/20 px-3 pt-1 pb-3 text-xs text-purple-400"
-        >
-            Track Record!
-        </div>
-    {:else if IsBest()}
-        <div
+	<!-- {#if laptime.is_track_record}
+		<div
+			class="-mb-2 flex w-full rounded-md rounded-b-none border border-b-0 bg-purple-500/20 px-3 pt-1 pb-3 text-xs text-purple-400"
+		>
+			Track Record!
+		</div>
+	{:else if laptime.is_personal_best}
+		<div
 			class="-mb-2 flex w-full rounded-md rounded-b-none border border-b-0 bg-yellow-500/20 px-3 pt-1 pb-3 text-xs text-yellow-400"
 		>
 			Personal Best!
 		</div>
-    {/if}
-	<div class="flex items-center gap-4 rounded-md border px-3 py-2 bg-card">
-		<Avatar.Root class="  size-12 border-purple-500 bg-purple-500 dark:border-purple-600">
+	{/if} -->
+	<div class="bg-card flex items-center gap-4 rounded-md border px-3 py-2">
+		<!-- <Avatar.Root class="  size-12 border-purple-500 bg-purple-500 dark:border-purple-600">
 			<Avatar.Image
 				src={laptime?.driver_avatar ?? 'https://avatars.githubusercontent.com/u/38655930?v=4'}
 				alt={laptime?.driver ?? 'Driver avatar'}
 			/>
 			<Avatar.Fallback>CN</Avatar.Fallback>
-		</Avatar.Root>
+		</Avatar.Root> -->
 
-		<div class="flex flex-1 flex-col">
-			<p class="lh-1 text-muted-foreground text-xs">
-				{formatTimeSinceCreation(laptime.created_at)}
+		<div class="flex flex-col flex-1">
+			<p class="lh-1 text-muted-foreground/50 text-xs">
+				{formatTimeSinceCreation(laptime.created_at ?? new Date().toISOString())}
 			</p>
-			<p class="text-md">{laptime.driver}</p>
+			<p class="text-md font-extralight">{laptime.driver}</p>
 			<p class="lh-1 text-muted-foreground text-xs">
-				<Car class="-mt-1 mr-1 inline size-4" strokeWidth="2" />
-				<!-- eg. Audi R8 -->
+				<!-- <Car class="-mt-1 mr-1 inline size-4" strokeWidth="2" /> -->
+				<span class="text-muted-foreground/50 mr-1">with</span>
 				{`${laptime.car_make} ${laptime.car_model}`}
 			</p>
 		</div>
-		<div class="flex flex-col justify-end text-right">
-			<p class="lh-1 text-muted-foreground text-xs">
-				{laptime.track}
-				<MapPin class="-mt-1 ml-1 inline size-4" strokeWidth="2" />
+		<div class="flex flex-col justify-end text-right self-end">
+			<p
+				class={`lh-1 font-mono text-xs  ${diff == '0.0s' ? 'text-muted-foreground/50' : isFaster ? 'text-green-500/60' : 'text-red-500/60'}`}
+			>
+				{diff}
 			</p>
-			<h1 class="lh-1 font-mono text-lg font-bold">{formatLaptime(laptime.laptime_ms)}</h1>
-			<p class={`lh-1 font-mono text-xs ${IsBest() ? 'text-green-400' : 'text-red-400'}`}>
-				<!-- {#if IsBest()}
-            <Badge variant="outline_purple" class="mt-1 ml-1">PB</Badge>
-            <Badge variant="purple" class="mt-1 ml-1">TR</Badge>
-			{/if} -->
-				{compareLaptimes(laptime.laptime_ms, laptime.laptime_best).diff}
+			<h1 class="lh-1 text-md font-mono font-medium tracking-widest">
+				{formatLaptime(laptime.laptime)}
+			</h1>
+			<p class="lh-1 text-muted-foreground text-xs">
+				<span class="text-muted-foreground/50 mr-1">at</span>
+				{laptime.track_name}
+				<!-- <MapPin class="-mt-1 ml-1 inline size-3" strokeWidth="2" /> -->
 			</p>
 		</div>
 	</div>

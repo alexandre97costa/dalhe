@@ -1,6 +1,7 @@
 import { m } from '$lib/paraglide/messages.js';
 
-export function formatLaptime(milliseconds: number): string {
+export function formatLaptime(milliseconds: number|null): string {
+    if (milliseconds === null) return '--:--.--';
     const totalSeconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
@@ -28,8 +29,12 @@ export function formatTimeSinceCreation(createdAt: string | Date): string {
     return m.laptime_createdat_years({ years: diffYears });
 }
 
-export function compareLaptimes(laptime: number, bestLap: number): { diff: string; isFaster: boolean } {
-    const difference = bestLap - laptime;
+export function compareLaptimes(laptime: number|null, previousLap: number|null): { diff: string; isFaster: boolean } {
+    if (previousLap === null || laptime === null) {
+        return { diff: '0.0s', isFaster: false };
+    }
+    
+    const difference = previousLap - laptime;
     const isFaster = difference > 0;
     const absDiff = Math.abs(difference);
     const diffSeconds = (absDiff / 1000).toFixed(3);

@@ -93,5 +93,7 @@
                 "years>1": "{years} years ago"
             }
         }
-    ]
+    ],
+    "home_recent_laptimes": "Recent Laptimes",
+    "home_recent_laptimes_description": "See the latest laptimes from the community"
 }
