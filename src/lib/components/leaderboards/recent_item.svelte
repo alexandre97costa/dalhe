@@ -40,7 +40,7 @@
 				{formatTimeSinceCreation(laptime.created_at ?? new Date().toISOString())}
 			</p>
 			<p class="text-md font-extralight">{laptime.driver}</p>
-			<p class="lh-1 text-muted-foreground text-xs">
+			<p class="lh-1 text-muted-foreground text-sm">
 				<!-- <Car class="-mt-1 mr-1 inline size-4" strokeWidth="2" /> -->
 				<span class="text-muted-foreground/50 mr-1">with</span>
 				{`${laptime.car_make} ${laptime.car_model}`}
@@ -55,7 +55,7 @@
 			<h1 class="lh-1 text-md font-mono font-medium tracking-widest">
 				{formatLaptime(laptime.laptime)}
 			</h1>
-			<p class="lh-1 text-muted-foreground text-xs">
+			<p class="lh-1 text-muted-foreground text-sm">
 				<span class="text-muted-foreground/50 mr-1">at</span>
 				{laptime.track_name}
 				<!-- <MapPin class="-mt-1 ml-1 inline size-3" strokeWidth="2" /> -->
