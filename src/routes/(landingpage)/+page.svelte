@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-	<title>User Management</title>
+	<title>Dá-lhe!</title>
 </svelte:head>
 
 <ModeWatcher />
@@ -78,7 +78,7 @@
 
 	<div class="flex items-center gap-2">
 		{#if session}
-			<Button size="sm" href="/demo/supa">Go to the app</Button>
+			<Button size="sm" href="/home">Go to the app</Button>
 			<UserSession user={session?.user} />
 		{:else}
 			<Button

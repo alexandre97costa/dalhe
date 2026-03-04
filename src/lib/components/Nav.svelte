@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { title } from '$lib/store.js';
+	import { m } from '$lib/paraglide/messages.js';
+	import { cn } from '$lib/utils.js';
+	import { type Icon as IconType, Home, Trophy, Flag, UserRound, Plus } from '@lucide/svelte';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index';
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
-	import { navigationMenuTriggerStyle } from '$lib/components/ui/navigation-menu/navigation-menu-trigger.svelte';
-	import { cn } from '$lib/utils.js';
-	import { type Icon as IconType, Home, Trophy, Flag, UserRound, Plus } from '@lucide/svelte';
-	import { m } from '$lib/paraglide/messages.js';
 
 	let { open = $bindable(false) } = $props();
+	let titleValue = $derived($title);
 
 	type MenuItem = {
 		title: string;
@@ -57,9 +58,9 @@
 	<NavigationMenu.Item
 		class={cn('col-span-2 flex justify-center', i < 2 ? 'order-first' : 'order-last')}
 	>
-		<NavigationMenu.Link href={item.href} class="flex flex-col items-center gap-2">
-			<Icon strokeWidth=2 />
-			<span class="text-sm font-light">
+		<NavigationMenu.Link href={item.href} class={cn("flex flex-col items-center gap-2 pt-3", titleValue == item.title ? "dark:bg-zinc-800 bg-zinc-100" : "")}>
+			<Icon strokeWidth=2 class={titleValue == item.title ? "text-zinc-50" : "text-zinc-400"} />
+			<span class={cn("text-sm font-light", titleValue == item.title ? "text-foreground" : "text-muted-foreground")}>
 				{item.title}
 			</span>
 		</NavigationMenu.Link>
