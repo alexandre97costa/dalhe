@@ -3,14 +3,13 @@
 	import type { LayoutServerLoad } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
+	import { getLocale } from '$lib/paraglide/runtime.js';
 	import { title } from '$lib/store.js';
 
 	import '../../app.css';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { Button } from '$lib/components/ui/button/index';
-	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import UserSession from '$lib/components/UserSession.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import New from '$lib/components/New.svelte';
@@ -34,11 +33,6 @@
 	$effect(() => {
 		console.log(data);
 	});
-
-	function toggleLanguage() {
-		language = language == 'en' ? 'pt' : 'en';
-		setLocale(language);
-	}
 </script>
 
 <svelte:head>

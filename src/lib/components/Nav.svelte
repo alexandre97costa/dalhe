@@ -29,7 +29,7 @@
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/demo/supa',
+			href: '/leaders',
 			description: 'For sighted users to preview content available behind a link.',
 			icon: Trophy,
 			order: 2

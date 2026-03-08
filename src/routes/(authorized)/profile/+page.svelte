@@ -7,8 +7,6 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
-	// ...
-
 	let { data, form } = $props();
 	let { session, supabase, profile } = $derived(data);
 	let profileForm: HTMLFormElement;
@@ -16,8 +14,6 @@
 	let fullName: string = profile?.full_name ?? '';
 	let username: string = profile?.username ?? '';
 	let website: string = profile?.website ?? '';
-
-	// ...
 
 	const handleSubmit: SubmitFunction = () => {
 		loading = true;
@@ -43,13 +39,13 @@
 		use:enhance={handleSubmit}
 		bind:this={profileForm}
 	>
-		// ...
 
 		<div>
 			<label for="email">Email</label>
 			<input id="email" type="text" value={session?.user.email} disabled />
 		</div>
 
+		<!--  
 		<div>
 			<label for="fullName">Full Name</label>
 			<input id="fullName" name="fullName" type="text" value={form?.fullName ?? fullName} />
@@ -73,11 +69,14 @@
 				disabled={loading}
 			/>
 		</div>
-	</form>
+		-->
 
+	</form>
+	<!-- 
 	<form method="post" action="?/signout" use:enhance={handleSignOut}>
 		<div>
 			<button class="button block" disabled={loading}>Sign Out</button>
 		</div>
 	</form>
+	 -->
 </div>

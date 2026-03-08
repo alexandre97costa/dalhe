@@ -96,5 +96,7 @@
         }
     ],
     "home_recent_laptimes": "Recent Laptimes",
-    "home_recent_laptimes_description": "See the latest laptimes from the community"
+    "home_recent_laptimes_description": "See the latest laptimes from the community",
+    "laptime_details_at_track": "at",
+    "laptime_details_with_car": "with"
 }

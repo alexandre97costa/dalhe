@@ -42,13 +42,13 @@
 			<p class="text-md font-extralight">{laptime.driver}</p>
 			<p class="lh-1 text-muted-foreground text-sm">
 				<!-- <Car class="-mt-1 mr-1 inline size-4" strokeWidth="2" /> -->
-				<span class="text-muted-foreground/50 mr-1">with</span>
+				<span class="text-muted-foreground/50 mr-1">{m.laptime_details_with_car()}</span>
 				{`${laptime.car_make} ${laptime.car_model}`}
 			</p>
 		</div>
 		<div class="flex flex-col justify-end text-right self-end">
 			<p
-				class={`lh-1 font-mono text-xs  ${diff == '0.0s' ? 'text-muted-foreground/50' : isFaster ? 'text-green-500/60' : 'text-red-500/60'}`}
+				class={`lh-1 font-mono text-xs  ${diff == '0.0s' ? 'text-muted-foreground/50' : isFaster ? 'text-green-400/70' : 'text-red-400/70'}`}
 			>
 				{diff}
 			</p>
@@ -56,7 +56,7 @@
 				{formatLaptime(laptime.laptime)}
 			</h1>
 			<p class="lh-1 text-muted-foreground text-sm">
-				<span class="text-muted-foreground/50 mr-1">at</span>
+				<span class="text-muted-foreground/50 mr-1">{m.laptime_details_at_track()}</span>
 				{laptime.track_name}
 				<!-- <MapPin class="-mt-1 ml-1 inline size-3" strokeWidth="2" /> -->
 			</p>

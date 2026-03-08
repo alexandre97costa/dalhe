@@ -3,19 +3,6 @@ import { fail, redirect } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 import { m } from '$lib/paraglide/messages.js';
 
-// export const load: PageServerLoad = async ({ url, locals }) => {
-// 	const { session } = await locals.safeGetSession();
-
-// 	console.log(session)
-
-// 	// if the user is already logged in return them to the account page
-// 	if (session) {
-// 		// redirect(303, '/account')
-// 	}
-
-// 	return { url: url.origin }
-// }
-
 export const actions: Actions = {
 	default: async (event) => {
 		const {

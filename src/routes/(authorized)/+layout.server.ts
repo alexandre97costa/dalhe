@@ -4,7 +4,6 @@ import { laptimeSchema } from '$lib/schemas/laptimeSchema';
 import { zod4 } from "sveltekit-superforms/adapters";
 // import { supabase } from '$lib/supabaseClient';
 import type { FormDataRecord, FormQuery } from '../../app.d.ts';
-import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import { form } from '$app/server';
 
 const formQueries: FormQuery[] = [
@@ -23,7 +22,6 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession, supabas
 
     formQueries.forEach((query, index) => {
         const result = results[index];
-        type ResultQueryData = QueryData<typeof query>;
 
         if (result.status === 'fulfilled') {
             // console.log('result.value', result.value);
