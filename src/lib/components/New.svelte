@@ -50,9 +50,7 @@
 		SPA: true,
 		onUpdate: ({ form }) => {
 			if (form.valid) {
-				console.table(form.data);
-			} else {
-				console.error('Please fix the errors in the form.');
+				open = false; // Close dialog/drawer on success
 			}
 		}
 	});
@@ -60,7 +58,7 @@
 
 	$effect(() => {
 		console.log($formData);
-		console.log(data);
+		// console.log(data);
 	});
 
 	// car makes select
@@ -103,7 +101,7 @@
 
 <!-- Form -->
 {#snippet laptimeForm()}
-	<form method="POST" use:enhance class="grid items-start gap-4">
+	<form method="POST" action="/new" use:enhance class="grid items-start gap-4">
 		<!-- Laptime -->
 		<Form.Field {form} name="laptime">
 			<Form.Control>
