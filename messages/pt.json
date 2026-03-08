@@ -32,6 +32,7 @@
     "formlogin_submit_error": "Ocorreu um erro ao fazer login. Tenta novamente.",
     "formlogin_submit_success": "Link de login enviado! Verifica o teu email.",
     "formlogin_submit_button": "Enviar link de login",
+    "homepage_gotoapp": "Ir para a app",
     "homepage_hero_title": "Mantém-te na ",
     "homepage_hero_title_underline": "linha de corrida.",
     "homepage_hero_subtitle": "O Dá-lhe! é um rastreador de voltas de corrida que te ajuda a monitorizar o teu progresso e competir com amigos.",
@@ -52,5 +53,48 @@
     "user_dropdown_language": "Idioma",
     "user_dropdown_language_pt": "Português",
     "user_dropdown_language_en": "Inglês",
-    "user_dropdown_logout": "Sair"
+    "user_dropdown_logout": "Sair",
+    "laptime_createdat_now": "Agora mesmo",
+    "laptime_createdat_minutes": [
+        {
+            "match": {
+                "minutes=1": "há {minutes} minuto",
+                "minutes>1": "há {minutes} minutos"
+            }
+        }
+    ],
+    "laptime_createdat_hours": [
+        {
+            "match": {
+                "hours=1": "há {hours} hora",
+                "hours>1": "há {hours} horas"
+            }
+        }
+    ],
+    "laptime_createdat_days": [
+        {
+            "match": {
+                "days=1": "há {days} dia",
+                "days>1": "há {days} dias"
+            }
+        }
+    ],
+    "laptime_createdat_months": [
+        {
+            "match": {
+                "months=1": "há {months} mês",
+                "months>1": "há {months} meses"
+            }
+        }
+    ],
+    "laptime_createdat_years": [
+        {
+            "match": {
+                "years=1": "há {years} ano",
+                "years>1": "há {years} anos"
+            }
+        }
+    ],
+    "home_recent_laptimes": "Voltas Recentes",
+    "home_recent_laptimes_description": "As últimas voltas da comunidade"
 }

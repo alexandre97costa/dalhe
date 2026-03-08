@@ -104,10 +104,10 @@ export type Database = {
           created_at: string
           driver_id: string
           id: number
-          minutes: number
-          seconds: number
-          sub_seconds: number
+          pole_rating: number
+          time_milliseconds: number
           track_id: number
+          was_podium: boolean
           wet: boolean
         }
         Insert: {
@@ -115,10 +115,10 @@ export type Database = {
           created_at?: string
           driver_id?: string
           id?: number
-          minutes: number
-          seconds: number
-          sub_seconds: number
+          pole_rating?: number
+          time_milliseconds: number
           track_id: number
+          was_podium?: boolean
           wet?: boolean
         }
         Update: {
@@ -126,10 +126,10 @@ export type Database = {
           created_at?: string
           driver_id?: string
           id?: number
-          minutes?: number
-          seconds?: number
-          sub_seconds?: number
+          pole_rating?: number
+          time_milliseconds?: number
           track_id?: number
+          was_podium?: boolean
           wet?: boolean
         }
         Relationships: [
@@ -138,6 +138,13 @@ export type Database = {
             columns: ["car_id"]
             isOneToOne: false
             referencedRelation: "car"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_driver_id_fkey1"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -156,7 +163,6 @@ export type Database = {
           id: string
           updated_at: string | null
           username: string | null
-          website: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -164,7 +170,6 @@ export type Database = {
           id: string
           updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -172,7 +177,6 @@ export type Database = {
           id?: string
           updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Relationships: []
       }
@@ -205,7 +209,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      listing_recent_laptimes: {
+        Row: {
+          car_make: string | null
+          car_model: string | null
+          created_at: string | null
+          driver: string | null
+          driver_avatar: string | null
+          is_personal_best: boolean | null
+          is_track_record: boolean | null
+          laptime: number | null
+          previous_laptime: number | null
+          track_name: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
