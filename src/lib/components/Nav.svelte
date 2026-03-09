@@ -29,24 +29,22 @@
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/leaders',
-			description: 'For sighted users to preview content available behind a link.',
+			href: '/leaders/monza',
+			description: 'leaderboard page for each track',
 			icon: ChessQueen,
 			order: 2
 		},
 		{
 			title: m.nav_tournaments(),
 			href: '/tournaments',
-			description:
-				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+			description: 'Tournament information and results',
 			icon: Trophy,
 			order: 4
 		},
 		{
 			title: m.nav_profile(),
 			href: '/profile',
-			description:
-				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+			description: 'Manage your profile and settings',
 			icon: UserRound,
 			order: 5
 		}
@@ -58,8 +56,8 @@
 	<NavigationMenu.Item
 		class={cn('col-span-2 flex justify-center', i < 2 ? 'order-first' : 'order-last')}
 	>
-		<NavigationMenu.Link href={item.href} class={cn("flex flex-col items-center gap-2 pt-3", titleValue == item.title ? "dark:bg-zinc-800 bg-zinc-100" : "")}>
-			<Icon strokeWidth=2 class={titleValue == item.title ? "text-zinc-50" : "text-zinc-400"} />
+		<NavigationMenu.Link href={item.href} class={cn("flex flex-col items-center gap-2 pt-3", titleValue == item.title ? "dark:bg-zinc-800 bg-white" : "")}>
+			<Icon strokeWidth=2 class={titleValue == item.title ? "dark:text-zinc-50 text-zinc-800" : "text-zinc-400"} />
 			<span class={cn("text-sm font-light", titleValue == item.title ? "text-foreground" : "text-muted-foreground")}>
 				{item.title}
 			</span>

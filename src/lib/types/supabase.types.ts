@@ -103,6 +103,7 @@ export type Database = {
           car_id: number
           created_at: string
           driver_id: string
+          for_testing: boolean
           id: number
           pole_rating: number
           time_milliseconds: number
@@ -114,6 +115,7 @@ export type Database = {
           car_id: number
           created_at?: string
           driver_id?: string
+          for_testing?: boolean
           id?: number
           pole_rating?: number
           time_milliseconds: number
@@ -125,6 +127,7 @@ export type Database = {
           car_id?: number
           created_at?: string
           driver_id?: string
+          for_testing?: boolean
           id?: number
           pole_rating?: number
           time_milliseconds?: number
@@ -215,7 +218,6 @@ export type Database = {
           car_model: string | null
           created_at: string | null
           driver: string | null
-          driver_avatar: string | null
           is_personal_best: boolean | null
           is_track_record: boolean | null
           laptime: number | null
@@ -226,7 +228,18 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_leaderboard_by_track: {
+        Args: { track: number }
+        Returns: {
+          car_make: string
+          car_model: string
+          created_at: string
+          driver: string
+          laptime: number
+          rank: number
+          track_record: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

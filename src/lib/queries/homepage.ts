@@ -5,7 +5,6 @@
 import { supabase } from '$lib/supabaseClient';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { RecentLaptime } from '../types/listings';
-import { it } from 'zod/locales';
 
 export async function getRecentLaptimes(supabaseClient: typeof supabase) {
     const { data, error } = await supabaseClient
@@ -20,7 +19,6 @@ export async function getRecentLaptimes(supabaseClient: typeof supabase) {
     const flattened: RecentLaptime[] = data?.map((item) => ({
         created_at: item.created_at,
         driver: item.driver,
-        driver_avatar: item.driver_avatar,
         car_make: item.car_make,
         car_model: item.car_model,
         track_name: item.track_name,
