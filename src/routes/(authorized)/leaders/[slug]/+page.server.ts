@@ -1,4 +1,4 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from '../$types';
 import type { RecentLaptime } from '$lib/types/listings';
 import { getRecentLaptimes } from '$lib/queries/homepage';
 

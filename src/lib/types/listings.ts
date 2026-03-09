@@ -16,3 +16,13 @@ export interface RecentLaptime {
     is_personal_best: Tables<'listing_recent_laptimes'>['is_personal_best']
     is_track_record: Tables<'listing_recent_laptimes'>['is_track_record']
 }
+
+export interface LeaderboardEntry {
+    // driver: Tables<'leaderboard'>['driver']
+    // driver_avatar: Tables<'leaderboard'>['driver_avatar']
+    // car_make: Tables<'leaderboard'>['car_make']
+    // car_model: Tables<'leaderboard'>['car_model']
+    // track_name: Tables<'leaderboard'>['track_name']
+    // laptime: Tables<'leaderboard'>['laptime']
+    // rank: Tables<'leaderboard'>['rank']
+}
