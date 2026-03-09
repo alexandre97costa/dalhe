@@ -5,17 +5,13 @@
 	import { resetMode, setMode } from 'mode-watcher';
 
 	import Button from './ui/button/button.svelte';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { toast } from 'svelte-sonner';
 
 	import { Moon, Sun, Monitor, ChevronDownIcon } from '@lucide/svelte';
 
 	let { user = $bindable(null), open = $bindable(false) } = $props();
 	let theme: 'light' | 'dark' | 'system' = $state('system');
 	let language = $state(getLocale());
-	let testing = $state(true);
 
 	$effect(() => {
 		console.log('User session data changed:', user);
@@ -28,11 +24,7 @@
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" class="dark:bg-background cursor-pointer gap-4 ">
-				<span>{testing ? 'alexandre' : user?.email ?? ''}</span>
-				<!-- <Avatar.Root class=" scale-125 border-2 border-purple-500 dark:border-purple-600 bg-purple-500">
-					<Avatar.Image src="https://avatars.githubusercontent.com/u/38655930?v=4"  alt={user?.email ?? 'user'} />
-					<Avatar.Fallback>CN</Avatar.Fallback>
-				</Avatar.Root> -->
+				<span>{user?.email.split('@')[0] ?? ''}</span>
 				<ChevronDownIcon class={'size-4 duration-200 ' + (open ? '-scale-100' : '')} />
 			</Button>
 		{/snippet}

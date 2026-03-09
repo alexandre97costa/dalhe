@@ -2,7 +2,7 @@
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils.js';
-	import { type Icon as IconType, Home, Trophy, Flag, UserRound, Plus } from '@lucide/svelte';
+	import { type Icon as IconType, House, Trophy, UserRound, Plus, ChessQueen } from '@lucide/svelte';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index';
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
@@ -24,14 +24,14 @@
 			href: '/home',
 			description:
 				'The home page serves as the central hub for users to access various features and information related to the application.',
-			icon: Home,
+			icon: House,
 			order: 1
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/demo/supa',
+			href: '/leaders',
 			description: 'For sighted users to preview content available behind a link.',
-			icon: Trophy,
+			icon: ChessQueen,
 			order: 2
 		},
 		{
@@ -39,7 +39,7 @@
 			href: '/tournaments',
 			description:
 				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
-			icon: Flag,
+			icon: Trophy,
 			order: 4
 		},
 		{

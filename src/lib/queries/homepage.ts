@@ -11,8 +11,7 @@ export async function getRecentLaptimes(supabaseClient: typeof supabase) {
     const { data, error } = await supabaseClient
         .from("listing_recent_laptimes")
         .select("*")
-        .order("created_at", { ascending: false })
-        .limit(10);
+        .order("created_at", { ascending: false });
     if (error) throw error;
 
 

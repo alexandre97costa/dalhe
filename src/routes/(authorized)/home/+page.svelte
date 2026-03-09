@@ -13,21 +13,11 @@
 
 	let { data } = $props();
 
-	let laptime: RecentLaptime = {
-		created_at: new Date().toISOString(),
-		driver: 'John Doe',
-		driver_avatar: 'https://avatars.githubusercontent.com/u/38655930?v=4',
-		car_make: 'Audi',
-		car_model: 'R8',
-		track_name: 'Monza',
-		laptime: 83456,
-		previous_laptime: 84394,
-		is_personal_best: true,
-		is_track_record: false
-	};
+	let showFilters = $state(false);
 </script>
 
-<div class="mb-4 flex items-center justify-between">
+{#if showFilters}
+<div class=" flex items-center justify-between sticky top-[57px]  bg-background py-2 mb-1">
 	<div class="flex flex-1 flex-col">
 		<span class="text-foreground text-xl font-medium tracking-tight"
 			>{m.home_recent_laptimes()}</span
@@ -39,9 +29,19 @@
 		<SlidersHorizontal class="ml-1" size="16" strokeWidth="2" />
 	</Button>
 </div>
+{/if}
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-4">
 	{#each data.laptimes as laptime}
 		<RecentItem {laptime} />
+	{:else}
+		<div class="flex flex-col items-center justify-center py-40">
+			<span class="text-foreground text-lg font-medium tracking-tight">
+				{m.home_no_laptimes()}
+			</span>
+			<span class="text-muted-foreground text-sm">
+				{m.home_no_laptimes_description()}
+			</span>
+		</div>
 	{/each}
 </div>
