@@ -1,12 +1,18 @@
-import type { PageServerLoad } from '../$types';
-import type { RecentLaptime } from '$lib/types/listings';
-import { getRecentLaptimes } from '$lib/queries/homepage';
+import { error } from '@sveltejs/kit'; 
+import type { PageServerLoad } from './$types';
+import { getTrackLeaderboard, getTrackIdBySlug } from '$lib/queries/leaderboards';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, params }) => {
     const { supabase, safeGetSession } = locals;
     const session = await safeGetSession();
 
     if (!session) return { data: { recentLaptimes: [] } };
-    const recentLaptimes = await getRecentLaptimes(supabase);
-    return { laptimes: recentLaptimes };
+
+    const trackId = await getTrackIdBySlug(supabase, params.slug);
+    if (!trackId) {
+        throw error(404, 'Track not found');
+    }
+
+    const leaderboardEntries = await getTrackLeaderboard(supabase, trackId);
+    return { laptimes: leaderboardEntries, slug: params.slug };
 }

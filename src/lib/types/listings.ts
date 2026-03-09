@@ -7,7 +7,6 @@ let laptime: Tables<'lap_time'>
 export interface RecentLaptime {
     created_at: Tables<'listing_recent_laptimes'>['created_at']
     driver: Tables<'listing_recent_laptimes'>['driver']
-    driver_avatar: Tables<'listing_recent_laptimes'>['driver_avatar']
     car_make: Tables<'listing_recent_laptimes'>['car_make']
     car_model: Tables<'listing_recent_laptimes'>['car_model']
     track_name: Tables<'listing_recent_laptimes'>['track_name']
@@ -16,13 +15,12 @@ export interface RecentLaptime {
     is_personal_best: Tables<'listing_recent_laptimes'>['is_personal_best']
     is_track_record: Tables<'listing_recent_laptimes'>['is_track_record']
 }
-
 export interface LeaderboardEntry {
-    // driver: Tables<'leaderboard'>['driver']
-    // driver_avatar: Tables<'leaderboard'>['driver_avatar']
-    // car_make: Tables<'leaderboard'>['car_make']
-    // car_model: Tables<'leaderboard'>['car_model']
-    // track_name: Tables<'leaderboard'>['track_name']
-    // laptime: Tables<'leaderboard'>['laptime']
-    // rank: Tables<'leaderboard'>['rank']
+    rank: number,
+    created_at: Tables<'lap_time'>['created_at'],
+    driver: Tables<'profiles'>['username'],
+    car_make: Tables<'car_make'>['name'],
+    car_model: Tables<'car'>['model'],
+    laptime: Tables<'lap_time'>['time_milliseconds'],
+    track_record: Tables<'lap_time'>['time_milliseconds'],
 }

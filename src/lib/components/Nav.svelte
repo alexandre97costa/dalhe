@@ -29,24 +29,22 @@
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/leaders',
-			description: 'For sighted users to preview content available behind a link.',
+			href: '/leaders/monza',
+			description: 'leaderboard page for each track',
 			icon: ChessQueen,
 			order: 2
 		},
 		{
 			title: m.nav_tournaments(),
 			href: '/tournaments',
-			description:
-				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+			description: 'Tournament information and results',
 			icon: Trophy,
 			order: 4
 		},
 		{
 			title: m.nav_profile(),
 			href: '/profile',
-			description:
-				'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+			description: 'Manage your profile and settings',
 			icon: UserRound,
 			order: 5
 		}

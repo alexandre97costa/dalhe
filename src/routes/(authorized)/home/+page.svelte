@@ -6,7 +6,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
-	import RecentItem from '$lib/components/leaderboards/recent_item.svelte';
+	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
 	import { type Icon as IconType, SlidersHorizontal } from '@lucide/svelte';
 
 	title.set(m.nav_home());
@@ -33,7 +33,7 @@
 
 <div class="flex flex-col gap-4">
 	{#each data.laptimes as laptime}
-		<RecentItem {laptime} />
+		<RecentEntry {laptime} />
 	{:else}
 		<div class="flex flex-col items-center justify-center py-40">
 			<span class="text-foreground text-lg font-medium tracking-tight">

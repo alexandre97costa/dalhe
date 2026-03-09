@@ -43,7 +43,7 @@
 			<h1 class="lh-1 text-md font-mono font-medium tracking-widest">
 				{formatLaptime(laptime.laptime)}
 			</h1>
-			<p class="lh-1 text-muted-foreground text-sm">
+			<p class="lh-1 text-muted-foreground text-sm" >
 				<span class="text-muted-foreground/50 mr-1">{m.laptime_details_at_track()}</span>
 				{laptime.track_name}
 			</p>
