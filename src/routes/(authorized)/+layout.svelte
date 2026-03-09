@@ -63,7 +63,7 @@
 	</div>
 </div>
 
-<div class="h- container mx-auto mt-14 mb-20 px-4 pb-4 ">
+<div class="h- container mx-auto mt-14 mb-20 px-4 py-4 ">
 	{@render children?.()}
 </div>
 
