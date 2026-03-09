@@ -58,8 +58,8 @@
 	<NavigationMenu.Item
 		class={cn('col-span-2 flex justify-center', i < 2 ? 'order-first' : 'order-last')}
 	>
-		<NavigationMenu.Link href={item.href} class={cn("flex flex-col items-center gap-2 pt-3", titleValue == item.title ? "dark:bg-zinc-800 bg-zinc-100" : "")}>
-			<Icon strokeWidth=2 class={titleValue == item.title ? "text-zinc-50" : "text-zinc-400"} />
+		<NavigationMenu.Link href={item.href} class={cn("flex flex-col items-center gap-2 pt-3", titleValue == item.title ? "dark:bg-zinc-800 bg-white" : "")}>
+			<Icon strokeWidth=2 class={titleValue == item.title ? "dark:text-zinc-50 text-zinc-800" : "text-zinc-400"} />
 			<span class={cn("text-sm font-light", titleValue == item.title ? "text-foreground" : "text-muted-foreground")}>
 				{item.title}
 			</span>
