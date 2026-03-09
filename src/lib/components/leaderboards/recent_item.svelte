@@ -13,7 +13,7 @@
 </script>
 
 <div>
-	<!-- {#if laptime.is_track_record}
+	{#if laptime.is_track_record}
 		<div
 			class="-mb-2 flex w-full rounded-md rounded-b-none border border-b-0 bg-purple-500/20 px-3 pt-1 pb-3 text-xs text-purple-400"
 		>
@@ -25,7 +25,7 @@
 		>
 			Personal Best!
 		</div>
-	{/if} -->
+	{/if}
 	<div class="bg-card flex items-center gap-4 rounded-md border px-3 py-2">
 		<!-- <Avatar.Root class="  size-12 border-purple-500 bg-purple-500 dark:border-purple-600">
 			<Avatar.Image

@@ -98,5 +98,7 @@
     "home_recent_laptimes": "Voltas Recentes",
     "home_recent_laptimes_description": "As últimas voltas da comunidade",
     "laptime_details_at_track": "em",
-    "laptime_details_with_car": "com"
+    "laptime_details_with_car": "com",
+    "home_no_laptimes": "Ainda não há voltas",
+    "home_no_laptimes_description": "Começa a adicionar as tuas voltas para as veres aqui!"
 }

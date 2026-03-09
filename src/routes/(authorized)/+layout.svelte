@@ -41,7 +41,7 @@
 <Toaster />
 <ModeWatcher />
 <div
-	class="fixed top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
+	class="fixed z-10 top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
 >
 	<div class="flex items-center gap-2">
 		<Button
@@ -63,7 +63,7 @@
 	</div>
 </div>
 
-<div class="h- container mx-auto mt-14 p-4">
+<div class="h- container mx-auto mt-14 mb-20 px-4 pb-4 ">
 	{@render children?.()}
 </div>
 

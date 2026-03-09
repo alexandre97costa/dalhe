@@ -98,5 +98,7 @@
     "home_recent_laptimes": "Recent Laptimes",
     "home_recent_laptimes_description": "See the latest laptimes from the community",
     "laptime_details_at_track": "at",
-    "laptime_details_with_car": "with"
+    "laptime_details_with_car": "with",
+    "home_no_laptimes": "No laptimes yet",
+    "home_no_laptimes_description": "Start adding your laptimes to see them here!"
 }
