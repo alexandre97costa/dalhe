@@ -1,29 +1,32 @@
 <script lang="ts">
 	// types
 	import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
+	import type { Handle } from '@sveltejs/kit';
 	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
 	import type { FormDataRecord } from '../../app.d.ts';
 	//form & utils
+	// import { enhance, applyAction } from '$app/forms';
 	import { REGEXP_ONLY_DIGITS } from 'bits-ui';
 	import { laptimeSchema, type LaptimeSchema } from '$lib/schemas/laptimeSchema';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
-	import { mode } from 'mode-watcher';
 	// components
+	import { type Icon as IconType, MapPin, Timer, Car } from '@lucide/svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import { toast } from "svelte-sonner";
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Field } from 'formsnap';
-	import FormField from './ui/form/form-field.svelte';
-	import { type Icon as IconType, MapPin, Timer, Car } from '@lucide/svelte';
 	import { Cell } from './ui/table/index.js';
+	import FormField from './ui/form/form-field.svelte';
 
 	let {
 		data,
@@ -36,21 +39,28 @@
 		open: boolean;
 	} = $props();
 
+	const isDesktop = new MediaQuery('(min-width: 768px)');
+	let formLoading = $state(false);
+
 	let car_makes = $derived(data.formDataRecord.carMakes ?? []);
 	let car_models = $derived(data.formDataRecord.cars ?? []);
 	let race_tracks = $derived(data.formDataRecord.raceTracks ?? []);
 
-	const isDesktop = new MediaQuery('(min-width: 768px)');
 	let selectedCarMake = $state<string | null>(null);
 	let selectedCarModel = $state<string | null>(null);
 	let selectedCarMakeModels = $state<any[]>([]);
 	let selectedTrack = $state<string | null>(null);
+
 	const form = superForm(data.laptimeForm, {
 		validators: zod4(laptimeSchema),
-		SPA: true,
-		onUpdate: ({ form }) => {
-			if (form.valid) {
-				open = false; // Close dialog/drawer on success
+		// SPA: false,
+		onUpdate: ({ form, result }) => {
+			if (form.valid ) {
+				open = false;
+			}
+			
+			if (result?.data?.success === false) {
+				toast.error('Failed to submit lap time. Please try again.');
 			}
 		}
 	});
@@ -58,7 +68,6 @@
 
 	$effect(() => {
 		console.log($formData);
-		// console.log(data);
 	});
 
 	// car makes select
@@ -86,10 +95,6 @@
 {#snippet formIcon(name: typeof IconType)}
 	{@const Icon = name}
 	<Icon size="18" color="oklch(0.714 0.203 305.504)" />
-	<!-- {#if mode.current === 'dark'}
-		<Icon size="18" color="oklch(0.214 0.203 305.504)" />
-	{:else}
-	{/if} -->
 {/snippet}
 
 {#snippet InputOTPSlot(cell: any)}
@@ -101,7 +106,13 @@
 
 <!-- Form -->
 {#snippet laptimeForm()}
-	<form method="POST" action="/new" use:enhance class="grid items-start gap-4">
+	<form
+		method="POST"
+		action="/new"
+		class="grid items-start gap-4"
+		use:enhance
+		onsubmit={() => (formLoading = true)}
+	>
 		<!-- Laptime -->
 		<Form.Field {form} name="laptime">
 			<Form.Control>
@@ -232,13 +243,18 @@
 			</Form.Field>
 		</div>
 
-		<Button type="submit">{m.nav_add_save()}</Button>
+		<Button type="submit">
+			{#if formLoading}
+				<Spinner />
+			{/if}
+			{m.nav_add_save()}
+		</Button>
 	</form>
 {/snippet}
 
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
-		<Dialog.Content >
+		<Dialog.Content>
 			<Dialog.Header>
 				<Dialog.Title>{m.formadd_header()}</Dialog.Title>
 			</Dialog.Header>

@@ -28,7 +28,6 @@
 	let { supabase, session, user, laptimeForm, formDataRecord } = $derived(data);
 
 	let open = $state(false);
-	let language = $state(getLocale());
 
 	$effect(() => {
 		console.log(data);
@@ -52,35 +51,14 @@
 			class="group hover:bg-popover hover:dark:bg-popover p-2"
 		>
 			<img src={LogoImg} alt="logo" class=" max-w-8" />
-			<!-- <div class="h-[36px] w-[36px] flex items-center justify-center bg-neutral-950 p-1.5 rounded-md border-1 border-neutral-500">
-			</div> -->
-			<!-- <span class="hidden group-hover:inline">
-				daaaaaaa-lhe
-				</span> -->
 		</Button>
 
 		<div class="flex flex-col">
 			<h1 class="text-xl font-semibold">{$title}</h1>
-			<!-- <h2 class="text-xs text-neutral-500">alexandre97costa</h2> -->
 		</div>
 	</div>
 	<div class="flex items-center gap-1.5 pr-1">
-		<!-- <Button
-			onclick={toggleLanguage}
-			variant="outline"
-			size="icon"
-			class="dark:bg-background  cursor-pointer"
-		>
-			<span class="h-[1.2rem] w-[1.2rem] scale-100">
-				{#if language == 'en'}
-					EN
-				{:else}
-					PT
-				{/if}
-			</span>
-			<span class="sr-only">Toggle language</span>
-		</Button>
-		<LightSwitch /> -->
+
 		<UserSession {user} />
 	</div>
 </div>

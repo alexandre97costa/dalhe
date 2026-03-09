@@ -31,9 +31,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return { session, user }
 	}
 
-	const { session } = await event.locals.safeGetSession();
+	const { session, user } = await event.locals.safeGetSession();
 
-	if (event.url.pathname !== "/" && !event.url.pathname.startsWith("/login") && !session) {
+	if (event.url.pathname !== "/" && !event.url.pathname.startsWith("/login") && !user) {
 		console.log(event.url.pathname + ': user not logged in, redirecting to login');
 		const redirectUrl = new URL('/login', event.url.origin);
         redirectUrl.searchParams.set('redirectTo', event.url.pathname + event.url.search);
