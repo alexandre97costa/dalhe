@@ -22,3 +22,11 @@ export async function getTrackIdBySlug(supabaseClient: typeof supabase, slug: st
     if (error) throw error;
     return data?.id;
 }
+
+export async function getAllTracks(supabaseClient: typeof supabase) {
+    const { data, error } = await supabaseClient
+        .from('race_track')
+        .select('id, name');
+    if (error) throw error;
+    return data;
+}
