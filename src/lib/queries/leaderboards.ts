@@ -2,6 +2,7 @@
 // e.g., track leaderboards, car leaderboards, etc.
 
 import { supabase } from '$lib/supabaseClient';
+import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { LeaderboardEntry } from '../types/listings';
 
@@ -15,7 +16,7 @@ export async function getTrackLeaderboard(
         .rpc("get_leaderboard_by_track", { 
             track: trackId,
             category: categoryId ?? null,
-            testing: false
+            testing: GET_TEST_RECORDS
         });
     if (error) throw error;
 
