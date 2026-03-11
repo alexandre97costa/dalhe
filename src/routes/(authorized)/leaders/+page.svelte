@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import * as Field from '$lib/components/ui/field/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import LeaderboardEntry from '$lib/components/leaderboards/leaderboard_entry.svelte';
 
 	// data from the server includes the full track/category lists plus the
 	// id that was actually used to compute the leaderboard; we use those
@@ -15,13 +16,13 @@
 	let selectedTrackId = $state<string | undefined>(initialTrackId?.toString());
 	let selectedTrack = $state<string | null>(
 		initialTrackId
-			? data.tracks?.find((t) => t.id === Number(initialTrackId))?.name ?? null
+			? (data.tracks?.find((t) => t.id === Number(initialTrackId))?.name ?? null)
 			: null
 	);
 	let selectedCategoryId = $state<string | undefined>(initialCategoryId?.toString());
 	let selectedCategory = $state<string | null>(
 		initialCategoryId
-			? data.categories?.find((c) => c.id === Number(initialCategoryId))?.name ?? null
+			? (data.categories?.find((c) => c.id === Number(initialCategoryId))?.name ?? null)
 			: null
 	);
 
@@ -33,6 +34,7 @@
 	}
 </script>
 
+<!-- Filters -->
 <div class="grid grid-cols-5 gap-4">
 	<Field.Field class="col-span-3">
 		<!-- <Field.Label for="input-id">{m.filters_track()}</Field.Label> -->
@@ -92,27 +94,17 @@
 	</Field.Field>
 </div>
 
-{#if data.laptimes && data.laptimes.length}
-	<table class="w-full mt-6 table-auto text-sm border-collapse">
-		<thead>
-			<tr class="bg-background">
-				<th class="p-2 text-left">#</th>
-				<th class="p-2 text-left">Driver</th>
-				<th class="p-2 text-left">Car</th>
-				<th class="p-2 text-left">Time</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each data.laptimes as entry}
-				<tr class="border-t">
-					<td class="p-2">{entry.rank}</td>
-					<td class="p-2">{entry.driver}</td>
-					<td class="p-2">{entry.car_make} {entry.car_model}</td>
-					<td class="p-2">{entry.laptime}</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-{:else}
-	<p class="mt-6 text-gray-500">No times found for your filter</p>
-{/if}
+<div class="flex flex-col gap-4 mt-4">
+	{#each data.laptimes as laptime}
+		<LeaderboardEntry {laptime} />
+	{:else}
+		<div class="flex flex-col items-center justify-center py-40">
+			<span class="text-foreground text-lg font-medium tracking-tight">
+				{m.home_no_laptimes()}
+			</span>
+			<span class="text-muted-foreground text-sm">
+				{m.home_no_laptimes_description()}
+			</span>
+		</div>
+	{/each}
+</div>
