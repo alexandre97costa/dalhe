@@ -21,7 +21,7 @@
     "formadd_car_make_error_required": "Car make is required",
     "formadd_car_model_placeholder": "Model",
     "formadd_race_track_label": "Track",
-    "formadd_race_track_placeholder": "Track",
+    "formadd_race_track_placeholder": "Select a track",
     "loading": "Loading...",
     "login_button": "Login",
     "formlogin_description": "Enter your email to receive a login link.",
@@ -102,5 +102,9 @@
     "home_recent_laptimes": "Recent Laptimes",
     "home_recent_laptimes_description": "See the latest laptimes from the community",
     "home_no_laptimes": "No laptimes yet",
-    "home_no_laptimes_description": "Start adding your laptimes to see them here!"
+    "home_no_laptimes_description": "Start adding your laptimes to see them here!",
+    "filters_track": "Track",
+    "filters_track_placeholder": "Select a track",
+    "filters_category": "Category",
+    "filters_category_placeholder": "Category"
 }

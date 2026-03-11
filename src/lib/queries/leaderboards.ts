@@ -2,12 +2,22 @@
 // e.g., track leaderboards, car leaderboards, etc.
 
 import { supabase } from '$lib/supabaseClient';
+import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { LeaderboardEntry } from '../types/listings';
 
-export async function getTrackLeaderboard(supabaseClient: typeof supabase, track: number) {
+export async function getTrackLeaderboard(
+    supabaseClient: typeof supabase,
+    trackId: number,
+    categoryId?: number
+) {
+
     const { data, error } = await supabaseClient
-        .rpc("get_leaderboard_by_track", { track });
+        .rpc("get_leaderboard_by_track", { 
+            track: trackId,
+            category: categoryId ?? null,
+            testing: GET_TEST_RECORDS
+        });
     if (error) throw error;
 
     return data;
@@ -21,4 +31,20 @@ export async function getTrackIdBySlug(supabaseClient: typeof supabase, slug: st
         .single();
     if (error) throw error;
     return data?.id;
+}
+
+export async function getAllTracks(supabaseClient: typeof supabase) {
+    const { data, error } = await supabaseClient
+        .from('race_track')
+        .select('id, name');
+    if (error) throw error;
+    return data;
+}
+
+export async function getAllCategories(supabaseClient: typeof supabase) {
+    const { data, error } = await supabaseClient
+        .from('car_category')
+        .select('id, name');
+    if (error) throw error;
+    return data;
 }
