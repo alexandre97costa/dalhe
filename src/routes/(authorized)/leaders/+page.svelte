@@ -6,9 +6,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import LeaderboardEntry from '$lib/components/leaderboards/leaderboard_entry.svelte';
 
-	// data from the server includes the full track/category lists plus the
-	// id that was actually used to compute the leaderboard; we use those
-	// values to bootstrap the dropdowns so they start in a valid state.
+	title.set(m.nav_leaders());
 	let { data } = $props();
 	let initialTrackId: number | undefined = data.selectedTrackId;
 	let initialCategoryId: number | undefined = data.selectedCategoryId;
