@@ -29,7 +29,7 @@
 		},
 		{
 			title: m.nav_leaders(),
-			href: '/leaders/monza',
+			href: '/leaders',
 			description: 'leaderboard page for each track',
 			icon: ChessQueen,
 			order: 2
