@@ -7,7 +7,7 @@
 	import { Button } from '$lib/components/ui/button/index';
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
 
-	let { open = $bindable(false) } = $props();
+	let { open = $bindable(false), driverId } = $props();
 	let titleValue = $derived($title);
 
 	type MenuItem = {
@@ -43,7 +43,7 @@
 		},
 		{
 			title: m.nav_profile(),
-			href: '/profile',
+			href: `/driver/${driverId}`,
 			description: 'Manage your profile and settings',
 			icon: UserRound,
 			order: 5
