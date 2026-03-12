@@ -57,6 +57,7 @@
 		onUpdate: ({ form, result }) => {
 			if (form.valid ) {
 				open = false;
+				formLoading = false;
 			}
 			
 			if (result?.data?.success === false) {
