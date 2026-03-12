@@ -15,8 +15,8 @@ export async function getTrackLeaderboard(
     const { data, error } = await supabaseClient
         .rpc("get_leaderboard_by_track", { 
             track: trackId,
-            category: categoryId ?? null,
-            testing: GET_TEST_RECORDS
+            category: categoryId ?? 1,
+            testing: GET_TEST_RECORDS === "true"
         });
     if (error) throw error;
 

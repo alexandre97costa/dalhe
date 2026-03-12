@@ -228,8 +228,23 @@ export type Database = {
       }
     }
     Functions: {
+      get_driver_timeline: {
+        Args: { driverid: string; testing: boolean }
+        Returns: {
+          car_make: string
+          car_model: string
+          created_at: string
+          driver: string
+          is_personal_best: boolean
+          is_track_record: boolean
+          laptime: number
+          previous_laptime: number
+          track_name: string
+          track_record: number
+        }[]
+      }
       get_leaderboard_by_track: {
-        Args: { track: number }
+        Args: { category: number; testing: boolean; track: number }
         Returns: {
           car_make: string
           car_model: string

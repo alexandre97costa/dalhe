@@ -68,6 +68,6 @@
 </div>
 
 <div class="fixed right-0 bottom-0 left-0 flex w-full justify-center">
-	<Nav bind:open />
+	<Nav bind:open driverId={session?.user.id} />
 	<New bind:open data={{ laptimeForm, formDataRecord }} />
 </div>
