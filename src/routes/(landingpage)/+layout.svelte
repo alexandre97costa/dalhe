@@ -2,6 +2,7 @@
 	import '../../app.css'
 	import { invalidate } from '$app/navigation'
 	import { onMount } from 'svelte'
+	import { Button } from "$lib/components/ui/button/index.js";
 
 	let { data, children } = $props()
 	let { supabase, session } = $derived(data)
@@ -21,6 +22,8 @@
 	<title>Dá-lhe!</title>
 </svelte:head>
 
-<div class="container" style="padding: 50px 0 100px 0">
+<div class="container h-full" style="padding: 50px 0 500px 0">
 	{@render children()}
+
 </div>
+<Button variant="link" href="/privacy-policy">Privacy Policy</Button>
