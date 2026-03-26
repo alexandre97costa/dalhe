@@ -21,7 +21,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
-	import { toast } from "svelte-sonner";
+	import { toast } from 'svelte-sonner';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Field } from 'formsnap';
@@ -55,11 +55,11 @@
 		validators: zod4(laptimeSchema),
 		// SPA: false,
 		onUpdate: ({ form, result }) => {
-			if (form.valid ) {
+			if (form.valid) {
 				open = false;
 				formLoading = false;
 			}
-			
+
 			if (result?.data?.success === false) {
 				toast.error('Failed to submit lap time. Please try again.');
 			}
@@ -253,6 +253,16 @@
 	</form>
 {/snippet}
 
+<Dialog.Root bind:open>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>{m.formadd_header()}</Dialog.Title>
+		</Dialog.Header>
+		{@render laptimeForm()}
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- 
 {#if isDesktop.current}
 	<Dialog.Root bind:open>
 		<Dialog.Content>
@@ -267,9 +277,9 @@
 		<Drawer.Content>
 			<Drawer.Header class="gap-0 pt-0 text-center text-xl">
 				<Drawer.Title>{m.formadd_header()}</Drawer.Title>
-				<!-- <Drawer.Description class="text-sm italic">{m.formadd_header_description()}</Drawer.Description> -->
+				<Drawer.Description class="text-sm italic">{m.formadd_header_description()}</Drawer.Description>
 			</Drawer.Header>
 			{@render laptimeForm()}
 		</Drawer.Content>
 	</Drawer.Root>
-{/if}
+{/if} -->

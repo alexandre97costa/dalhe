@@ -1,0 +1,18 @@
+{
+    "short_name": "Da-lhe",
+    "name": "Da-lhe",
+    "start_url": "/",
+    "icons": [
+      {
+        "src": "app-icon.png",
+        "type": "image/png",
+        "sizes": "128x128"
+      }
+    ],
+    "background_color": "#09090b",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#a855f7",
+    "shortcuts": [],
+    "description": "A simple app to keep record of sim racing laptimes and sessions."
+}
