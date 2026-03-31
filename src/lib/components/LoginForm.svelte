@@ -54,13 +54,13 @@
 
 	{#if form?.message !== undefined}
 		{#if form?.success === true}
-			<Card.Root class="rounded-md border-0 bg-lime-500/15 px-3 py-2 text-sm text-lime-100">
+			<Card.Root class="rounded-md border-0 bg-lime-500/15 px-3 py-2 text-sm text-lime-700 dark:text-lime-100">
 				<Card.Content class="p-0">
 					<p>{form?.message ?? 'Success'}</p>
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			<Card.Root class="rounded-md border-0 bg-red-500/10 px-3 py-2 text-sm text-rose-100">
+			<Card.Root class="rounded-md border-0 bg-red-500/10 px-3 py-2 text-sm text-rose-700 dark:text-rose-100">
 				<Card.Content class="p-0">
 					<p>{form?.message ?? 'Error'}</p>
 				</Card.Content>
