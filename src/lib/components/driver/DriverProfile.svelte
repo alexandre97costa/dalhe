@@ -5,8 +5,8 @@
 	import { Button } from '$lib/components/ui/button/index';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-    import {Pencil } from '@lucide/svelte';
-
+	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Pencil, Turtle } from '@lucide/svelte';
 
 	interface Props {
 		username: string;
@@ -22,25 +22,25 @@
 	};
 </script>
 
+<div class="flex items-center gap-4">
+	<Avatar.Root class="size-16 border-0 border-rose-400">
+		<Avatar.Image src="https://github.com/shadcn.pn" alt="@shadcn" />
+		<Avatar.Fallback class="bg-linear-to-bl from-purple-600 to-purple-400">
+			<Turtle class="mb-0.5 ml-1 size-10 text-white" strokeWidth={1.5} />
+		</Avatar.Fallback>
+	</Avatar.Root>
 
-<div class="flex gap-4">
-    <Avatar.Root class="size-20">
-        <Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
-        <Avatar.Fallback>CN</Avatar.Fallback>
-    </Avatar.Root>
+	<div class="flex flex-1 flex-col gap-0">
+		<div class="flex items-end justify-between">
+			<h2 class="text-lg font-semibold">{username}</h2>
+		</div>
+		<h3 class="text-muted-foreground text-sm font-light">alexandre97costa@gmail.com</h3>
+	</div>
 
-    <div class="flex-1 flex flex-col gap-2">
-
-        <div class="flex items-center justify-between gap-4">
-
-            <h2 class="text-xl font-semibold">{username}</h2>
-            {#if isCurrentUser}
-            <Button variant="outline" size="sm" onclick={handleEditProfile}>
-                <span>Editar</span> 
-                <Pencil class="size-3" />
-            </Button>
-            {/if}
-        </div>
-    </div>
+	{#if isCurrentUser}
+		<Button variant="outline" size="icon" class="" onclick={handleEditProfile}>
+			<!-- <span>Editar</span> -->
+			<Pencil class="size-3" />
+		</Button>
+	{/if}
 </div>
-
