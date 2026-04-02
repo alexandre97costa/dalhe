@@ -38,7 +38,8 @@
 	--color-new-button: oklch(0.94, 0.04, 310.27);
 }
 .dark {
-	--background: oklch(0.141 0.005 285.823);
+	--background: oklch(16.099% 0.0084 285.395);
+	/* --background: oklch(0.141 0.005 285.823); */
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.21 0.006 285.885);
 	--card-foreground: oklch(0.985 0 0);
