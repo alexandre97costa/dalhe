@@ -2,11 +2,13 @@
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import type { RecentLaptime } from '$lib/types/listings';
+
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import * as Item from '$lib/components/ui/item/index.js';
 	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
 	import DriverProfile from '$lib/components/driver/DriverProfile.svelte';
+	import DriverChart from '$lib/components/driver/DriverChart.svelte';
 	import {
 		type Icon as IconType,
 		Trophy,
@@ -22,7 +24,7 @@
 
 {#snippet StatCard(title: string, value: string, icon: typeof IconType, color: string)}
 	{@const Icon = icon}
-	<Item.Root variant="outline" class="flex gap-1 bg-linear-to-bl from-card to-background">
+	<Item.Root variant="outline" class="from-card to-background flex gap-1 bg-linear-to-bl">
 		<Item.Header class="flex gap-0">
 			<Item.Title>{title}</Item.Title>
 		</Item.Header>
@@ -61,7 +63,9 @@
 		<!-- Progress Accordion -->
 		<Accordion.Item value="item-2">
 			{@render AccordionTitle('Progress')}
-			<Accordion.Content class="pb-4 text-muted-foreground">Work in progress</Accordion.Content>
+			<Accordion.Content class="text-muted-foreground pb-4">
+				<DriverChart  />
+			</Accordion.Content>
 		</Accordion.Item>
 
 		<!-- Recent Laptimes Accordion -->
