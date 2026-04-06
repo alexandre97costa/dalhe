@@ -4,8 +4,13 @@
 	import type { RecentLaptime } from '$lib/types/listings';
 
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import * as Item from '$lib/components/ui/item/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
 	import DriverProfile from '$lib/components/driver/DriverProfile.svelte';
 	import DriverChart from '$lib/components/driver/DriverChart.svelte';
@@ -20,6 +25,26 @@
 
 	title.set(m.nav_profile());
 	let { data } = $props();
+
+	type tabView = {
+		id: string;
+		label: string;
+	};
+	let tabViewId: tabView['id'] = $state('latest');
+	let tabViews: tabView[] = [
+		{
+			id: 'latest',
+			label: m.driver_profile_latest()
+		},
+		{
+			id: 'progress',
+			label: m.driver_profile_progress()
+		},
+		{
+			id: 'stats',
+			label: m.driver_profile_stats()
+		}
+	];
 </script>
 
 {#snippet StatCard(title: string, value: string, icon: typeof IconType, color: string)}
@@ -44,7 +69,23 @@
 <div class="flex flex-col">
 	<DriverProfile username={'Alexandre'} photoUrl={'data.driver.photoUrl'} isCurrentUser={true} />
 
-	<Separator class="mt-4" />
+	<Separator class="my-4" />
+
+	<Tabs.Root value="latest" class="w-full flex-col justify-start gap-6">
+		<div class="flex justify-center">
+			<Label for="tab-selector" class="sr-only">Tab</Label>
+			<Tabs.List class="flex ">
+				{#each tabViews as view (view.id)}
+					<Tabs.Trigger value={view.id}>
+						{view.label}
+					</Tabs.Trigger>
+				{/each}
+			</Tabs.List>
+		</div>
+		<Tabs.Content value={"latest"}>Make changes to your latest here.</Tabs.Content>
+		<Tabs.Content value={"progress"}>View your progress here.</Tabs.Content>
+		<Tabs.Content value={"stats"}>View your stats here.</Tabs.Content>
+	</Tabs.Root>
 
 	<Accordion.Root type="multiple" value={['item-1', 'item-2', 'item-3']} class="w-full">
 		<!-- Stats Accordion -->
@@ -64,7 +105,7 @@
 		<Accordion.Item value="item-2">
 			{@render AccordionTitle('Progress')}
 			<Accordion.Content class="text-muted-foreground pb-4">
-				<DriverChart  />
+				<DriverChart />
 			</Accordion.Content>
 		</Accordion.Item>
 
