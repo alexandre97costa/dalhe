@@ -8,9 +8,15 @@
 				default: "cn-tabs-list-variant-default bg-muted",
 				line: "cn-tabs-list-variant-line gap-1 bg-transparent",
 			},
+			size: {
+				default: "h-8",
+				sm: "h-7",
+				lg: "h-10 ",
+			},
 		},
 		defaultVariants: {
 			variant: "default",
+			size: "default",
 		},
 	});
 
@@ -24,10 +30,12 @@
 	let {
 		ref = $bindable(null),
 		variant = "default",
+		size = "default",
 		class: className,
 		...restProps
 	}: TabsPrimitive.ListProps & {
 		variant?: TabsListVariant;
+		size?: 'default' | 'sm' | 'lg';
 	} = $props();
 </script>
 
@@ -35,6 +43,7 @@
 	bind:ref
 	data-slot="tabs-list"
 	data-variant={variant}
-	class={cn(tabsListVariants({ variant }), className)}
+	data-size={size}
+	class={cn(tabsListVariants({ variant, size }), className)}
 	{...restProps}
 />

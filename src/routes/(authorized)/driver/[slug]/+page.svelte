@@ -60,10 +60,10 @@
 	</Item.Root>
 {/snippet}
 
-{#snippet AccordionTitle(title: string)}
-	<Accordion.Trigger class="items-center">
+{#snippet TabTitle(title: string)}
+	<div class="mb-4">
 		<h1 class="text-foreground text-xl font-bold tracking-normal text-balance">{title}</h1>
-	</Accordion.Trigger>
+	</div>
 {/snippet}
 
 <div class="flex flex-col">
@@ -74,7 +74,7 @@
 	<Tabs.Root value="latest" class="w-full flex-col justify-start gap-6">
 		<div class="flex justify-center">
 			<Label for="tab-selector" class="sr-only">Tab</Label>
-			<Tabs.List class="flex ">
+			<Tabs.List class="flex " size="lg">
 				{#each tabViews as view (view.id)}
 					<Tabs.Trigger value={view.id}>
 						{view.label}
@@ -82,52 +82,35 @@
 				{/each}
 			</Tabs.List>
 		</div>
-		<Tabs.Content value={"latest"}>Make changes to your latest here.</Tabs.Content>
-		<Tabs.Content value={"progress"}>View your progress here.</Tabs.Content>
-		<Tabs.Content value={"stats"}>View your stats here.</Tabs.Content>
+		<Tabs.Content value={'latest'}>
+			{@render TabTitle('Recent Laptimes')}
+			<div class="flex flex-col gap-4">
+				{#each data.laptimes as laptime}
+					<RecentEntry {laptime} />
+				{:else}
+					<div class="flex flex-col items-center justify-center py-40">
+						<span class="text-foreground text-lg font-medium tracking-tight">
+							{m.home_no_laptimes()}
+						</span>
+						<span class="text-muted-foreground text-sm">
+							{m.home_no_laptimes_description()}
+						</span>
+					</div>
+				{/each}
+			</div>
+		</Tabs.Content>
+		<Tabs.Content value={'progress'}>
+			{@render TabTitle('Progress')}
+			<DriverChart />
+		</Tabs.Content>
+		<Tabs.Content value={'stats'}>
+			{@render TabTitle('Stats')}
+			<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+				{@render StatCard('Podiums', '53', Award, 'text-rose-500')}
+				{@render StatCard('Poles', '32', Medal, 'text-amber-500')}
+				{@render StatCard('Dominance', '32 pts', BicepsFlexed, 'text-purple-500')}
+				{@render StatCard('Laps submitted', '257', Tally5, 'text-blue-500')}
+			</div>
+		</Tabs.Content>
 	</Tabs.Root>
-
-	<Accordion.Root type="multiple" value={['item-1', 'item-2', 'item-3']} class="w-full">
-		<!-- Stats Accordion -->
-		<Accordion.Item value="item-1">
-			{@render AccordionTitle('Stats')}
-			<Accordion.Content class="pb-4">
-				<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-					{@render StatCard('Podiums', '53', Award, 'text-rose-500')}
-					{@render StatCard('Poles', '32', Medal, 'text-amber-500')}
-					{@render StatCard('Dominance', '32 pts', BicepsFlexed, 'text-purple-500')}
-					{@render StatCard('Laps submitted', '257', Tally5, 'text-blue-500')}
-				</div>
-			</Accordion.Content>
-		</Accordion.Item>
-
-		<!-- Progress Accordion -->
-		<Accordion.Item value="item-2">
-			{@render AccordionTitle('Progress')}
-			<Accordion.Content class="text-muted-foreground pb-4">
-				<DriverChart />
-			</Accordion.Content>
-		</Accordion.Item>
-
-		<!-- Recent Laptimes Accordion -->
-		<Accordion.Item value="item-3">
-			{@render AccordionTitle('Recent Laptimes')}
-			<Accordion.Content class="pb-4">
-				<div class="flex flex-col gap-4">
-					{#each data.laptimes as laptime}
-						<RecentEntry {laptime} />
-					{:else}
-						<div class="flex flex-col items-center justify-center py-40">
-							<span class="text-foreground text-lg font-medium tracking-tight">
-								{m.home_no_laptimes()}
-							</span>
-							<span class="text-muted-foreground text-sm">
-								{m.home_no_laptimes_description()}
-							</span>
-						</div>
-					{/each}
-				</div>
-			</Accordion.Content>
-		</Accordion.Item>
-	</Accordion.Root>
 </div>

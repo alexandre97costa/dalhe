@@ -10,7 +10,7 @@
 
 <div class="-mb-4 flex w-full max-w-sm flex-col gap-6">
 	<Tabs.Root bind:value={activeTab}>
-		<Tabs.List>
+		<Tabs.List >
 			<Tabs.Trigger value="account">Account</Tabs.Trigger>
 			<Tabs.Trigger value="password">Password</Tabs.Trigger>
 		</Tabs.List>
