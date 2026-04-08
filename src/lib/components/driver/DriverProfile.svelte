@@ -22,19 +22,19 @@
 	};
 </script>
 
-<div class="flex items-center gap-4">
-	<Avatar.Root class="size-12 border-0 border-rose-400">
-		<Avatar.Image src="https://github.com/shadcn.pn" alt="@shadcn" />
+<div class="flex flex-col items-center gap-4">
+	<Avatar.Root class="size-20 border-0 border-rose-400">
+		<Avatar.Image src={photoUrl} alt={username} />
 		<Avatar.Fallback class="bg-linear-to-t from-purple-600 to-purple-400">
-			<Turtle class="mb-0.5 ml-1 size-8 text-white" strokeWidth={1.5} />
+			<Turtle class="mb-0.5 ml-1 size-12 text-white" strokeWidth={1.5} />
 		</Avatar.Fallback>
 	</Avatar.Root>
 
 	<div class="flex flex-1 flex-col gap-0">
 		<div class="flex items-end justify-between">
-			<h2 class="text-md font-semibold">{username}</h2>
+			<h2 class="text-3xl font-semibold">{username}</h2>
 		</div>
-		<h3 class="text-muted-foreground text-sm font-light">alexandre97costa@gmail.com</h3>
+		<!-- <h3 class="text-muted-foreground text-sm font-light">{email}</h3> -->
 	</div>
 
 	{#if isCurrentUser}

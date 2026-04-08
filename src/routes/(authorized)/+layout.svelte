@@ -5,6 +5,7 @@
 	import { invalidate } from '$app/navigation';
 	import { getLocale } from '$lib/paraglide/runtime.js';
 	import { title } from '$lib/store.js';
+	import { navigating } from '$app/state';
 
 	import '../../app.css';
 	import { ModeWatcher } from 'mode-watcher';
@@ -14,6 +15,7 @@
 	import Nav from '$lib/components/Nav.svelte';
 	import New from '$lib/components/New.svelte';
 	import LogoImg from '$lib/images/500w.png';
+	import { is } from 'zod/locales';
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
@@ -28,9 +30,17 @@
 	let { supabase, session, user, laptimeForm, formDataRecord } = $derived(data);
 
 	let open = $state(false);
+	let isNavigating: boolean = $derived(navigating.complete !== null);
 
 	$effect(() => {
-		console.log(data);
+		console.log(isNavigating);
+		if (isNavigating) {
+			navigator.vibrate?.(20);
+		}
+	});
+
+	$effect(() => {
+		// console.log(data);
 	});
 </script>
 
@@ -40,8 +50,9 @@
 
 <Toaster />
 <ModeWatcher />
+
 <div
-	class="fixed z-10 top-0 right-0 left-0 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
+	class="fixed top-0 right-0 left-0 z-20 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
 >
 	<div class="flex items-center gap-2">
 		<Button
@@ -58,16 +69,20 @@
 		</div>
 	</div>
 	<div class="flex items-center gap-1.5 pr-1">
-
 		<UserSession {user} />
 	</div>
 </div>
 
-<div class="h- container mx-auto mt-14 mb-20 px-4 py-4 ">
+<div class="relative container mx-auto mt-14 mb-20 px-4 py-4">
+	{#if isNavigating}
+		<div class="fixed inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-appear">
+			<img src={LogoImg} alt="logo" class="relative w-20 h-auto animate-bounce" />
+		</div>
+	{/if}
 	{@render children?.()}
 </div>
 
-<div class="fixed right-0 bottom-0 left-0 flex w-full justify-center">
-	<Nav bind:open driverId={session?.user.id} />
+<div class="fixed right-0 bottom-0 left-0 z-20 flex w-full justify-center">
+	<Nav bind:open driverId={session?.user.id} {isNavigating} />
 	<New bind:open data={{ laptimeForm, formDataRecord }} />
 </div>

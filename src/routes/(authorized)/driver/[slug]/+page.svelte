@@ -62,19 +62,19 @@
 
 {#snippet TabTitle(title: string)}
 	<div class="mb-4">
-		<h1 class="text-foreground text-xl font-bold tracking-normal text-balance">{title}</h1>
+		<h1 class="text-foreground text-xl font-semibold tracking-wide text-balance">{title}</h1>
 	</div>
 {/snippet}
 
 <div class="flex flex-col">
-	<DriverProfile username={'Alexandre'} photoUrl={'data.driver.photoUrl'} isCurrentUser={true} />
+	<DriverProfile username={data.driver?.username ?? 'Unknown Driver'} photoUrl={data.driver?.avatar_url ?? "https://github.com/shadcn.png"} isCurrentUser={false} />
 
 	<Separator class="my-4" />
 
 	<Tabs.Root value="latest" class="w-full flex-col justify-start gap-6">
 		<div class="flex justify-center">
 			<Label for="tab-selector" class="sr-only">Tab</Label>
-			<Tabs.List class="flex " size="lg">
+			<Tabs.List class="flex " size="default">
 				{#each tabViews as view (view.id)}
 					<Tabs.Trigger value={view.id}>
 						{view.label}
@@ -83,7 +83,7 @@
 			</Tabs.List>
 		</div>
 		<Tabs.Content value={'latest'}>
-			{@render TabTitle('Recent Laptimes')}
+			{@render TabTitle(m.driver_profile_latest())}
 			<div class="flex flex-col gap-4">
 				{#each data.laptimes as laptime}
 					<RecentEntry {laptime} />
@@ -100,11 +100,11 @@
 			</div>
 		</Tabs.Content>
 		<Tabs.Content value={'progress'}>
-			{@render TabTitle('Progress')}
+			{@render TabTitle(m.driver_profile_progress())}
 			<DriverChart />
 		</Tabs.Content>
 		<Tabs.Content value={'stats'}>
-			{@render TabTitle('Stats')}
+			{@render TabTitle(m.driver_profile_stats())}
 			<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
 				{@render StatCard('Podiums', '53', Award, 'text-rose-500')}
 				{@render StatCard('Poles', '32', Medal, 'text-amber-500')}
