@@ -12,6 +12,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     console.log('Loading driver page for slug:', params.slug);
 
     const driverRecentLaptimes = await getDriverTimeline(supabase, params.slug);
+    const driver = await getDriverById(supabase, params.slug);
 
-    return { laptimes: driverRecentLaptimes, slug: params.slug };
+    return { 
+        slug: params.slug, 
+        laptimes: driverRecentLaptimes,
+        driver: driver
+    };
 }

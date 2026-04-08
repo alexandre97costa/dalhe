@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+@import 'layerchart/shadcn-svelte.css';
 @custom-variant dark (&:is(.dark *));
 :root {
 	--radius: 0.625rem;
@@ -38,7 +39,8 @@
 	--color-new-button: oklch(0.94, 0.04, 310.27);
 }
 .dark {
-	--background: oklch(0.141 0.005 285.823);
+	--background: oklch(16.099% 0.0084 285.395);
+	/* --background: oklch(0.141 0.005 285.823); */
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.21 0.006 285.885);
 	--card-foreground: oklch(0.985 0 0);
@@ -132,5 +134,17 @@
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
 		}
+	}
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	.animate-appear {
+		animation: fade-in 0.3s ease-out;
 	}
 }

@@ -106,5 +106,8 @@
     "filters_track": "Track",
     "filters_track_placeholder": "Select a track",
     "filters_category": "Category",
-    "filters_category_placeholder": "Category"
+    "filters_category_placeholder": "Category",
+    "driver_profile_progress": "Progress",
+    "driver_profile_stats": "Stats",
+    "driver_profile_latest": "Latest laps"
 }

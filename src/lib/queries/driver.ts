@@ -7,16 +7,21 @@ export async function getDriverById(
     supabaseClient: typeof supabase,
     driverId: string) {
 
-        return {id: 1}
-
+    const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', driverId)
+        .single();
+    if (error) throw error;
+    return data;
 }
 
 export async function getDriverTimeline(
     supabaseClient: typeof supabase,
     driverId: string) {
-    
+
     const { data, error } = await supabaseClient
-        .rpc("get_driver_timeline", { 
+        .rpc("get_driver_timeline", {
             driverid: driverId,
             testing: GET_TEST_RECORDS === "true"
         });
