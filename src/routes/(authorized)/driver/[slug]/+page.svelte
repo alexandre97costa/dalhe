@@ -20,7 +20,10 @@
 		BicepsFlexed,
 		Medal,
 		Award,
-		Tally5
+		Tally5,
+		CircleUserRound,
+		ListFilter,
+		Swords
 	} from '@lucide/svelte';
 
 	title.set(m.nav_profile());
@@ -67,7 +70,11 @@
 {/snippet}
 
 <div class="flex flex-col">
-	<DriverProfile username={data.driver?.username ?? 'Unknown Driver'} photoUrl={data.driver?.avatar_url ?? "https://github.com/shadcn.png"} isCurrentUser={false} />
+	<DriverProfile
+		username={data.driver?.username ?? 'Unknown Driver'}
+		photoUrl={data.driver?.avatar_url ?? 'https://github.com/shadcn.png'}
+		isCurrentUser={false}
+	/>
 
 	<Separator class="my-4" />
 
@@ -84,9 +91,40 @@
 		</div>
 		<Tabs.Content value={'latest'}>
 			{@render TabTitle(m.driver_profile_latest())}
-			<div class="flex flex-col gap-4">
-				{#each data.laptimes as laptime}
-					<RecentEntry {laptime} />
+			<Accordion.Root type="single" class="flex w-full flex-col gap-4" value="">
+				{#each data.laptimes as laptime, index}
+					<Accordion.Item value={'item-' + index} class="not-last:border-b-0">
+						<!-- Tem um accordion trigger lá dentro -->
+						<RecentEntry {laptime} />
+
+						<Accordion.Content
+							class="bg-card flex flex-col gap-3 rounded-b-md border border-t-0 px-3 py-3 "
+						>
+							<a
+								class="text-muted-foreground/30 hover:text-foreground pointer-events-none flex items-center gap-2 no-underline!"
+								href="/driver/{laptime.driver}"
+							>
+								<CircleUserRound class="" size="16" strokeWidth="2" />
+								{m.laptime_options_goto_driver()}
+							</a>
+							<Separator class="" />
+							<a
+								class="text-muted-foreground hover:text-foreground pointer-events-none flex gap-2 no-underline!"
+								href="/teste"
+							>
+								<ListFilter class="rotate-180" size="16" strokeWidth="2" />
+								{m.laptime_options_goto_leaderboard()}
+							</a>
+							<Separator class="" />
+							<a
+								class="text-muted-foreground hover:text-foreground pointer-events-none flex gap-2 no-underline!"
+								href="/teste"
+							>
+								<Swords class="" size="16" strokeWidth="2" />
+								{m.laptime_options_compare()}
+							</a>
+						</Accordion.Content>
+					</Accordion.Item>
 				{:else}
 					<div class="flex flex-col items-center justify-center py-40">
 						<span class="text-foreground text-lg font-medium tracking-tight">
@@ -97,7 +135,7 @@
 						</span>
 					</div>
 				{/each}
-			</div>
+			</Accordion.Root>
 		</Tabs.Content>
 		<Tabs.Content value={'progress'}>
 			{@render TabTitle(m.driver_profile_progress())}
@@ -108,8 +146,18 @@
 			<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
 				{@render StatCard('Podiums', `${data.stats?.podiums ?? '0'}`, Award, 'text-rose-500')}
 				{@render StatCard('Poles', `${data.stats?.poles ?? '0'}`, Medal, 'text-amber-500')}
-				{@render StatCard('Dominance', `${data.stats?.dominance ?? '0'} pts`, BicepsFlexed, 'text-purple-500')}
-				{@render StatCard('Laps submitted', `${data.stats?.totalLaps ?? '0'}`, Tally5, 'text-blue-500')}
+				{@render StatCard(
+					'Dominance',
+					`${data.stats?.dominance ?? '0'} pts`,
+					BicepsFlexed,
+					'text-purple-500'
+				)}
+				{@render StatCard(
+					'Laps submitted',
+					`${data.stats?.totalLaps ?? '0'}`,
+					Tally5,
+					'text-blue-500'
+				)}
 			</div>
 		</Tabs.Content>
 	</Tabs.Root>
