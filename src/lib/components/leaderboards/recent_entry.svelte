@@ -25,7 +25,7 @@
 	{/if} -->
 	<div
 		class={cn(
-			`to-background flex items-center gap-4 rounded-md border bg-linear-to-bl px-3 py-2 `,
+			`bg-linear-to-bl to-background flex items-center gap-4 rounded-md border px-3 py-2`,
 			laptime.is_track_record
 				? 'from-purple-500/15 border-purple-500/10'
 				: laptime.is_personal_best

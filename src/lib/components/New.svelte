@@ -67,9 +67,9 @@
 	});
 	const { form: formData, enhance } = form;
 
-	$effect(() => {
-		console.log($formData);
-	});
+	// $effect(() => {
+	// 	console.log($formData);
+	// });
 
 	// car makes select
 	$effect(() => {

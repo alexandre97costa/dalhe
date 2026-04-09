@@ -13,9 +13,9 @@
 	let theme: 'light' | 'dark' | 'system' = $state('system');
 	let language = $state(getLocale());
 
-	$effect(() => {
-		console.log('User session data changed:', user);
-	});
+	// $effect(() => {
+	// 	console.log('User session data changed:', user);
+	// });
 </script>
 
 <!-- <Button variant="cta" size="sm" onclick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}> -->

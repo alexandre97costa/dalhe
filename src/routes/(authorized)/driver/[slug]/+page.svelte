@@ -106,10 +106,10 @@
 		<Tabs.Content value={'stats'}>
 			{@render TabTitle(m.driver_profile_stats())}
 			<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-				{@render StatCard('Podiums', '53', Award, 'text-rose-500')}
-				{@render StatCard('Poles', '32', Medal, 'text-amber-500')}
-				{@render StatCard('Dominance', '32 pts', BicepsFlexed, 'text-purple-500')}
-				{@render StatCard('Laps submitted', '257', Tally5, 'text-blue-500')}
+				{@render StatCard('Podiums', `${data.stats?.podiums ?? '0'}`, Award, 'text-rose-500')}
+				{@render StatCard('Poles', `${data.stats?.poles ?? '0'}`, Medal, 'text-amber-500')}
+				{@render StatCard('Dominance', `${data.stats?.dominance ?? '0'} pts`, BicepsFlexed, 'text-purple-500')}
+				{@render StatCard('Laps submitted', `${data.stats?.totalLaps ?? '0'}`, Tally5, 'text-blue-500')}
 			</div>
 		</Tabs.Content>
 	</Tabs.Root>

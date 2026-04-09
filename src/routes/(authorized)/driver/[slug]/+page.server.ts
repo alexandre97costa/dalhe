@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit'; 
 import type { PageServerLoad } from './$types';
-import { getDriverTimeline, getDriverById } from '$lib/queries/driver';
+import { getDriverById, getDriverTimeline, getDriverStats } from '$lib/queries/driver';
 import type { RecentLaptime } from '$lib/types/listings';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -13,10 +13,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
     const driverRecentLaptimes = await getDriverTimeline(supabase, params.slug);
     const driver = await getDriverById(supabase, params.slug);
+    const stats = await getDriverStats(supabase, params.slug);
 
     return { 
         slug: params.slug, 
         laptimes: driverRecentLaptimes,
-        driver: driver
+        driver: driver,
+        stats: stats
     };
 }
