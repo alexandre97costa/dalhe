@@ -13,16 +13,8 @@
 
 <div
 	class={cn(
-		'bg-card flex items-center gap-4 rounded-md border px-3 py-2',
-		laptime.rank == 1
-			? 'border-yellow-400 bg-linear-to-r from-yellow-400/30  to-yellow-600/20 to-70%'
-			: '',
-		laptime.rank == 2
-			? 'border-slate-400 bg-linear-to-r from-slate-400/30  to-slate-600/20 to-70%'
-			: '',
-		laptime.rank == 3
-			? 'border-orange-400 bg-linear-to-r from-orange-400/30  to-orange-600/20 to-70%'
-			: ''
+		'to-background flex items-center gap-4 rounded-md border bg-linear-to-bl px-3 py-2',
+		laptime.rank == 1 ? 'border-purple-500/10 from-purple-500/15' : 'from-card'
 	)}
 >
 	{laptime.rank}
@@ -36,8 +28,12 @@
 			<span class="text-foreground/50">{`${laptime.car_make} ${laptime.car_model}`}</span>
 		</p>
 	</div>
-	<div class={cn('flex flex-col text-right ', laptime.rank == 1 ? 'self-center' : 'self-start')}>
-		{#if laptime.rank !== 1}
+	<div class="flex flex-col gap-0.5 justify-end self-start text-right">
+		{#if laptime.rank == 1}
+			<p class="lh-1 text-xs text-purple-400">
+				{m.laptime_track_record()}
+			</p>
+		{:else}
 			<p class={'lh-1 text-muted-foreground/50 font-mono text-xs'}>
 				{diff}
 			</p>

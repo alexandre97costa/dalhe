@@ -33,7 +33,7 @@
 	let isNavigating: boolean = $derived(navigating.complete !== null);
 
 	$effect(() => {
-		console.log(isNavigating);
+		// console.log(isNavigating);
 		if (isNavigating) {
 			navigator.vibrate?.(20);
 		}
