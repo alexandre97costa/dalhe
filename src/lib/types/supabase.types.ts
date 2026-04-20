@@ -98,15 +98,41 @@ export type Database = {
         }
         Relationships: []
       }
+      game: {
+        Row: {
+          banner: string | null
+          created_at: string
+          id: number
+          logo: string | null
+          name: string
+        }
+        Insert: {
+          banner?: string | null
+          created_at?: string
+          id?: number
+          logo?: string | null
+          name: string
+        }
+        Update: {
+          banner?: string | null
+          created_at?: string
+          id?: number
+          logo?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
       lap_time: {
         Row: {
           car_id: number
           created_at: string
           driver_id: string
           for_testing: boolean
+          game_id: number | null
           id: number
           pole_rating: number
           time_milliseconds: number
+          tournament_id: number | null
           track_id: number
           was_podium: boolean
           wet: boolean
@@ -116,9 +142,11 @@ export type Database = {
           created_at?: string
           driver_id?: string
           for_testing?: boolean
+          game_id?: number | null
           id?: number
           pole_rating?: number
           time_milliseconds: number
+          tournament_id?: number | null
           track_id: number
           was_podium?: boolean
           wet?: boolean
@@ -128,9 +156,11 @@ export type Database = {
           created_at?: string
           driver_id?: string
           for_testing?: boolean
+          game_id?: number | null
           id?: number
           pole_rating?: number
           time_milliseconds?: number
+          tournament_id?: number | null
           track_id?: number
           was_podium?: boolean
           wet?: boolean
@@ -147,8 +177,36 @@ export type Database = {
             foreignKeyName: "lap_time_driver_id_fkey1"
             columns: ["driver_id"]
             isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["driverid"]
+          },
+          {
+            foreignKeyName: "lap_time_driver_id_fkey1"
+            columns: ["driver_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "game"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournament"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["trackid"]
           },
           {
             foreignKeyName: "lap_time_track_id_fkey"
@@ -210,6 +268,190 @@ export type Database = {
         }
         Relationships: []
       }
+      reference_time: {
+        Row: {
+          category_id: number
+          created_at: string
+          game_id: number
+          id: number
+          time_ms: number
+          track_id: number
+        }
+        Insert: {
+          category_id: number
+          created_at?: string
+          game_id: number
+          id?: number
+          time_ms: number
+          track_id: number
+        }
+        Update: {
+          category_id?: number
+          created_at?: string
+          game_id?: number
+          id?: number
+          time_ms?: number
+          track_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reference_time_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "car_category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reference_time_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "game"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reference_time_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["trackid"]
+          },
+          {
+            foreignKeyName: "reference_time_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "race_track"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournament: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: number
+          is_private: boolean
+          name: string
+          scoring_type: Database["public"]["Enums"]["TournamentScoring"]
+          start_date: string
+          status: Database["public"]["Enums"]["TournamentStatus"]
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          is_private?: boolean
+          name: string
+          scoring_type?: Database["public"]["Enums"]["TournamentScoring"]
+          start_date: string
+          status?: Database["public"]["Enums"]["TournamentStatus"]
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: number
+          is_private?: boolean
+          name?: string
+          scoring_type?: Database["public"]["Enums"]["TournamentScoring"]
+          start_date?: string
+          status?: Database["public"]["Enums"]["TournamentStatus"]
+        }
+        Relationships: []
+      }
+      tournament_participant: {
+        Row: {
+          created_at: string
+          driver_id: string
+          id: number
+          is_admin: boolean
+          tournament_id: number
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          id?: number
+          is_admin?: boolean
+          tournament_id: number
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          id?: number
+          is_admin?: boolean
+          tournament_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_participant_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["driverid"]
+          },
+          {
+            foreignKeyName: "tournament_participant_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_participant_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournament"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournament_track: {
+        Row: {
+          created_at: string
+          id: number
+          order_index: number | null
+          tournament_id: number
+          track_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          order_index?: number | null
+          tournament_id: number
+          track_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          order_index?: number | null
+          tournament_id?: number
+          track_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_track_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournament"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_track_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["trackid"]
+          },
+          {
+            foreignKeyName: "tournament_track_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "race_track"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       listing_recent_laptimes: {
@@ -218,13 +460,24 @@ export type Database = {
           car_model: string | null
           created_at: string | null
           driver: string | null
+          driverid: string | null
+          game_id: number | null
           is_personal_best: boolean | null
           is_track_record: boolean | null
           laptime: number | null
           previous_laptime: number | null
           track_name: string | null
+          trackid: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lap_time_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "game"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
@@ -257,7 +510,11 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      TournamentScoring:
+        | "Aggregate"
+        | "Points-Based (Participants)"
+        | "Points-Based (F1)"
+      TournamentStatus: "Draft" | "Scheduled" | "Ongoing" | "Completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -384,6 +641,13 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      TournamentScoring: [
+        "Aggregate",
+        "Points-Based (Participants)",
+        "Points-Based (F1)",
+      ],
+      TournamentStatus: ["Draft", "Scheduled", "Ongoing", "Completed"],
+    },
   },
 } as const
