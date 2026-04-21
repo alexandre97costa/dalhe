@@ -37,7 +37,8 @@ export async function getTrackIdBySlug(supabaseClient: typeof supabase, slug: st
 export async function getAllTracks(supabaseClient: typeof supabase) {
     const { data, error } = await supabaseClient
         .from('race_track')
-        .select('id, name');
+        .select('id, name')
+        .order('name', { ascending: true });
     if (error) throw error;
     return data;
 }
