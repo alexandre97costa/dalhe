@@ -8,9 +8,9 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
 	// console.log(session)
 
-	// if the user is already logged in return them to the account page
+	// if the user is already logged in, take them to the app's home page
 	if (session) {
-		// redirect(303, '/account')
+		redirect(303, '/home');
 	}
 
 	return { url: url.origin, session }
