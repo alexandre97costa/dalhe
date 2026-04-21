@@ -40,17 +40,17 @@
 			<RecentEntry {laptime} />
 
 			<Accordion.Content class="border bg-card border-t-0 rounded-b-md flex flex-col gap-3 px-3 py-3 ">
-				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 items-center pointer-events-none" href="/driver/{laptime.driver}" >
+				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 items-center" href="/driver/{laptime.driverid}" >
 					<CircleUserRound class="" size="16" strokeWidth="2" />
 					{m.laptime_options_goto_driver()}
 				</a>
 				<Separator class="" />
-				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 pointer-events-none" href="/teste">
+				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2" href="/leaders/{laptime.trackid}">
 					<ListFilter class="rotate-180" size="16" strokeWidth="2" />
 					{m.laptime_options_goto_leaderboard()}
 				</a>
 				<Separator class="" />
-				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 pointer-events-none" href="/teste">
+				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2" href="/driver/{laptime.driverid}">
 					<Swords class="" size="16" strokeWidth="2" />
 					{m.laptime_options_compare()}
 				</a>
