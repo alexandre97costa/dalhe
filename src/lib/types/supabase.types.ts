@@ -503,6 +503,7 @@ export type Database = {
           car_model: string
           created_at: string
           driver: string
+          driverid: string
           laptime: number
           rank: number
           track_record: number
