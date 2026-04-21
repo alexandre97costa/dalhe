@@ -10,6 +10,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
 	import DriverProfile from '$lib/components/driver/DriverProfile.svelte';
@@ -101,27 +102,22 @@
 							class="bg-card flex flex-col gap-3 rounded-b-md border border-t-0 px-3 py-3 "
 						>
 							<a
-								class="text-muted-foreground/30 hover:text-foreground pointer-events-none flex items-center gap-2 no-underline!"
-								href="/driver/{laptime.driver}"
-							>
-								<CircleUserRound class="" size="16" strokeWidth="2" />
-								{m.laptime_options_goto_driver()}
-							</a>
-							<Separator class="" />
-							<a
-								class="text-muted-foreground hover:text-foreground pointer-events-none flex gap-2 no-underline!"
-								href="/teste"
+								class="text-muted-foreground hover:text-foreground flex gap-2 no-underline!"
+								href="/leaders?track={laptime.trackid}"
 							>
 								<ListFilter class="rotate-180" size="16" strokeWidth="2" />
 								{m.laptime_options_goto_leaderboard()}
 							</a>
 							<Separator class="" />
 							<a
-								class="text-muted-foreground hover:text-foreground pointer-events-none flex gap-2 no-underline!"
-								href="/teste"
+								class="text-muted-foreground/50 hover:text-foreground pointer-events-none flex gap-2 no-underline!"
+								href="/driver/{data.driver?.id}"
 							>
 								<Swords class="" size="16" strokeWidth="2" />
 								{m.laptime_options_compare()}
+								<Badge variant="outline_teal" class="ml-1">
+									{m.laptime_options_compare_soon()}
+								</Badge>
 							</a>
 						</Accordion.Content>
 					</Accordion.Item>

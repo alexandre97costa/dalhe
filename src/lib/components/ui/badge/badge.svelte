@@ -12,8 +12,8 @@
 				destructive:
 					"bg-destructive [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/70 border-transparent text-white",
 				outline: "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-				outline_purple:
-					"border-purple-500 bg-transparent text-purple-400 [a&]:hover:bg-purple-500/10 [a&]:hover:text-purple-500",
+				outline_purple:	"border-purple-500 bg-transparent text-purple-400 [a&]:hover:bg-purple-500/10 [a&]:hover:text-purple-500",
+				outline_teal:	"border-teal-500 bg-transparent text-teal-400 [a&]:hover:bg-teal-500/10 [a&]:hover:text-teal-500",
 				purple:
 					"border-purple-500 bg-purple-500 text-white [a&]:hover:bg-purple-500/90",
 			},

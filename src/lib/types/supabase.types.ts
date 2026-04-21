@@ -1,6 +1,5 @@
 // This file was generated and you can get an updated version of it here 
 // https://supabase.com/dashboard/project/kuqpwuozwlqiqgphzgai/api?page=tables-intro
-
 export type Json =
   | string
   | number
@@ -494,6 +493,7 @@ export type Database = {
           previous_laptime: number
           track_name: string
           track_record: number
+          trackid: number
         }[]
       }
       get_leaderboard_by_track: {

@@ -102,6 +102,7 @@
     "laptime_options_goto_driver": "Go to driver",
     "laptime_options_goto_leaderboard": "Go to track's leaderboard",
     "laptime_options_compare": "Compare with me",
+    "laptime_options_compare_soon": "Coming soon",
     "home_recent_laptimes": "Recent Laptimes",
     "home_recent_laptimes_description": "See the latest laptimes from the community",
     "home_no_laptimes": "No laptimes yet",

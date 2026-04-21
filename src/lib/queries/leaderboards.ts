@@ -18,6 +18,7 @@ export async function getTrackLeaderboard(
             category: categoryId ?? 1,
             testing: GET_TEST_RECORDS == 'true'
         });
+    if (error) console.error('Error fetching track leaderboard:', error);
     if (error) throw error;
 
     return data;
