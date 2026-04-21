@@ -16,8 +16,9 @@ export async function getTrackLeaderboard(
         .rpc("get_leaderboard_by_track", { 
             track: trackId,
             category: categoryId ?? 1,
-            testing: GET_TEST_RECORDS === "true"
+            testing: GET_TEST_RECORDS == 'true'
         });
+    if (error) console.error('Error fetching track leaderboard:', error);
     if (error) throw error;
 
     return data;

@@ -21,6 +21,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import { Separator } from "$lib/components/ui/separator/index.js";
 	import { toast } from 'svelte-sonner';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -95,7 +96,7 @@
 
 {#snippet formIcon(name: typeof IconType)}
 	{@const Icon = name}
-	<Icon size="18" color="oklch(0.714 0.203 305.504)" />
+	<Icon size="18" color="oklch(70.8% 0 0)"/>
 {/snippet}
 
 {#snippet InputOTPSlot(cell: any)}
@@ -110,7 +111,7 @@
 	<form
 		method="POST"
 		action="/new"
-		class="grid items-start gap-4"
+		class="grid items-start gap-5"
 		use:enhance
 		onsubmit={() => (formLoading = true)}
 	>
@@ -181,7 +182,7 @@
 		</Form.Field>
 
 		<!-- Car -->
-		<div class="grid grid-cols-2 items-end gap-3">
+		<div class="grid grid-cols-2 items-end gap-4">
 			<Form.Field {form} name="car_make">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -244,7 +245,7 @@
 			</Form.Field>
 		</div>
 
-		<Button type="submit">
+		<Button type="submit" variant="cta" size="lg">
 			{#if formLoading}
 				<Spinner />
 			{/if}
@@ -254,9 +255,10 @@
 {/snippet}
 
 <Dialog.Root bind:open>
-	<Dialog.Content>
+	<Dialog.Content class="border-purple-700 bg-white dark:bg-muted">
 		<Dialog.Header>
 			<Dialog.Title>{m.formadd_header()}</Dialog.Title>
+			<Separator class="mt-4 mb-2" />
 		</Dialog.Header>
 		{@render laptimeForm()}
 	</Dialog.Content>

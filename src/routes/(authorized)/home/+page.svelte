@@ -6,10 +6,17 @@
 	import { m } from '$lib/paraglide/messages.js';
 
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
-	import { Separator } from "$lib/components/ui/separator/index.js";
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
-	import { type Icon as IconType, SlidersHorizontal, CircleUserRound, ListFilter, Swords } from '@lucide/svelte';
+	import {
+		type Icon as IconType,
+		SlidersHorizontal,
+		CircleUserRound,
+		ListFilter,
+		Swords
+	} from '@lucide/svelte';
 
 	title.set(m.nav_home());
 
@@ -39,22 +46,35 @@
 			<!-- Tem um accordion trigger lá dentro -->
 			<RecentEntry {laptime} />
 
-			<Accordion.Content class="border bg-card border-t-0 rounded-b-md flex flex-col gap-3 px-3 py-3 ">
-				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 items-center pointer-events-none" href="/driver/{laptime.driver}" >
+			<Accordion.Content
+				class="bg-card flex flex-col gap-3 rounded-b-md border border-t-0 px-3 py-3 "
+			>
+				<a
+					class="text-muted-foreground hover:text-foreground flex items-center gap-2 no-underline!"
+					href="/driver/{laptime.driverid}"
+				>
 					<CircleUserRound class="" size="16" strokeWidth="2" />
 					{m.laptime_options_goto_driver()}
 				</a>
 				<Separator class="" />
-				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 pointer-events-none" href="/teste">
+				<a
+					class="text-muted-foreground hover:text-foreground flex gap-2 no-underline!"
+					href="/leaders?track={laptime.trackid}"
+				>
 					<ListFilter class="rotate-180" size="16" strokeWidth="2" />
 					{m.laptime_options_goto_leaderboard()}
 				</a>
 				<Separator class="" />
-				<a class="no-underline! text-muted-foreground hover:text-foreground flex gap-2 pointer-events-none" href="/teste">
+				<a
+					class="text-muted-foreground/50 hover:text-foreground pointer-events-none flex gap-2 no-underline!"
+					href="/driver/{laptime.driverid}"
+				>
 					<Swords class="" size="16" strokeWidth="2" />
 					{m.laptime_options_compare()}
+					<Badge variant="outline_teal" class="ml-1">
+						{m.laptime_options_compare_soon()}
+					</Badge>
 				</a>
-
 			</Accordion.Content>
 		</Accordion.Item>
 	{:else}
