@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit'; 
+import { error, redirect } from '@sveltejs/kit'; 
 import type { PageServerLoad } from './$types';
 import { getDriverById, getDriverTimeline, getDriverStats } from '$lib/queries/driver';
 import type { RecentLaptime } from '$lib/types/listings';
@@ -6,8 +6,6 @@ import type { RecentLaptime } from '$lib/types/listings';
 export const load: PageServerLoad = async ({ locals, params }) => {
     const { supabase, safeGetSession } = locals;
     const session = await safeGetSession();
-
-    if (!session) return { data: { recentLaptimes: [] } };
 
     console.log('Loading driver page for slug:', params.slug);
 
@@ -18,7 +16,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     return { 
         slug: params.slug, 
         laptimes: driverRecentLaptimes,
-        driver: driver,
-        stats: stats
+        driver,
+        session,
+        stats
     };
 }

@@ -37,7 +37,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.url.pathname !== "/" &&
 		event.url.pathname !== "/privacy-policy" &&
 		!event.url.pathname.startsWith("/login") &&
-		!user
+		(!session || !user)
 	) {
 		console.log(event.url.pathname + ': user not logged in, redirecting to login');
 		const redirectUrl = new URL('/login', event.url.origin);

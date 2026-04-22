@@ -22,7 +22,7 @@
 	};
 </script>
 
-<div class="flex flex-col items-center gap-4">
+<div class="mt-4 flex flex-col items-center gap-2">
 	<Avatar.Root class="size-20 border-0 border-rose-400">
 		<Avatar.Image src={photoUrl} alt={username} />
 		<Avatar.Fallback class="bg-linear-to-t from-purple-600 to-purple-400">
@@ -30,17 +30,20 @@
 		</Avatar.Fallback>
 	</Avatar.Root>
 
-	<div class="flex flex-1 flex-col gap-0">
-		<div class="flex items-end justify-between">
-			<h2 class="text-3xl font-semibold">{username}</h2>
-		</div>
-		<!-- <h3 class="text-muted-foreground text-sm font-light">{email}</h3> -->
+	<div class="flex flex-col items-center gap-1">
+		<h2 class="text-2xl font-semibold">{username}</h2>
+		<h2 class="text-md font-regular text-muted-foreground italic">
+			"To finish first, first you have to finish"
+		</h2>
 	</div>
-
-	{#if isCurrentUser}
-		<Button variant="outline" size="icon" class="" onclick={handleEditProfile}>
-			<!-- <span>Editar</span> -->
-			<Pencil class="size-3" />
-		</Button>
-	{/if}
 </div>
+
+{#if isCurrentUser}
+	<div class="flex justify-center mt-3">
+		<Button variant="outline" size="default" class="" onclick={handleEditProfile}>
+			<!-- <span>Editar</span> -->
+			Editar perfil
+			<Pencil class="size-4" />
+		</Button>
+	</div>
+{/if}

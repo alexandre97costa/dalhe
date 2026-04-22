@@ -255,7 +255,7 @@
 {/snippet}
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="border-purple-700 bg-white dark:bg-muted">
+	<Dialog.Content class="border-muted-foreground/30 border-2 bg-white dark:bg-muted">
 		<Dialog.Header>
 			<Dialog.Title>{m.formadd_header()}</Dialog.Title>
 			<Separator class="mt-4 mb-2" />

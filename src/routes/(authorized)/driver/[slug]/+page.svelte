@@ -26,14 +26,13 @@
 		ListFilter,
 		Swords
 	} from '@lucide/svelte';
-
-	title.set(m.nav_profile());
-	let { data } = $props();
-
 	type tabView = {
 		id: string;
 		label: string;
 	};
+
+	let { data } = $props();
+	let accordionValue: string = $state('');
 	let tabViewId: tabView['id'] = $state('latest');
 	let tabViews: tabView[] = [
 		{
@@ -49,6 +48,12 @@
 			label: m.driver_profile_stats()
 		}
 	];
+
+	if (data.driver?.id === data.session!.user!.id) {
+		title.set(m.nav_profile());
+	} else {
+		title.set(m.nav_driver());
+	}
 </script>
 
 {#snippet StatCard(title: string, value: string, icon: typeof IconType, color: string)}
@@ -74,7 +79,7 @@
 	<DriverProfile
 		username={data.driver?.username ?? 'Unknown Driver'}
 		photoUrl={data.driver?.avatar_url ?? 'https://github.com/shadcn.png'}
-		isCurrentUser={false}
+		isCurrentUser={data.driver?.id === data.session!.user!.id}
 	/>
 
 	<Separator class="my-4" />
@@ -82,7 +87,7 @@
 	<Tabs.Root value="latest" class="w-full flex-col justify-start gap-6">
 		<div class="flex justify-center">
 			<Label for="tab-selector" class="sr-only">Tab</Label>
-			<Tabs.List class="flex " size="default">
+			<Tabs.List class="flex " size="lg">
 				{#each tabViews as view (view.id)}
 					<Tabs.Trigger value={view.id}>
 						{view.label}
@@ -92,7 +97,7 @@
 		</div>
 		<Tabs.Content value={'latest'}>
 			{@render TabTitle(m.driver_profile_latest())}
-			<Accordion.Root type="single" class="flex w-full flex-col gap-4" value="">
+			<Accordion.Root type="single" class="flex w-full flex-col gap-4" value={accordionValue}>
 				{#each data.laptimes as laptime, index}
 					<Accordion.Item value={'item-' + index} class="not-last:border-b-0">
 						<!-- Tem um accordion trigger lá dentro -->
@@ -108,17 +113,19 @@
 								<ListFilter class="rotate-180" size="16" strokeWidth="2" />
 								{m.laptime_options_goto_leaderboard()}
 							</a>
-							<Separator class="" />
-							<a
-								class="text-muted-foreground/50 hover:text-foreground pointer-events-none flex gap-2 no-underline!"
-								href="/driver/{data.driver?.id}"
-							>
-								<Swords class="" size="16" strokeWidth="2" />
-								{m.laptime_options_compare()}
-								<Badge variant="outline_teal" class="ml-1">
-									{m.laptime_options_compare_soon()}
-								</Badge>
-							</a>
+							{#if data.driver?.id !== data.session!.user!.id}
+								<Separator class="" />
+								<a
+									class="text-muted-foreground/50 hover:text-foreground pointer-events-none flex gap-2 no-underline!"
+									href="/driver/{data.driver?.id}"
+								>
+									<Swords class="" size="16" strokeWidth="2" />
+									{m.laptime_options_compare()}
+									<Badge variant="outline_teal" class="ml-1">
+										{m.laptime_options_compare_soon()}
+									</Badge>
+								</a>
+							{/if}
 						</Accordion.Content>
 					</Accordion.Item>
 				{:else}
