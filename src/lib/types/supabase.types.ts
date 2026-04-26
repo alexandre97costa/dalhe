@@ -1,5 +1,6 @@
 // This file was generated and you can get an updated version of it here 
 // https://supabase.com/dashboard/project/kuqpwuozwlqiqgphzgai/api?page=tables-intro
+
 export type Json =
   | string
   | number
@@ -219,6 +220,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           full_name: string | null
           id: string
           updated_at: string | null
@@ -226,6 +228,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           full_name?: string | null
           id: string
           updated_at?: string | null
@@ -233,6 +236,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           full_name?: string | null
           id?: string
           updated_at?: string | null

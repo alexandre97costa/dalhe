@@ -114,5 +114,12 @@
     "filters_category_placeholder": "Category",
     "driver_profile_progress": "Progress",
     "driver_profile_stats": "Stats",
-    "driver_profile_latest": "Latest laps"
+    "driver_profile_latest": "Latest laps",
+    "driver_stat_podiums": "Podiums",
+    "driver_stat_current_podiums": "Current Podiums",
+    "driver_stat_poles": "Pole Positions",
+    "driver_stat_current_poles": "Current Pole Positions",
+    "driver_stat_leader_pts": "Leader points",
+    "driver_stat_leader_pts_info": "Leader points are given to you when other drivers add laptimes that are slower than your pole position.",
+    "driver_stat_total_laps": "Total Laps"
 }

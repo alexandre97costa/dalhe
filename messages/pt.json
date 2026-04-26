@@ -114,5 +114,12 @@
     "filters_category_placeholder": "Categoria",
     "driver_profile_progress": "Progresso",
     "driver_profile_stats": "Estatísticas",
-    "driver_profile_latest": "Últimas voltas"
+    "driver_profile_latest": "Últimas voltas",
+    "driver_stat_podiums": "Pódios",
+    "driver_stat_current_podiums": "Pódios Atuais",
+    "driver_stat_poles": "Primeiros Lugares",
+    "driver_stat_current_poles": "Primeiros Lugares Atuais",
+    "driver_stat_leader_pts": "Pontos de Líder",
+    "driver_stat_leader_pts_info": "Os pontos de líder são atribuídos quando outros pilotos adicionam tempos que são mais lentos do que a sua posição de pole.",
+    "driver_stat_total_laps": "Total de Voltas"
 }

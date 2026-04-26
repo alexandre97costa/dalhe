@@ -48,7 +48,7 @@
 	<title>{$title ? $title + ' | Dá-lhe!' : 'Dá-lhe!'}</title>
 </svelte:head>
 
-<Toaster />
+<Toaster position="top-right" invert={false} richColors={true} offset={{ top: '70px' }} mobileOffset={{ top: '70px' }} />
 <ModeWatcher />
 
 <div
@@ -75,8 +75,10 @@
 
 <div class="relative container mx-auto mt-14 mb-20 px-4 py-4">
 	{#if isNavigating}
-		<div class="fixed inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-appear">
-			<img src={LogoImg} alt="logo" class="relative w-20 h-auto animate-bounce" />
+		<div
+			class="animate-appear fixed inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+		>
+			<img src={LogoImg} alt="logo" class="relative h-auto w-20 animate-bounce" />
 		</div>
 	{/if}
 	{@render children?.()}
