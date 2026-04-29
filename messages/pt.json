@@ -121,5 +121,16 @@
     "driver_stat_current_poles": "Primeiros Lugares Atuais",
     "driver_stat_leader_pts": "Pontos de Líder",
     "driver_stat_leader_pts_info": "Os pontos de líder são atribuídos quando outros pilotos adicionam tempos que são mais lentos do que a sua posição de pole.",
-    "driver_stat_total_laps": "Total de Voltas"
+    "driver_stat_total_laps": "Total de Voltas",
+    "formdriver_header": "Editar Perfil",
+    "formdriver_header_description": "Atualiza as informações do teu perfil.",
+    "formdriver_username_label": "Nome de Utilizador",
+    "formdriver_username_placeholder": "Introduz o teu nome de utilizador",
+    "formdriver_username_error_required": "O nome de utilizador é obrigatório",
+    "formdriver_bio_label": "Bio",
+    "formdriver_bio_placeholder": "Diz-nos um pouco sobre ti",
+    "formdriver_cancel_button": "Cancelar",
+    "formdriver_submit_button": "Guardar Alterações",
+    "formdriver_submit_error": "Ocorreu um erro ao atualizar o teu perfil. Por favor, tenta novamente.",
+    "formdriver_submit_success": "Perfil atualizado com sucesso!"
 }

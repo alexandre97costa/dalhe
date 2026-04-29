@@ -41,7 +41,7 @@
 	} = $props();
 
 	const isDesktop = new MediaQuery('(min-width: 768px)');
-	let formLoading = $state(false);
+	let isFormLoading = $state(false);
 
 	let car_makes = $derived(data.formDataRecord.carMakes ?? []);
 	let car_models = $derived(data.formDataRecord.cars ?? []);
@@ -58,7 +58,7 @@
 		onUpdate: ({ form, result }) => {
 			if (form.valid) {
 				open = false;
-				formLoading = false;
+				isFormLoading = false;
 			}
 
 			if (result?.data?.success === false) {
@@ -113,7 +113,7 @@
 		action="/new"
 		class="grid items-start gap-5"
 		use:enhance
-		onsubmit={() => (formLoading = true)}
+		onsubmit={() => (isFormLoading = true)}
 	>
 		<!-- Laptime -->
 		<Form.Field {form} name="laptime">
@@ -246,7 +246,7 @@
 		</div>
 
 		<Button type="submit" variant="cta" size="lg">
-			{#if formLoading}
+			{#if isFormLoading}
 				<Spinner />
 			{/if}
 			{m.nav_add_save()}

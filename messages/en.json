@@ -121,5 +121,16 @@
     "driver_stat_current_poles": "Current Pole Positions",
     "driver_stat_leader_pts": "Leader points",
     "driver_stat_leader_pts_info": "Leader points are given to you when other drivers add laptimes that are slower than your pole position.",
-    "driver_stat_total_laps": "Total Laps"
+    "driver_stat_total_laps": "Total Laps",
+    "formdriver_header": "Edit Profile",
+    "formdriver_header_description": "Update your profile information.",
+    "formdriver_username_label": "Username",
+    "formdriver_username_placeholder": "Enter your username",
+    "formdriver_username_error_required": "Username is required",
+    "formdriver_bio_label": "Bio",
+    "formdriver_bio_placeholder": "Tell us a bit about yourself",
+    "formdriver_cancel_button": "Cancel",
+    "formdriver_submit_button": "Save Changes",
+    "formdriver_submit_error": "An error occurred while updating your profile. Please try again.",
+    "formdriver_submit_success": "Profile updated successfully!"
 }

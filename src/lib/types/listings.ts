@@ -1,4 +1,6 @@
 import type { Database, Tables, Enums } from './supabase.types'
+import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
+import { type DriverSchema } from '$lib/schemas/driverSchema';
 
 // example of how to use the types
 // https://supabase.com/docs/reference/javascript/typescript-support
@@ -23,4 +25,12 @@ export interface LeaderboardEntry {
     car_model: Tables<'car'>['model'],
     laptime: Tables<'lap_time'>['time_milliseconds'],
     track_record: Tables<'lap_time'>['time_milliseconds'],
+}
+
+export interface DriverProfileProps {
+    driverForm: SuperValidated<Infer<DriverSchema>>;
+    username: string;
+    photoUrl: string;
+    bio?: string;
+    isCurrentUser: boolean;
 }

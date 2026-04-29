@@ -2,6 +2,9 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getDriverById, getDriverTimeline, getDriverStats } from '$lib/queries/driver';
 import type { RecentLaptime } from '$lib/types/listings';
+import { superValidate } from "sveltekit-superforms";
+import { driverSchema } from '$lib/schemas/driverSchema';
+import { zod4 } from "sveltekit-superforms/adapters";
 
 export const load: PageServerLoad = async ({ locals, params }) => {
     const { supabase, safeGetSession } = locals;
@@ -14,6 +17,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     const stats = await getDriverStats(supabase, params.slug);
 
     return { 
+        driverForm: await superValidate(zod4(driverSchema)),
         slug: params.slug, 
         laptimes: driverRecentLaptimes,
         driver,

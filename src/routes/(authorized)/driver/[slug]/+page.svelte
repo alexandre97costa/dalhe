@@ -162,11 +162,13 @@
 {/snippet}
 
 <div class="flex flex-col">
-	<DriverProfile
-		username={data.driver?.username ?? 'Unknown Driver'}
-		photoUrl={data.driver?.avatar_url ?? 'https://github.com/shadcn.png'}
-		bio={data.driver?.bio ?? undefined}
-		isCurrentUser={data.driver?.id === data.session!.user!.id}
+
+	<DriverProfile  
+		driverForm={data.driverForm}
+		username = {(data.driver?.username) ?? 'Unknown Driver'}
+		photoUrl= {(data.driver?.avatar_url) ?? 'https://github.com/shadcn.png'}
+		bio={(data.driver?.bio) ?? undefined}
+		isCurrentUser={(data.driver?.id === data.session!.user!.id)}
 	/>
 
 	<Separator class="my-4" />
