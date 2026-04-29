@@ -1,8 +1,6 @@
 <script lang="ts">
 	// types
-	import { type Infer, superForm, type SuperValidated, superValidate } from 'sveltekit-superforms';
-	import type { Handle } from '@sveltejs/kit';
-	import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
+	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import type { FormDataRecord } from '../../app.d.ts';
 	//form & utils
 	// import { enhance, applyAction } from '$app/forms';
@@ -14,7 +12,6 @@
 	// components
 	import { type Icon as IconType, MapPin, Timer, Car } from '@lucide/svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -23,11 +20,6 @@
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
 	import { Separator } from "$lib/components/ui/separator/index.js";
 	import { toast } from 'svelte-sonner';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Field } from 'formsnap';
-	import { Cell } from './ui/table/index.js';
-	import FormField from './ui/form/form-field.svelte';
 
 	let {
 		data,
