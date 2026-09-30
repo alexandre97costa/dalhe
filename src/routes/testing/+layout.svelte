@@ -1,0 +1,73 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { invalidate } from '$app/navigation';
+	import { getLocale } from '$lib/paraglide/runtime.js';
+	import { title } from '$lib/store.js';
+	import { navigating } from '$app/state';
+
+	import '../../app.css';
+	import { ModeWatcher } from 'mode-watcher';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { Button } from '$lib/components/ui/button/index';
+	import UserSession from '$lib/components/UserSession.svelte';
+	import Nav from '$lib/components/Nav.svelte';
+	import New from '$lib/components/New.svelte';
+	import LogoImg from '$lib/images/500w.png';
+	import { is } from 'zod/locales';
+
+	let { data, children } = $props()
+	let open = $state(false);
+	let isNavigating: boolean = $derived(navigating.complete !== null);
+
+	$effect(() => {
+		// console.log(isNavigating);
+		if (isNavigating) {
+			navigator.vibrate?.(20);
+		}
+	});
+
+	$effect(() => {
+		// console.log(data);
+	});
+</script>
+
+<svelte:head>
+	<title>{$title ? $title + ' | Dá-lhe!' : 'Dá-lhe!'}</title>
+</svelte:head>
+
+<Toaster position="top-right" invert={false} richColors={true} offset={{ top: '70px' }} mobileOffset={{ top: '70px' }} />
+<ModeWatcher />
+
+<div
+	class="fixed top-0 right-0 left-0 z-20 flex justify-between border-b bg-zinc-100 px-1 py-2 backdrop-blur-sm dark:bg-zinc-900"
+>
+	<div class="flex items-center gap-2">
+		<Button
+			href="/"
+			variant="ghost"
+			size="lg"
+			class="group hover:bg-popover hover:dark:bg-popover p-2"
+		>
+			<img src={LogoImg} alt="logo" class=" max-w-8" />
+		</Button>
+
+		<div class="flex flex-col">
+			<h1 class="text-xl font-semibold">{$title}</h1>
+		</div>
+	</div>
+	<div class="flex items-center gap-1.5 pr-1">
+		
+	</div>
+</div>
+
+<div class="relative container mx-auto mt-14 mb-20 px-4 py-4">
+	{#if isNavigating}
+		<div
+			class="animate-appear fixed inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+		>
+			<img src={LogoImg} alt="logo" class="relative h-auto w-20 animate-bounce" />
+		</div>
+	{/if}
+	{@render children()}
+</div>
+

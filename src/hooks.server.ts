@@ -33,10 +33,17 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const { session, user } = await event.locals.safeGetSession();
 
+	const freeAccessPaths = [
+		'/',
+		'/login',
+		'/login/confirm',
+		'/login/error',
+		'/privacy-policy',
+		'/testing',
+	]
+
 	if (
-		event.url.pathname !== "/" &&
-		event.url.pathname !== "/privacy-policy" &&
-		!event.url.pathname.startsWith("/login") &&
+		freeAccessPaths.indexOf(event.url.pathname) === -1 &&
 		(!session || !user)
 	) {
 		console.log(event.url.pathname + ': user not logged in, redirecting to login');
