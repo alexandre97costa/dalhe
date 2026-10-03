@@ -40,6 +40,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		'/login/error',
 		'/privacy-policy',
 		'/testing',
+		'/testing/sh',
 	]
 
 	if (
