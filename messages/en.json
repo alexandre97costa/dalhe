@@ -133,5 +133,9 @@
     "formdriver_cancel_button": "Cancel",
     "formdriver_submit_button": "Save Changes",
     "formdriver_submit_error": "An error occurred while updating your profile. Please try again.",
-    "formdriver_submit_success": "Profile updated successfully!"
+    "formdriver_submit_success": "Profile updated successfully!",
+    "rig_connect_to_rig": "Connect to Rig",
+    "rig_disconnect_from_rig": "Disconnect from Rig",
+    "rig_connecting": "Connecting...",
+    "rig_connected": "Connected"
 }
