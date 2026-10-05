@@ -44,7 +44,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 			'/testing/sh',
 		],
 		slugPaths: [ /* Paths with slugs after them (eg. /connect/:id) */
-			'/connect/'
+			'/connect/',
+			'/rig/',
 		]
 	}
 

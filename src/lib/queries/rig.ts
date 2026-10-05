@@ -42,3 +42,40 @@ export async function getRigById(
     if (error) throw error;
     return data;
 }
+
+export type RigStats = {
+    session: {
+        trackName: string;
+        carName: string;
+        trackTemperature: number;
+        weather: string;
+    };
+    lap: {
+        lapNumber: number;
+        /** Progress from 0 to 1. */
+        lapProgress: number;
+        numberOfSectors: number;
+        currentSector: number;
+        currentSectorTime: number;
+        currentLapTime: number;
+        sectorTimes: Record<number, number>;
+    };
+};
+
+export async function sendRigStats(
+    supabaseClient: typeof supabase,
+    rigId: string,
+    stats: RigStats) {
+
+    const { error } = await supabaseClient
+        .from('rig_stats')
+        .update({
+            session_stats: stats.session,
+            session_updated_at: new Date().toISOString(),
+            lap_stats: stats.lap,
+            lap_updated_at: new Date().toISOString()
+        })
+        .eq('id', rigId);
+    if (error) throw error;
+    
+}
