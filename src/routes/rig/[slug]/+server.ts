@@ -13,7 +13,7 @@ export async function GET({ url, locals, params }): Promise<Response> {
 	const rig = await getRigById(supabase, params.slug);
 
 	return json({
-        rig_name: rig.name,
-        driver_name: rig.profiles?.username || null,
+        rig_name: rig?.name || null,
+        driver_name: rig?.profiles?.username || null,
 	});
 }

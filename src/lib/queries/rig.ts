@@ -12,16 +12,54 @@ export async function attemptRigConnection(
     // 1) update the rig's connected_user and last_connection fields and 
     // 2) create/update on the n:m table rig_drivers, with the rig_id and driver_id, and a timestamp for the connection
 
-
-
-    const { data, error } = await supabaseClient
+    const { data: rigData, error: rigError } = await supabaseClient
         .from('rig')
+        .update({
+            connected_user: driverId,
+            last_connection: new Date().toISOString()
+        })
+        .eq('id', rigId);
+    if (rigError) throw rigError;
+
+    const { data: driverData, error: driverError } = await supabaseClient
+        .from('rig_drivers')
+        .upsert({
+            rig_id: rigId,
+            driver_id: driverId,
+            last_connected_at: new Date().toISOString()
+        }, {
+            onConflict: 'rig_id,driver_id',
+        });
+
+    if (driverError) throw driverError;
+
+    return { message: 'User sucessfully connected to rig!' };
+}
+
+export async function getRigStats(
+    supabaseClient: typeof supabase,
+    rigId: string,
+    driverId: string) {
+
+    // check if driver is associated with rig in rig_drivers table
+    const { data: rigDriverData, error: rigDriverError } = await supabaseClient
+        .from('rig_drivers')
         .select('*')
-        .eq('id', rigId)
+        .eq('rig_id', rigId)
         .eq('driver_id', driverId)
         .single();
-    if (error) throw error;
 
+    if (rigDriverError) throw rigDriverError;
+
+    const { data, error } = await supabaseClient
+        .from('rig_stats')
+        .select(`
+            session_stats,
+            lap_stats
+        `)
+        .eq('id', rigId)
+        .single();
+    if (error) throw error;
     return data;
 }
 
@@ -39,7 +77,7 @@ export async function getRigById(
         `)
         .eq('id', rigId)
         .single();
-    if (error) throw error;
+    if (error && error?.code !== 'PGRST116') throw error;
     return data;
 }
 
@@ -77,5 +115,5 @@ export async function sendRigStats(
         })
         .eq('id', rigId);
     if (error) throw error;
-    
+
 }

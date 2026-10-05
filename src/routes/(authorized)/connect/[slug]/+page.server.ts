@@ -10,8 +10,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     const { supabase, safeGetSession } = locals;
     const session = await safeGetSession();
 
-    console.log('Trying to connect to rig:', params.slug);
-
+    /*
+    This is the homepage for when the driver scans a QR Code on the rig. 
+    
+    If the driver is not connected to the rig, they will be shown a button to connect to the rig.
+    If the driver is already connected to the rig, they will be redirected to the rig's page. 
+    */
 
     return { 
         
