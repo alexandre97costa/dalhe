@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { LayoutProps } from './$types';
-	import type { LayoutServerLoad } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { getLocale } from '$lib/paraglide/runtime.js';
@@ -17,18 +15,7 @@
 	import LogoImg from '$lib/images/500w.png';
 	import { is } from 'zod/locales';
 
-	onMount(() => {
-		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
-			if (_session?.expires_at !== session?.expires_at) {
-				invalidate('supabase:auth');
-			}
-		});
-		return () => data.subscription.unsubscribe();
-	});
-
-	let { data, children }: LayoutProps = $props();
-	let { supabase, session, user, laptimeForm, formDataRecord } = $derived(data);
-
+	let { data, children } = $props()
 	let open = $state(false);
 	let isNavigating: boolean = $derived(navigating.complete !== null);
 
@@ -69,7 +56,7 @@
 		</div>
 	</div>
 	<div class="flex items-center gap-1.5 pr-1">
-		<UserSession {user} />
+		
 	</div>
 </div>
 
@@ -81,10 +68,6 @@
 			<img src={LogoImg} alt="logo" class="relative h-auto w-20 animate-bounce" />
 		</div>
 	{/if}
-	{@render children?.()}
+	{@render children()}
 </div>
 
-<div class="fixed right-0 bottom-0 left-0 z-20 flex w-full justify-center">
-	<Nav bind:open driverId={session?.user.id} {isNavigating} />
-	<New bind:open data={{ laptimeForm, formDataRecord }} />
-</div>

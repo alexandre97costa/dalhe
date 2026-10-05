@@ -1,0 +1,10 @@
+# requests
+# Requests are separated by ###. Variables: {{baseUrl}}. Environments: http-client.env.json
+
+### POST http://localhost:5173/testing/sh?what=the%20hell
+POST http://localhost:5173/testing/sh?what=the%20hell
+Content-Type: application/json
+
+{
+  "is": "going on"
+}

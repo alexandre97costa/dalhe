@@ -33,11 +33,29 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const { session, user } = await event.locals.safeGetSession();
 
+	const freeAccess = {
+		absolutePaths: [
+			'/',
+			'/login',
+			'/login/confirm',
+			'/login/error',
+			'/privacy-policy',
+			'/testing',
+			'/testing/sh',
+		],
+		slugPaths: [ /* Paths with slugs after them (eg. /connect/:id) */
+			'/connect/',
+			'/rig/',
+		]
+	}
+
+	const isFreeAccessPath =
+		freeAccess.absolutePaths.includes(event.url.pathname) ||
+		freeAccess.slugPaths.some((path) => event.url.pathname.startsWith(path))
+
 	if (
-		event.url.pathname !== "/" &&
-		event.url.pathname !== "/privacy-policy" &&
-		!event.url.pathname.startsWith("/login") &&
-		!user
+		!isFreeAccessPath &&
+		(!session || !user)
 	) {
 		console.log(event.url.pathname + ': user not logged in, redirecting to login');
 		const redirectUrl = new URL('/login', event.url.origin);

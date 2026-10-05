@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Chart from '$lib/components/ui/chart/index.js';
-	import { curveNatural } from 'd3-shape';
 	import { Area, AreaChart, LinearGradient, defaultChartPadding } from 'layerchart';
 	import TrendingUpIcon from '@lucide/svelte/icons/trending-up';
 
@@ -63,7 +62,6 @@
 					{#snippet children({ gradient })}
 						<Area
 							seriesKey={s.key}
-							curve={curveNatural}
 							fillOpacity={0.4}
 							line={{ class: 'stroke-1' }}
 							motion="tween"
