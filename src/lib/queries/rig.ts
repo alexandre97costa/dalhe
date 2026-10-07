@@ -72,6 +72,7 @@ export async function getRigById(
         .select(`
             name,
             profiles (
+                id,
                 username
             )
         `)

@@ -1,3 +1,0 @@
-<div>
-    Session page
-</div>

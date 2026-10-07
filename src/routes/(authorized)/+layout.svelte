@@ -64,9 +64,9 @@
 			<img src={LogoImg} alt="logo" class=" max-w-8" />
 		</Button>
 
-		<div class="flex flex-col">
+		<!-- <div class="flex flex-col">
 			<h1 class="text-xl font-semibold">{$title}</h1>
-		</div>
+		</div> -->
 	</div>
 	<div class="flex items-center gap-1.5 pr-1">
 		<UserSession {user} />
@@ -78,7 +78,7 @@
 		<div
 			class="animate-appear fixed inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-sm"
 		>
-			<img src={LogoImg} alt="logo" class="relative h-auto w-20 animate-bounce" />
+			<img src={LogoImg} alt="logo" class="relative h-auto w-20 animate-arrow-bounce" />
 		</div>
 	{/if}
 	{@render children?.()}

@@ -134,8 +134,12 @@
     "formdriver_submit_button": "Guardar Alterações",
     "formdriver_submit_error": "Ocorreu um erro ao atualizar o teu perfil. Por favor, tenta novamente.",
     "formdriver_submit_success": "Perfil atualizado com sucesso!",
+    "rig_connect_title": "Conectar a {rigName}",
     "rig_connect_to_rig": "Conectar ao cockpit",
-    "rig_disconnect_from_rig": "Sair do cockpit",
+    "rig_connect_label": "Estás prestes a conectar-te a:",
+    "rig_connect_warning": "Irás desconectar o condutor atual:",
+    "rig_connected": "Ligado",
     "rig_connecting": "A ligar...",
-    "rig_connected": "Ligado"
+    "rig_disconnect_from_rig": "Sair do cockpit",
+    "rig_disconnected": "Desconectado"
 }

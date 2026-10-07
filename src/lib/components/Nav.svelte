@@ -66,18 +66,18 @@
 		<NavigationMenu.Link
 			href={item.href}
 			class={cn(
-				'flex flex-col items-center gap-2 pt-2',
-				titleValue == item.title ? 'bg-white dark:bg-zinc-800' : ''
+				'flex flex-col items-center gap-2 pt-2 size-18'
 			)}
 		>
 			<Icon
-				strokeWidth="1.2"
-				class={cn('size-6', titleValue == item.title ? 'text-zinc-800 dark:text-zinc-50' : 'text-zinc-400')}
+				strokeWidth={titleValue == item.title ? "1.5" : "1"}
+				class={cn('size-6', titleValue == item.title ? 'text-purple-700 dark:text-purple-500' : 'text-foreground/70')}
 			/>
+				<!-- /* class={cn('size-6', titleValue == item.title ? 'text-zinc-800 dark:text-zinc-50' : 'text-zinc-400')} */ -->
 			<span
 				class={cn(
-					'text-sm font-light',
-					titleValue == item.title ? 'text-foreground' : 'text-muted-foreground'
+					'text-sm ',
+					titleValue == item.title ? 'text-purple-800 dark:text-purple-400 font-normal' : 'text-foreground font-light'
 				)}
 			>
 				{item.title}
@@ -88,7 +88,7 @@
 
 <NavigationMenu.Root
 	viewport={false}
-	class="dark:border-input max-w-full border-t bg-zinc-100 px-4 py-2 shadow-xl backdrop-blur-sm dark:bg-zinc-900 "
+	class="dark:border-input max-w-full border-t  px-4 py-2 shadow-xl bg-white dark:bg-zinc-900 "
 >
 	<NavigationMenu.List class="grid min-w-screen grid-cols-4 gap-3 md:min-w-full">
 		{#each menuItems as item, i}
