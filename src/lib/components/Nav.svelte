@@ -46,14 +46,14 @@
 			href: '/tournaments',
 			description: 'Tournament information and results',
 			icon: Trophy,
-			order: 4
+			order: 3
 		},
 		{
 			title: m.nav_profile(),
 			href: `/driver/${driverId}`,
 			description: 'Manage your profile and settings',
 			icon: UserRound,
-			order: 5
+			order: 4
 		}
 	];
 </script>
@@ -61,18 +61,18 @@
 {#snippet menuItem(item: MenuItem, i: number)}
 	{@const Icon = item.icon}
 	<NavigationMenu.Item
-		class={cn('col-span-2 flex justify-center', i < 2 ? 'order-first' : 'order-last')}
+		class={cn(`flex justify-center order-${i}`)}
 	>
 		<NavigationMenu.Link
 			href={item.href}
 			class={cn(
-				'flex flex-col items-center gap-2 pt-3',
+				'flex flex-col items-center gap-2 pt-2',
 				titleValue == item.title ? 'bg-white dark:bg-zinc-800' : ''
 			)}
 		>
 			<Icon
-				strokeWidth="2"
-				class={titleValue == item.title ? 'text-zinc-800 dark:text-zinc-50' : 'text-zinc-400'}
+				strokeWidth="1.2"
+				class={cn('size-6', titleValue == item.title ? 'text-zinc-800 dark:text-zinc-50' : 'text-zinc-400')}
 			/>
 			<span
 				class={cn(
@@ -90,11 +90,12 @@
 	viewport={false}
 	class="dark:border-input max-w-full border-t bg-zinc-100 px-4 py-2 shadow-xl backdrop-blur-sm dark:bg-zinc-900 "
 >
-	<NavigationMenu.List class="grid min-w-screen grid-cols-10 gap-3 md:min-w-full">
+	<NavigationMenu.List class="grid min-w-screen grid-cols-4 gap-3 md:min-w-full">
 		{#each menuItems as item, i}
 			{@render menuItem(item, i)}
 		{/each}
 
+		<!-- 
 		<NavigationMenuItem class="relative col-span-2 flex h-3 justify-center ">
 			<NavigationMenu.Link>
 				{#snippet child()}
@@ -123,19 +124,15 @@
 
 							"
 					>
-						<!-- {#if isNavigating}
-							<div
-								class="scale-[180%] size-4 animate-spin rounded-full border-1 border-t-purple-500"
-							></div>
-						{:else} -->
+
 							<div class="scale-[180%]">
 								<Plus strokeWidth="2" />
 							</div>
-						<!-- {/if} -->
 						<span class="sr-only">{m.nav_add}</span>
 					</Button>
 				{/snippet}
 			</NavigationMenu.Link>
 		</NavigationMenuItem>
+		 -->
 	</NavigationMenu.List>
 </NavigationMenu.Root>
