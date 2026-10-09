@@ -12,28 +12,30 @@ export async function attemptRigConnection(
     // 1) update the rig's connected_user and last_connection fields and 
     // 2) create/update on the n:m table rig_drivers, with the rig_id and driver_id, and a timestamp for the connection
 
-    const { data: rigData, error: rigError } = await supabaseClient
-        .from('rig')
-        .update({
-            connected_user: driverId,
-            last_connection: new Date().toISOString()
-        })
-        .eq('id', rigId);
-    if (rigError) throw rigError;
+    // TODO IMPORTANT: USE RPC RIG CONNECTION INSTEAD OF THIS FUNCTION, AS IT WILL HANDLE THE CONNECTION LOGIC AND VALIDATION ON THE SERVER SIDE
 
-    const { data: driverData, error: driverError } = await supabaseClient
-        .from('rig_drivers')
-        .upsert({
-            rig_id: rigId,
-            driver_id: driverId,
-            last_connected_at: new Date().toISOString()
-        }, {
-            onConflict: 'rig_id,driver_id',
-        });
+    // const { data: rigData, error: rigError } = await supabaseClient
+    //     .from('rig')
+    //     .update({
+    //         connected_user: driverId,
+    //         last_connection: new Date().toISOString()
+    //     })
+    //     .eq('id', rigId);
+    // if (rigError) throw rigError;
 
-    if (driverError) throw driverError;
+    // const { data: driverData, error: driverError } = await supabaseClient
+    //     .from('rig_drivers')
+    //     .upsert({
+    //         rig_id: rigId,
+    //         driver_id: driverId,
+    //         last_connected_at: new Date().toISOString()
+    //     }, {
+    //         onConflict: 'rig_id,driver_id',
+    //     });
 
-    return { message: 'User sucessfully connected to rig!' };
+    // if (driverError) throw driverError;
+
+    // return { message: 'User sucessfully connected to rig!' };
 }
 
 export async function getRigStats(
