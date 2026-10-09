@@ -126,12 +126,19 @@ export type Database = {
         Row: {
           car_id: number
           created_at: string
-          driver_id: string
+          dismissed_at: string | null
+          driver_assigned_at: string | null
+          driver_assigned_by: string | null
+          driver_id: string | null
           for_testing: boolean
           game_id: number | null
           id: number
           pole_rating: number
           rig_id: string | null
+          sector1_ms: number | null
+          sector2_ms: number | null
+          sector3_ms: number | null
+          session_id: string | null
           time_milliseconds: number
           tournament_id: number | null
           track_id: number
@@ -141,12 +148,19 @@ export type Database = {
         Insert: {
           car_id: number
           created_at?: string
-          driver_id?: string
+          dismissed_at?: string | null
+          driver_assigned_at?: string | null
+          driver_assigned_by?: string | null
+          driver_id?: string | null
           for_testing?: boolean
           game_id?: number | null
           id?: number
           pole_rating?: number
           rig_id?: string | null
+          sector1_ms?: number | null
+          sector2_ms?: number | null
+          sector3_ms?: number | null
+          session_id?: string | null
           time_milliseconds: number
           tournament_id?: number | null
           track_id: number
@@ -156,12 +170,19 @@ export type Database = {
         Update: {
           car_id?: number
           created_at?: string
-          driver_id?: string
+          dismissed_at?: string | null
+          driver_assigned_at?: string | null
+          driver_assigned_by?: string | null
+          driver_id?: string | null
           for_testing?: boolean
           game_id?: number | null
           id?: number
           pole_rating?: number
           rig_id?: string | null
+          sector1_ms?: number | null
+          sector2_ms?: number | null
+          sector3_ms?: number | null
+          session_id?: string | null
           time_milliseconds?: number
           tournament_id?: number | null
           track_id?: number
@@ -174,6 +195,20 @@ export type Database = {
             columns: ["car_id"]
             isOneToOne: false
             referencedRelation: "car"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_driver_assigned_by_fkey"
+            columns: ["driver_assigned_by"]
+            isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["driverid"]
+          },
+          {
+            foreignKeyName: "lap_time_driver_assigned_by_fkey"
+            columns: ["driver_assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -202,6 +237,13 @@ export type Database = {
             columns: ["rig_id"]
             isOneToOne: false
             referencedRelation: "rig"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lap_time_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "rig_session"
             referencedColumns: ["id"]
           },
           {
@@ -339,42 +381,21 @@ export type Database = {
       }
       rig: {
         Row: {
-          connected_user: string | null
           created_at: string
           id: string
-          last_connection: string | null
           name: string
         }
         Insert: {
-          connected_user?: string | null
           created_at?: string
           id?: string
-          last_connection?: string | null
           name: string
         }
         Update: {
-          connected_user?: string | null
           created_at?: string
           id?: string
-          last_connection?: string | null
           name?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "rig_connected_user_fkey"
-            columns: ["connected_user"]
-            isOneToOne: false
-            referencedRelation: "listing_recent_laptimes"
-            referencedColumns: ["driverid"]
-          },
-          {
-            foreignKeyName: "rig_connected_user_fkey"
-            columns: ["connected_user"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       rig_drivers: {
         Row: {
@@ -415,6 +436,58 @@ export type Database = {
           },
           {
             foreignKeyName: "rig_drivers_rig_id_fkey"
+            columns: ["rig_id"]
+            isOneToOne: false
+            referencedRelation: "rig"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rig_session: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          ended_at: string | null
+          id: string
+          last_activity_at: string
+          rig_id: string
+          started_at: string
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          ended_at?: string | null
+          id?: string
+          last_activity_at?: string
+          rig_id: string
+          started_at?: string
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          ended_at?: string | null
+          id?: string
+          last_activity_at?: string
+          rig_id?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rig_session_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "listing_recent_laptimes"
+            referencedColumns: ["driverid"]
+          },
+          {
+            foreignKeyName: "rig_session_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rig_session_rig_id_fkey"
             columns: ["rig_id"]
             isOneToOne: false
             referencedRelation: "rig"
@@ -614,6 +687,11 @@ export type Database = {
       }
     }
     Functions: {
+      connect_to_rig: {
+        Args: { p_driver_id: string; p_rig_id: string }
+        Returns: string
+      }
+      disconnect_from_rig: { Args: { p_rig_id: string }; Returns: string }
       get_driver_timeline: {
         Args: { driverid: string; testing: boolean }
         Returns: {
@@ -642,6 +720,23 @@ export type Database = {
           rank: number
           track_record: number
         }[]
+      }
+      get_or_create_active_session: {
+        Args: { p_rig_id: string; p_timeout_minutes: number }
+        Returns: string
+      }
+      insert_lap: {
+        Args: {
+          p_car_id: string
+          p_lap_time_ms: number
+          p_rig_id: string
+          p_s1_ms: number
+          p_s2_ms: number
+          p_s3_ms: number
+          p_timeout_minutes: number
+          p_track_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
