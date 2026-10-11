@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { getRigById, attemptRigConnection } from '$lib/queries/rig';
+import { getRigById, connectToRig } from '$lib/queries/rig';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { supabase, safeGetSession } = locals;
@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		throw error(404, 'Rig not found');
 	}
 
-	if (user && rig.profiles?.id === user.id) {
+	if (user && rig.driver_id === user.id) {
 		throw redirect(303, `/connect/${params.slug}/lounge`);
 	}
 
@@ -33,7 +33,7 @@ export const actions: Actions = {
 
 		console.log('Attempting to connect user to rig:', params.slug, 'user id:', user.id);
 
-		await attemptRigConnection(supabase, params.slug, user.id);
+		await connectToRig(supabase, params.slug, user.id);
 
 		throw redirect(303, `/connect/${params.slug}/lounge`);
 	}
