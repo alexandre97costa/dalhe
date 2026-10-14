@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { getRigById, connectToRig } from '$lib/queries/rig';
+import { getRigById } from '$lib/queries/rig';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { supabase, safeGetSession } = locals;
@@ -26,6 +26,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions: Actions = {
 	default: async ({ locals: { supabase, safeGetSession }, params }) => {
 		const { user } = await safeGetSession();
+
+		// ! TODO 
 		if (!user) {
 			const redirectTo = encodeURIComponent(`/connect/${params.slug}`);
 			redirect(303, `/login?redirectTo=${redirectTo}`);
@@ -33,7 +35,7 @@ export const actions: Actions = {
 
 		console.log('Attempting to connect user to rig:', params.slug, 'user id:', user.id);
 
-		await connectToRig(supabase, params.slug, user.id);
+		// await connectToRig(supabase, params.slug, user.id);
 
 		throw redirect(303, `/connect/${params.slug}/lounge`);
 	}
