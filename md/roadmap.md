@@ -28,7 +28,7 @@ Task: build the "Lounge room" page UI at src/routes/(authorized)/connect/\[slug\
 Data contract (do NOT fetch data in components; receive it via the page `data` prop only):
 - rig: rig name
 - session: driver? session_stats?, live_lap_stats?, car_name, car_category, track_name, weather?, track_temp?, air_temp?
-- live lap: lap_number, lap_total?, laptime, delta_best, laptime_progress, current_sector, current_split, s1_ms?, s2_ms?, best_s1_ms?, best_s2_ms?, best_s3_ms?
+- live lap: lap_number, lap_total?, laptime, delta_best, laptime_progress, lap_valid, current_sector, current_split, s1_ms?, s2_ms?, best_s1_ms?, best_s2_ms?, best_s3_ms?
 - recent laps (from this session): laptime_ms, s1_ms, s2_ms, s3_ms, track_name, car_name, car_category, created_at
 - unclaimed laps (from this rig): laptime_ms, s1_ms, s2_ms, s3_ms, track_name, car_name, car_category, created_at
 

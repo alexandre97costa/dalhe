@@ -15,14 +15,18 @@ export type SessionStats = {
 
 export type LapStats = {
     lapNumber: number;
-    lapProgress: number; /* Progress from 0 to 1. */
-    lapValid: boolean;
+    lapTotalCount?: number;
+    laptime_ms: number;
+    deltaBest: number;
+    progress: number; /* Progress from 0 to 1. */
+    valid: boolean;
     currentSector: number;
     currentSplit: number;
-    currentLapTime: number;
-    deltaLapTime: number;
-    sector1Time?: number;
-    sector2Time?: number;
+    s1_ms?: number;
+    s2_ms?: number;
+    bestS1_ms?: number;
+    bestS2_ms?: number;
+    bestS3_ms?: number;
 }
 
 export type NewLap = {
