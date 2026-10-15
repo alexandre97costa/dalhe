@@ -10,6 +10,15 @@ export function formatLaptime(milliseconds: number|null): string {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
 }
 
+export function convertTimeStringToMilliseconds(timeString: string): number {
+    const parts = timeString.split(':');
+    const hours = parseInt(parts[0]);
+    const minutes = parseInt(parts[1]);
+    const seconds = parseFloat(parts[2]); /* 10.8620000 -> 10.862 */
+
+    return (hours * 3600 + minutes * 60 + seconds) * 1000;
+}
+
 export function formatTimeSinceCreation(createdAt: string | Date): string {
     const created = new Date(createdAt);
     const now = new Date();

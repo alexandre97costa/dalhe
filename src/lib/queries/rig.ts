@@ -2,7 +2,7 @@ import { supabase } from '$lib/supabaseClient';
 import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { RecentLaptime } from '$lib/types/listings';
-import type { SessionStats, LapStats } from '$lib/types/rig_types';
+import type { SessionStats, LapStats } from '$lib/types/rig';
 
 export async function getRigById(
     supabaseClient: typeof supabase,

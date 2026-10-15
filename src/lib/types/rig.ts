@@ -1,3 +1,5 @@
+import * as z from "zod"; 
+
 export type SessionStats = {
     gameName: string;
     trackName: string;
@@ -30,5 +32,21 @@ export type LapStats = {
 }
 
 export type NewLap = {
-    
+    laptime_ms: number; /* iLastTime */
+    s1_time: string;
+    s2_time: string;
+    s3_time: string;
+    carName: string;
+    trackName: string;  
+    rigId: string;
 }
+
+export const NewLapSchema = z.object({
+    laptime_ms: z.coerce.number<number>().int().positive(),
+    s1_time: z.iso.time(), /* format HH:MM[:SS[.s+]] */
+    s2_time: z.iso.time(), /* simhub 00:01:10.8620000 */
+    s3_time: z.iso.time(),
+    carName: z.string().nonempty(),
+    trackName: z.string().nonempty(),
+    rigId: z.uuid({version: 'v4'})
+});
