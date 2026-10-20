@@ -38,7 +38,7 @@ export type NewLap = {
     s3_time: string;
     carName: string;
     trackName: string;  
-    rigId: string;
+    rigId?: string;
 }
 
 export const NewLapSchema = z.object({
@@ -48,5 +48,5 @@ export const NewLapSchema = z.object({
     s3_time: z.iso.time(),
     carName: z.string().nonempty(),
     trackName: z.string().nonempty(),
-    rigId: z.uuid({version: 'v4'})
+    rigId: z.optional(z.uuid({version: 'v4'}))
 });

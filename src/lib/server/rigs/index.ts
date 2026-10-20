@@ -46,7 +46,32 @@ export async function resolveRig(
     return data[0];
 }
 
-// receive stuff from rig
+export function validateRouteParams<T extends z.ZodType>(
+    params: URLSearchParams,
+    schema: T
+) {
+    return schema.safeParse(Object.fromEntries(params));
+}
 
-// take a RouteParams object and a schema, and return the validation result (dont throw)
+export async function insertNewLap(newLap: NewLap) {
 
+    // ! TODO: vai dar erro assim
+    // * Falta passar ISO para ms
+    // * Falta passar nomes de codigo de car e track para id
+    // ? Falta a categoria do carro no type NewLap
+
+        const { data, error } = await supabaseAdmin
+        .rpc('insert_new_lap', {
+            p_expiry_minutes: parseInt(SESSION_TIMEOUT_MINS),
+            p_rig_id: newLap.rigId,
+            p_laptime_ms: newLap.laptime_ms,
+            p_s1_time: newLap.s1_time,
+            p_s2_time: newLap.s2_time,
+            p_s3_time: newLap.s3_time,
+            p_car_name: newLap.carName,
+            p_track_name: newLap.trackName
+        });
+
+}
+
+    
