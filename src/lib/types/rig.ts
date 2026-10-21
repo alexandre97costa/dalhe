@@ -49,7 +49,7 @@ export const zNewLapConverted = z.object({
     s1_ms: z.coerce.number<number>().int().positive(),
     s2_ms: z.coerce.number<number>().int().positive(),
     s3_ms: z.coerce.number<number>().int().positive(),
-    carId: z.uuid({ version: "v4"}),
-    trackId: z.uuid({ version: "v4"}),
+    carId: z.coerce.number<number>().int().positive(),
+    trackId: z.coerce.number<number>().int().positive(),
 });
 export type NewLapConverted = z.infer<typeof zNewLapConverted>;

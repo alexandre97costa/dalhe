@@ -1,4 +1,4 @@
-import { SESSION_TIMEOUT_MINS } from '$env/static/private';
+import { SESSION_TIMEOUT_MINS, GET_TEST_RECORDS } from '$env/static/private';
 import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 import { json } from '@sveltejs/kit';
 import * as z from "zod";
@@ -39,26 +39,26 @@ export async function resolveRig(
             p_rig_id: rigId
         });
 
-    console.log('resolveRig data:', data);
-    console.log('resolveRig error:', error);
-    if (error) throw error;
+    if (error) {
+        console.log('resolveRig error:', error);
+        return null;
+    }
+    
     if (!Array.isArray(data) || data.length === 0) return null;
     return data[0];
 }
 
 export async function resolveCar(
     carId: string):
-    Promise<{
-        car_id: string
-    } | null> {
+    Promise<{ id:number } | null> {
 
-    const uuid = z.uuid({ version: 'v4' });
-    const validate = uuid.safeParse(carId);
+    const carIdSchema = z.string().nonempty();
+    const validate = carIdSchema.safeParse(carId);
     if (!validate.success) return null;
 
     const { data, error } = await supabaseAdmin
         .from('car')
-        .select('car_id:id')
+        .select('id')
         .eq('simhub_carid', carId)
         .single();
 
@@ -68,17 +68,15 @@ export async function resolveCar(
 
 export async function resolveTrack(
     trackId: string):
-    Promise<{
-        track_id: string
-    } | null> {
+    Promise<{ id:number } | null> {
 
-    const uuid = z.uuid({ version: 'v4' });
-    const validate = uuid.safeParse(trackId);
+    const trackIdSchema = z.string().nonempty();
+    const validate = trackIdSchema.safeParse(trackId);
     if (!validate.success) return null;
 
     const { data, error } = await supabaseAdmin
         .from('race_track')
-        .select('track_id:id')
+        .select('id')
         .eq('simhub_trackid', trackId)
         .single();
 
@@ -95,11 +93,12 @@ export function validateRouteParams<T extends z.ZodType>(
 
 export async function insertNewLap(
     l: NewLapConverted): 
-    Promise<{ lap_id: string } | null> {
+    Promise<{ lap_id: number } | null> {
 
     const { data, error } = await supabaseAdmin
-        .rpc('insert_new_lap', {
+        .rpc('insert_lap', {
             p_timeout_minutes: parseInt(SESSION_TIMEOUT_MINS),
+            p_for_testing: GET_TEST_RECORDS === "true",
             p_rig_id: l.rigId,
             p_lap_time_ms: l.laptime_ms,
             p_s1_ms: l.s1_ms,
@@ -108,6 +107,9 @@ export async function insertNewLap(
             p_car_id: l.carId,
             p_track_id: l.trackId
         });
+
+    console.log('rpc insert new lap id -> ', data)
+    console.log('rpc insert new lap error -> ', error)
 
     if (error) return null;
     return data;

@@ -20,11 +20,14 @@ export async function GET({ params, url }): Promise<Response> {
 	if (!validateUrl.success) {
 		return rigJson({
 			success: false,
+			step: 'validate url',
 			error_message: JSON.parse(validateUrl.error.message)
 		}, 400);
 	}
 
 	const newLap: NewLap = validateUrl.data;
+	const car = await resolveCar(newLap.carId);
+	const track = await resolveTrack(newLap.trackId);
 
 	const validateLap = zNewLapConverted.safeParse({
 		rigId: rig.rig_id,
@@ -32,13 +35,14 @@ export async function GET({ params, url }): Promise<Response> {
 		s1_ms: convertTimeStringToMilliseconds(newLap.s1_time),
 		s2_ms: convertTimeStringToMilliseconds(newLap.s2_time),
 		s3_ms: convertTimeStringToMilliseconds(newLap.s3_time),
-		carId: resolveCar(newLap.carId),
-		trackId: resolveTrack(newLap.trackId),
+		carId: car?.id,
+		trackId: track?.id,
 	})
 
 	if (!validateLap.success) {
 		return rigJson({
 			success: false,
+			step: 'validate lap',
 			error_message: JSON.parse(validateLap.error.message)
 		}, 400);
 	}

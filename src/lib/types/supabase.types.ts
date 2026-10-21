@@ -24,6 +24,7 @@ export type Database = {
           id: number
           make_id: number
           model: string
+          simhub_carid: string | null
           year: number
         }
         Insert: {
@@ -32,6 +33,7 @@ export type Database = {
           id?: number
           make_id: number
           model: string
+          simhub_carid?: string | null
           year: number
         }
         Update: {
@@ -40,6 +42,7 @@ export type Database = {
           id?: number
           make_id?: number
           model?: string
+          simhub_carid?: string | null
           year?: number
         }
         Relationships: [
@@ -304,6 +307,7 @@ export type Database = {
           length: number | null
           location: string | null
           name: string
+          simhub_trackid: string | null
         }
         Insert: {
           country_code?: string | null
@@ -312,6 +316,7 @@ export type Database = {
           length?: number | null
           location?: string | null
           name: string
+          simhub_trackid?: string | null
         }
         Update: {
           country_code?: string | null
@@ -320,6 +325,7 @@ export type Database = {
           length?: number | null
           location?: string | null
           name?: string
+          simhub_trackid?: string | null
         }
         Relationships: []
       }
@@ -727,16 +733,17 @@ export type Database = {
       }
       insert_lap: {
         Args: {
-          p_car_id: string
+          p_car_id: number
+          p_for_testing: boolean
           p_lap_time_ms: number
           p_rig_id: string
           p_s1_ms: number
           p_s2_ms: number
           p_s3_ms: number
           p_timeout_minutes: number
-          p_track_id: string
+          p_track_id: number
         }
-        Returns: string
+        Returns: number
       }
       rig_status: {
         Args: { p_expiry_minutes: number; p_rig_id: string }
