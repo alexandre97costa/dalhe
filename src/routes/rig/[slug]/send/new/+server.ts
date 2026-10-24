@@ -20,8 +20,10 @@ export async function GET({ params, url }): Promise<Response> {
 	if (!validateUrl.success) {
 		return rigJson({
 			success: false,
-			step: 'validate url',
+			step: 'Invalid URL',
 			error_message: JSON.parse(validateUrl.error.message)
+				.map(({ path, message }: { path: (string | number)[]; message: string }) => `${path.join(', ')}: ${message}`)
+				.join('; ')
 		}, 400);
 	}
 
@@ -42,8 +44,22 @@ export async function GET({ params, url }): Promise<Response> {
 	if (!validateLap.success) {
 		return rigJson({
 			success: false,
-			step: 'validate lap',
+			step: 'Invalid stats',
 			error_message: JSON.parse(validateLap.error.message)
+				.map(({ path, message }: { path: (string | number)[]; message: string }) => `${path.join(', ')}: ${message}`)
+				.join('; ')
+		}, 400);
+	}
+
+	if (validateLap.data.laptime_ms !== 
+		validateLap.data.s1_ms + 
+		validateLap.data.s2_ms + 
+		validateLap.data.s3_ms
+	) {
+		return rigJson({
+			success: false,
+			step: 'Invalid lap',
+			error_message: 'Sector times don\'t add up to the laptime'
 		}, 400);
 	}
 
