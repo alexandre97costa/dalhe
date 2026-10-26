@@ -22,7 +22,6 @@
 	import LightSwitch from '$lib/components/LightSwitch.svelte';
 	import UserSession from '$lib/components/UserSession.svelte';
 	import Nav from '$lib/components/Nav.svelte';
-	import New from '$lib/components/New.svelte';
 	import LoginForm from '../../lib/components/LoginForm.svelte';
 
 	// images

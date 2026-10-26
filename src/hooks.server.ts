@@ -40,8 +40,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 			'/login/confirm',
 			'/login/error',
 			'/privacy-policy',
-			'/testing',
-			'/testing/sh',
 		],
 		slugPaths: [ /* Paths with slugs after them (eg. /connect/:id) */
 			// '/connect/',
