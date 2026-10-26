@@ -1,18 +1,34 @@
 import * as z from "zod"; 
 
-export type SessionStats = {
-    gameName: string;
-    trackName: string;
-    sessionType: string;
-    carName: string;
-    carClass: string;
-    tractionControl?: number;
-    brakeBias?: number;
-    abs?: number;
-    airTemperature?: number;
-    trackTemperature?: number;
-    rainDensity?: number;
-};
+const rainIntensities = z.literal([
+    'ACC_NO_RAIN',
+    'ACC_NO_RAIN',
+    'ACC_NO_RAIN',
+]);
+
+// os campos têm o nome que está no Simhub, o comentário ao lado é um exemplo válido
+export const zSessionStats = z.object({
+    CurrentGame: z.literal('AssettoCorsaCompetizione'),
+    TrackId: z.string(),                        // brands_hatch
+    SessionTypeName: z.literal([
+        'PRACTICE',
+        'HOTLAP',
+        8, // SUPERPOLE
+        7, // HOTSTINT
+        'RACE',
+    ]),
+    CarId: z.string(),                          // audi_r8_lms_evo
+    CarClass: z.string().nullable(),            // GT3 
+    TCLevel: z.int().positive(),                // 6
+    ABSLevel: z.int().positive(),               // 5
+    BrakeBias: z.int(),                         // -17
+    AirTemperature: z.int(),                    // 30
+    TrackTemperature: z.int(),                  // 37
+    rainIntesity: rainIntensities,              // ACC_NO_RAIN
+    rainIntensityIn10min: rainIntensities,
+    rainIntensityIn30min: rainIntensities,
+})
+export type SessionStats = z.infer<typeof zSessionStats>;
 
 
 export type LapStats = {
