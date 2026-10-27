@@ -1,10 +1,10 @@
-import { supabase } from '$lib/supabaseClient';
+import type { TypedSupabaseClient } from '$lib/types/supabase';
 import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { RecentLaptime } from '$lib/types/listings';
 
 export async function getDriverById(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     driverId: string) {
 
     const { data, error } = await supabaseClient
@@ -27,7 +27,7 @@ export async function getDriverById(
 }
 
 export async function getDriverTimeline(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     driverId: string) {
 
     const { data, error } = await supabaseClient
@@ -41,7 +41,7 @@ export async function getDriverTimeline(
 }
 
 export async function getDriverStats(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     driverId: string) {
 
     // podiums
@@ -99,7 +99,7 @@ export async function getDriverStats(
 }
 
 export async function getDriverTrackLeaderboard(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     driverId: number,
     trackId: number,
     categoryId?: number) {

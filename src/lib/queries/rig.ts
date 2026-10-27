@@ -1,11 +1,11 @@
-import { supabase } from '$lib/supabaseClient';
+import type { TypedSupabaseClient } from '$lib/types/supabase';
 import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { RecentLaptime } from '$lib/types/listings';
 import type { SessionStats, LapStats } from '$lib/types/rig';
 
 export async function getRigById(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     rigId: string) {
     const { data, error } = await supabaseClient
         .from('rig')
@@ -35,7 +35,7 @@ export async function getRigById(
 }
 
 export async function sendRigStats_Session(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     rigId: string,
     stats: SessionStats) {
 
@@ -51,7 +51,7 @@ export async function sendRigStats_Session(
 }
 
 export async function sendRigStats_Lap(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     rigId: string,
     stats: LapStats) {
 

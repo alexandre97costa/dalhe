@@ -1,10 +1,10 @@
-import { supabase } from '$lib/supabaseClient';
+import type { TypedSupabaseClient } from '$lib/types/supabase';
 import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { RecentLaptime } from '$lib/types/listings';
 
 export async function connectToRig(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     rigId: string,
     driverId: string) {
     const { data, error } = await supabaseClient.rpc('connect_to_rig', {
@@ -17,7 +17,7 @@ export async function connectToRig(
 }
 
 export async function getRigStats(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     rigId: string,
     driverId: string) {
 

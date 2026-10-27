@@ -1,13 +1,13 @@
 // queries related to any kind of leaderboards
 // e.g., track leaderboards, car leaderboards, etc.
 
-import { supabase } from '$lib/supabaseClient';
+import type { TypedSupabaseClient } from '$lib/types/supabase';
 import { GET_TEST_RECORDS } from '$env/static/private';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'
 import type { LeaderboardEntry } from '../types/listings';
 
 export async function getTrackLeaderboard(
-    supabaseClient: typeof supabase,
+    supabaseClient: TypedSupabaseClient,
     trackId: number,
     categoryId?: number
 ) {
@@ -24,7 +24,7 @@ export async function getTrackLeaderboard(
     return data;
 }
 
-export async function getTrackIdBySlug(supabaseClient: typeof supabase, slug: string) {
+export async function getTrackIdBySlug(supabaseClient: TypedSupabaseClient, slug: string) {
     const { data, error } = await supabaseClient
         .from('race_track')
         .select('id')
@@ -34,7 +34,7 @@ export async function getTrackIdBySlug(supabaseClient: typeof supabase, slug: st
     return data?.id;
 }
 
-export async function getAllTracks(supabaseClient: typeof supabase) {
+export async function getAllTracks(supabaseClient: TypedSupabaseClient) {
     const { data, error } = await supabaseClient
         .from('race_track')
         .select('id, name')
@@ -43,7 +43,7 @@ export async function getAllTracks(supabaseClient: typeof supabase) {
     return data;
 }
 
-export async function getAllCategories(supabaseClient: typeof supabase) {
+export async function getAllCategories(supabaseClient: TypedSupabaseClient) {
     const { data, error } = await supabaseClient
         .from('car_category')
         .select('id, name');

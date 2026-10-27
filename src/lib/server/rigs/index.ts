@@ -93,7 +93,7 @@ export function validateRouteParams<T extends z.ZodType>(
 
 export async function insertNewLap(
     l: NewLapConverted): 
-    Promise<{ lap_id: number } | null> {
+    Promise<number | null> {
 
     const { data, error } = await supabaseAdmin
         .rpc('insert_lap', {
