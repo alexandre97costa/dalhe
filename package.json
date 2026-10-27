@@ -9,7 +9,9 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"format": "prettier --write .",
-		"lint": "prettier --check ."
+		"lint": "prettier --check .",
+		"db:types": "node scripts/db-types.mjs",
+		"db:reset": "supabase db reset && pnpm db:types"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.12.0",
