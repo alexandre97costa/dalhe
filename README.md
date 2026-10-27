@@ -2,6 +2,8 @@
 
 A web app that displays track times in racing sims. Built with SvelteKit, Supabase and ShadCN.
 
+Planning and design docs live in [`docs/`](docs/): sprints, decisions, the backlog, the database workflow and the rig endpoints.
+
 ## Local development
 
 Needs Node 22, pnpm and Docker Desktop (WSL2 backend on Windows).

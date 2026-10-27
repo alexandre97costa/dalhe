@@ -1,22 +1,6 @@
-# Roadmap
+# Sprint 1: lounge page brief
 
-- Google sign-in
-- Profile page
-  - sync google
-  - edit name
-  - edit avatar
-- Block nameless users, redirect to edit name
-- Logout
-- Card revamp
-  - New style with avatar
-  - Track record badge
-- Track page
-  - Podium revamp with pole rating
-  - Graphs:
-    - personal progress line chart
-    - global laptimes plot chart
-
-# Copilot brief for lounge page building
+A prompt for building the lounge room UI, written for Copilot before Sprint 0. Moved here from `md/roadmap.md`; the data contract may need updating against `docs/sprints/sprint-1.md`.
 
 Context: SvelteKit 5 (runes) + Supabase + shadcn-svelte + Tailwind. Mobile-first web app for sim racing friends/family ("Dá-lhe!").
 

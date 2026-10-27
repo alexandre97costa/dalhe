@@ -12,6 +12,5 @@ bun.lockb
 src/lib/types/supabase.types.ts
 
 # Vendored agent skills and Supabase CLI state
-.agents/
-skills-lock.json
+.claude/skills/
 supabase/.temp/
