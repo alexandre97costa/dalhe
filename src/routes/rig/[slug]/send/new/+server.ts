@@ -8,9 +8,14 @@ import {
 	rigNotFound,
 	validateRouteParams
 } from '$lib/server/rigs';
-import * as z from "zod";
+import * as z from 'zod';
 import { type NewLap, zNewLap, type NewLapConverted, zNewLapConverted } from '$lib/types/rig';
-import { formatLaptime, convertTimeStringToMilliseconds, formatTimeSinceCreation, compareLaptimes } from '$lib/utils/laptime';
+import {
+	formatLaptime,
+	convertTimeStringToMilliseconds,
+	formatTimeSinceCreation,
+	compareLaptimes
+} from '$lib/utils/laptime';
 
 export async function GET({ params, url }): Promise<Response> {
 	const rig = await resolveRig(params.slug);
@@ -18,13 +23,19 @@ export async function GET({ params, url }): Promise<Response> {
 
 	const validateUrl = validateRouteParams(url.searchParams, zNewLap);
 	if (!validateUrl.success) {
-		return rigJson({
-			success: false,
-			step: 'Invalid URL',
-			error_message: JSON.parse(validateUrl.error.message)
-				.map(({ path, message }: { path: (string | number)[]; message: string }) => `${path.join(', ')}: ${message}`)
-				.join('; ')
-		}, 400);
+		return rigJson(
+			{
+				success: false,
+				step: 'Invalid URL',
+				error_message: JSON.parse(validateUrl.error.message)
+					.map(
+						({ path, message }: { path: (string | number)[]; message: string }) =>
+							`${path.join(', ')}: ${message}`
+					)
+					.join('; ')
+			},
+			400
+		);
 	}
 
 	const newLap: NewLap = validateUrl.data;
@@ -38,29 +49,37 @@ export async function GET({ params, url }): Promise<Response> {
 		s2_ms: convertTimeStringToMilliseconds(newLap.s2_time),
 		s3_ms: convertTimeStringToMilliseconds(newLap.s3_time),
 		carId: car?.id,
-		trackId: track?.id,
-	})
+		trackId: track?.id
+	});
 
 	if (!validateLap.success) {
-		return rigJson({
-			success: false,
-			step: 'Invalid stats',
-			error_message: JSON.parse(validateLap.error.message)
-				.map(({ path, message }: { path: (string | number)[]; message: string }) => `${path.join(', ')}: ${message}`)
-				.join('; ')
-		}, 400);
+		return rigJson(
+			{
+				success: false,
+				step: 'Invalid stats',
+				error_message: JSON.parse(validateLap.error.message)
+					.map(
+						({ path, message }: { path: (string | number)[]; message: string }) =>
+							`${path.join(', ')}: ${message}`
+					)
+					.join('; ')
+			},
+			400
+		);
 	}
 
-	if (validateLap.data.laptime_ms !== 
-		validateLap.data.s1_ms + 
-		validateLap.data.s2_ms + 
-		validateLap.data.s3_ms
+	if (
+		validateLap.data.laptime_ms !==
+		validateLap.data.s1_ms + validateLap.data.s2_ms + validateLap.data.s3_ms
 	) {
-		return rigJson({
-			success: false,
-			step: 'Invalid lap',
-			error_message: 'Sector times don\'t add up to the laptime'
-		}, 400);
+		return rigJson(
+			{
+				success: false,
+				step: 'Invalid lap',
+				error_message: "Sector times don't add up to the laptime"
+			},
+			400
+		);
 	}
 
 	const newLapConverted: NewLapConverted = validateLap.data;
@@ -68,10 +87,13 @@ export async function GET({ params, url }): Promise<Response> {
 	const newLapId = await insertNewLap(newLapConverted);
 
 	if (!newLapId) {
-		return rigJson({
-			success: false,
-			error_message: 'Error inserting. Lap was not created.'
-		}, 400);
+		return rigJson(
+			{
+				success: false,
+				error_message: 'Error inserting. Lap was not created.'
+			},
+			400
+		);
 	}
 
 	return rigJson({

@@ -1,6 +1,6 @@
 // src/routes/+page.server.ts
-import { fail, redirect } from '@sveltejs/kit'
-import type { Actions, PageServerLoad } from './$types'
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 import { m } from '$lib/paraglide/messages.js';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
@@ -13,8 +13,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		redirect(303, '/home');
 	}
 
-	return { url: url.origin, session }
-}
+	return { url: url.origin, session };
+};
 
 export const actions: Actions = {
 	default: async (event) => {
@@ -22,28 +22,28 @@ export const actions: Actions = {
 			url,
 			request,
 			locals: { supabase }
-		} = event
-		const formData = await request.formData()
-		const email = formData.get('email') as string
-		const validEmail = /^[\w-\.+]+@([\w-]+\.)+[\w-]{2,8}$/.test(email)
+		} = event;
+		const formData = await request.formData();
+		const email = formData.get('email') as string;
+		const validEmail = /^[\w-\.+]+@([\w-]+\.)+[\w-]{2,8}$/.test(email);
 
 		if (!validEmail) {
-			return fail(400, { errors: { email: m.formlogin_email_error_pattern()}, email })
+			return fail(400, { errors: { email: m.formlogin_email_error_pattern() }, email });
 		}
 
-		const { error } = await supabase.auth.signInWithOtp({ email })
+		const { error } = await supabase.auth.signInWithOtp({ email });
 
 		if (error) {
 			return fail(400, {
 				success: false,
 				email,
 				message: m.formlogin_submit_error()
-			})
+			});
 		}
 
 		return {
 			success: true,
 			message: m.formlogin_submit_success()
-		}
+		};
 	}
-}
+};

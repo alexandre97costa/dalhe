@@ -28,7 +28,7 @@
 			<span class="text-foreground/50">{`${laptime.car_make} ${laptime.car_model}`}</span>
 		</p>
 	</div>
-	<div class="flex flex-col gap-0.5 justify-end self-start text-right">
+	<div class="flex flex-col justify-end gap-0.5 self-start text-right">
 		{#if laptime.rank == 1}
 			<p class="lh-1 text-xs text-purple-400">
 				{m.laptime_track_record()}

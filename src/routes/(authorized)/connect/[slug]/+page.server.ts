@@ -27,7 +27,7 @@ export const actions: Actions = {
 	default: async ({ locals: { supabase, safeGetSession }, params }) => {
 		const { user } = await safeGetSession();
 
-		// ! TODO 
+		// ! TODO
 		if (!user) {
 			const redirectTo = encodeURIComponent(`/connect/${params.slug}`);
 			redirect(303, `/login?redirectTo=${redirectTo}`);

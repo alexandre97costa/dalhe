@@ -60,24 +60,25 @@
 
 {#snippet menuItem(item: MenuItem, i: number)}
 	{@const Icon = item.icon}
-	<NavigationMenu.Item
-		class={cn(`flex justify-center order-${i}`)}
-	>
+	<NavigationMenu.Item class={cn(`flex justify-center order-${i}`)}>
 		<NavigationMenu.Link
 			href={item.href}
-			class={cn(
-				'flex flex-col items-center gap-2 pt-2 size-18'
-			)}
+			class={cn('flex size-18 flex-col items-center gap-2 pt-2')}
 		>
 			<Icon
-				strokeWidth={titleValue == item.title ? "1.5" : "1"}
-				class={cn('size-6', titleValue == item.title ? 'text-purple-700 dark:text-purple-500' : 'text-foreground/70')}
+				strokeWidth={titleValue == item.title ? '1.5' : '1'}
+				class={cn(
+					'size-6',
+					titleValue == item.title ? 'text-purple-700 dark:text-purple-500' : 'text-foreground/70'
+				)}
 			/>
-				<!-- /* class={cn('size-6', titleValue == item.title ? 'text-zinc-800 dark:text-zinc-50' : 'text-zinc-400')} */ -->
+			<!-- /* class={cn('size-6', titleValue == item.title ? 'text-zinc-800 dark:text-zinc-50' : 'text-zinc-400')} */ -->
 			<span
 				class={cn(
 					'text-sm ',
-					titleValue == item.title ? 'text-purple-800 dark:text-purple-400 font-normal' : 'text-foreground font-light'
+					titleValue == item.title
+						? 'font-normal text-purple-800 dark:text-purple-400'
+						: 'text-foreground font-light'
 				)}
 			>
 				{item.title}
@@ -88,7 +89,7 @@
 
 <NavigationMenu.Root
 	viewport={false}
-	class="dark:border-input max-w-full border-t  px-4 py-2 shadow-xl bg-white dark:bg-zinc-900 "
+	class="dark:border-input max-w-full border-t  bg-white px-4 py-2 shadow-xl dark:bg-zinc-900 "
 >
 	<NavigationMenu.List class="grid min-w-screen grid-cols-4 gap-3 md:min-w-full">
 		{#each menuItems as item, i}

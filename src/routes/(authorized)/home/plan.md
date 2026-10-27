@@ -16,7 +16,7 @@ interface RecentLaptimeItem {
   // Laptime data
   laptime: string; // Formatted as MM:SS.mmm
   differenceToFirstMs: number; // Milliseconds difference to 1st place on this track
-  
+
   // Vehicle info
   car: {
     id: string;
@@ -38,30 +38,28 @@ interface RecentLaptimeItem {
 type TrackCondition = 'wet' | 'dry' | 'night' | 'snow' | 'fog' | 'rain';
 ```
 
-
-
 src/lib/
-├── schemas/              # Zod validation schemas (already exists)
-│   ├── laptimeSchema.ts
-│   └── ...
-├── types/               # TypeScript interfaces (NEW)
-│   ├── listings.ts      # All listing item types
-│   ├── db.ts            # Database table types
-│   └── ...
-├── queries/             # Database queries (NEW)
-│   ├── laptimes.ts      # Laptime-related queries
-│   ├── leaderboard.ts   # Leaderboard queries
-│   └── ...
+├── schemas/ # Zod validation schemas (already exists)
+│ ├── laptimeSchema.ts
+│ └── ...
+├── types/ # TypeScript interfaces (NEW)
+│ ├── listings.ts # All listing item types
+│ ├── db.ts # Database table types
+│ └── ...
+├── queries/ # Database queries (NEW)
+│ ├── laptimes.ts # Laptime-related queries
+│ ├── leaderboard.ts # Leaderboard queries
+│ └── ...
 └── ...
 
 src/routes/(authorized)/
 ├── home/
-│   ├── +page.svelte
-│   ├── +page.server.ts  # Server load/actions (imports from lib/queries)
-│   └── plan.md
+│ ├── +page.svelte
+│ ├── +page.server.ts # Server load/actions (imports from lib/queries)
+│ └── plan.md
 ├── leaders/
-│   ├── +page.svelte
-│   └── +page.server.ts
+│ ├── +page.svelte
+│ └── +page.server.ts
 └── ...
 
 Pattern:

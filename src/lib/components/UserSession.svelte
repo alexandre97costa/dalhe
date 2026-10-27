@@ -37,7 +37,9 @@
 			<DropdownMenu.Item>{m.user_dropdown_settings()}</DropdownMenu.Item>
 			<DropdownMenu.Separator />
 			<DropdownMenu.RadioGroup bind:value={theme}>
-				<DropdownMenu.GroupHeading class="text-sm font-normal">{m.user_dropdown_theme()}</DropdownMenu.GroupHeading>
+				<DropdownMenu.GroupHeading class="text-sm font-normal"
+					>{m.user_dropdown_theme()}</DropdownMenu.GroupHeading
+				>
 				<DropdownMenu.RadioItem value="light" onclick={() => setMode('light')}>
 					<Sun />
 					{m.user_dropdown_theme_light()}
@@ -53,14 +55,16 @@
 			</DropdownMenu.RadioGroup>
 			<DropdownMenu.Separator />
 			<DropdownMenu.RadioGroup bind:value={language}>
-				<DropdownMenu.GroupHeading class="text-sm font-normal">{m.user_dropdown_language()}</DropdownMenu.GroupHeading>
+				<DropdownMenu.GroupHeading class="text-sm font-normal"
+					>{m.user_dropdown_language()}</DropdownMenu.GroupHeading
+				>
 				<DropdownMenu.RadioItem value="pt" onclick={() => setLocale('pt')}>
 					<img
 						src="https://flagsapi.com/PT/flat/64.png"
 						alt="Portuguese Flag"
 						class="inline size-5"
 					/>
-					{m.user_dropdown_language_pt()}					
+					{m.user_dropdown_language_pt()}
 				</DropdownMenu.RadioItem>
 				<DropdownMenu.RadioItem value="en" onclick={() => setLocale('en')}>
 					<img

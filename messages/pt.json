@@ -1,145 +1,145 @@
 {
-    "$schema": "https://inlang.com/schema/inlang-message-format",
-    "hello_world": "Bem-vindo ao Dá-lhe! 🚗💨",
-    "nav_home": "Início",
-    "nav_leaders": "Líderes",
-    "nav_add": "Nova volta",
-    "nav_tournaments": "Torneios",
-    "nav_profile": "Carreira",
-    "nav_driver": "Condutor",
-    "nav_add_cancel": "Cancelar",
-    "nav_add_save": "Criar volta",
-    "formadd_header": "Nova volta",
-    "formadd_header_description": "Insere a tua melhor volta!",
-    "formadd_laptime_label": "Volta",
-    "formadd_laptime_placeholder": "Insere a tua melhor volta!",
-    "formadd_laptime_error_required": "A volta é obrigatória",
-    "formadd_laptime_error_pattern": "A volta tem que estar no formato MMSSMMM",
-    "mode_light": "Modo Claro",
-    "mode_dark": "Modo Escuro",
-    "formadd_car_make_label": "Carro",
-    "formadd_car_make_placeholder": "Marca",
-    "formadd_car_make_error_required": "A marca do carro é obrigatória",
-    "formadd_car_model_placeholder": "Modelo",
-    "loading": "A carregar...",
-    "login_button": "Login",
-    "formadd_race_track_label": "Pista",
-    "formadd_race_track_placeholder": "Seleciona uma pista",
-    "formlogin_description": "Insere o teu email para receber um link de login.",
-    "formlogin_email_label": "Email",
-    "formlogin_email_placeholder": "Insere o teu email",
-    "formlogin_email_error_required": "O email é obrigatório",
-    "formlogin_email_error_pattern": "Insere um email válido",
-    "formlogin_submit_error": "Ocorreu um erro ao fazer login. Tenta novamente.",
-    "formlogin_submit_success": "Link de login enviado! Verifica o teu email.",
-    "formlogin_submit_button": "Enviar link de login",
-    "homepage_gotoapp": "Ir para a app",
-    "homepage_hero_title": "Mantém-te na ",
-    "homepage_hero_title_underline": "linha de corrida.",
-    "homepage_hero_subtitle": "O Dá-lhe! é um rastreador de voltas de corrida que te ajuda a monitorizar o teu progresso e competir com amigos.",
-    "homepage_hero_cta": "Começar a dar-lhe!",
-    "homepage_features_tracking_title": "Regista as tuas voltas",
-    "homepage_features_tracking_description": "Guarda e monitoriza facilmente as tuas voltas ao longo do tempo.",
-    "homepage_features_comparison_title": "Compara com amigos",
-    "homepage_features_comparison_description": "Vê como te comparas com os teus amigos e rivais.",
-    "homepage_features_insights_title": "Ganha uma nova perspetiva",
-    "homepage_features_insights_description": "Analisa o teu desempenho e identifica áreas para melhorar.",
-    "user_dropdown_account": "Conta",
-    "user_dropdown_profile": "Perfil",
-    "user_dropdown_settings": "Definições",
-    "user_dropdown_theme": "Tema",
-    "user_dropdown_theme_light": "Claro",
-    "user_dropdown_theme_dark": "Escuro",
-    "user_dropdown_theme_system": "Sistema",
-    "user_dropdown_language": "Idioma",
-    "user_dropdown_language_pt": "Português",
-    "user_dropdown_language_en": "Inglês",
-    "user_dropdown_logout": "Sair",
-    "laptime_createdat_now": "Agora mesmo",
-    "laptime_createdat_minutes": [
-        {
-            "match": {
-                "minutes=1": "há {minutes} minuto",
-                "minutes>1": "há {minutes} minutos"
-            }
-        }
-    ],
-    "laptime_createdat_hours": [
-        {
-            "match": {
-                "hours=1": "há {hours} hora",
-                "hours>1": "há {hours} horas"
-            }
-        }
-    ],
-    "laptime_createdat_days": [
-        {
-            "match": {
-                "days=1": "há {days} dia",
-                "days>1": "há {days} dias"
-            }
-        }
-    ],
-    "laptime_createdat_months": [
-        {
-            "match": {
-                "months=1": "há {months} mês",
-                "months>1": "há {months} meses"
-            }
-        }
-    ],
-    "laptime_createdat_years": [
-        {
-            "match": {
-                "years=1": "há {years} ano",
-                "years>1": "há {years} anos"
-            }
-        }
-    ],
-    "laptime_details_at_track": "em",
-    "laptime_details_with_car": "com",
-    "laptime_track_record": "Recorde da pista!",
-    "laptime_personal_best": "Melhor tempo pessoal!",
-    "laptime_options_goto_driver": "Ver piloto",
-    "laptime_options_goto_leaderboard": "Ver pista",
-    "laptime_options_compare": "Comparar comigo",
-    "laptime_options_compare_soon": "Brevemente",
-    "home_recent_laptimes": "Voltas Recentes",
-    "home_recent_laptimes_description": "As últimas voltas da comunidade",
-    "home_no_laptimes": "Ainda não há voltas",
-    "home_no_laptimes_description": "Começa a adicionar as tuas voltas para as veres aqui!",
-    "filters_track": "Pista",
-    "filters_track_placeholder": "Seleciona uma pista",
-    "filters_category": "Categoria",
-    "filters_category_placeholder": "Categoria",
-    "driver_profile_progress": "Progresso",
-    "driver_profile_stats": "Estatísticas",
-    "driver_profile_latest": "Últimas voltas",
-    "driver_stat_podiums": "Pódios",
-    "driver_stat_current_podiums": "Pódios Atuais",
-    "driver_stat_poles": "Primeiros Lugares",
-    "driver_stat_current_poles": "Primeiros Lugares Atuais",
-    "driver_stat_leader_pts": "Pontos de Líder",
-    "driver_stat_leader_pts_info": "Os pontos de líder são atribuídos quando outros pilotos adicionam tempos que são mais lentos do que a sua posição de pole.",
-    "driver_stat_total_laps": "Total de Voltas",
-    "formdriver_header": "Editar Perfil",
-    "formdriver_header_description": "Atualiza as informações do teu perfil.",
-    "formdriver_username_label": "Nome de Utilizador",
-    "formdriver_username_placeholder": "Introduz o teu nome de utilizador",
-    "formdriver_username_error_required": "O nome de utilizador é obrigatório",
-    "formdriver_avatar_label": "Avatar",
-    "formdriver_bio_label": "Bio",
-    "formdriver_bio_placeholder": "Diz-nos um pouco sobre ti!",
-    "formdriver_cancel_button": "Cancelar",
-    "formdriver_submit_button": "Guardar Alterações",
-    "formdriver_submit_error": "Ocorreu um erro ao atualizar o teu perfil. Por favor, tenta novamente.",
-    "formdriver_submit_success": "Perfil atualizado com sucesso!",
-    "rig_connect_title": "Conectar a {rigName}",
-    "rig_connect_to_rig": "Conectar ao cockpit",
-    "rig_connect_label": "Estás prestes a conectar-te a:",
-    "rig_connect_warning": "Irás desconectar o condutor atual:",
-    "rig_connected": "Ligado",
-    "rig_connecting": "A ligar...",
-    "rig_disconnect_from_rig": "Sair do cockpit",
-    "rig_disconnected": "Desconectado"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"hello_world": "Bem-vindo ao Dá-lhe! 🚗💨",
+	"nav_home": "Início",
+	"nav_leaders": "Líderes",
+	"nav_add": "Nova volta",
+	"nav_tournaments": "Torneios",
+	"nav_profile": "Carreira",
+	"nav_driver": "Condutor",
+	"nav_add_cancel": "Cancelar",
+	"nav_add_save": "Criar volta",
+	"formadd_header": "Nova volta",
+	"formadd_header_description": "Insere a tua melhor volta!",
+	"formadd_laptime_label": "Volta",
+	"formadd_laptime_placeholder": "Insere a tua melhor volta!",
+	"formadd_laptime_error_required": "A volta é obrigatória",
+	"formadd_laptime_error_pattern": "A volta tem que estar no formato MMSSMMM",
+	"mode_light": "Modo Claro",
+	"mode_dark": "Modo Escuro",
+	"formadd_car_make_label": "Carro",
+	"formadd_car_make_placeholder": "Marca",
+	"formadd_car_make_error_required": "A marca do carro é obrigatória",
+	"formadd_car_model_placeholder": "Modelo",
+	"loading": "A carregar...",
+	"login_button": "Login",
+	"formadd_race_track_label": "Pista",
+	"formadd_race_track_placeholder": "Seleciona uma pista",
+	"formlogin_description": "Insere o teu email para receber um link de login.",
+	"formlogin_email_label": "Email",
+	"formlogin_email_placeholder": "Insere o teu email",
+	"formlogin_email_error_required": "O email é obrigatório",
+	"formlogin_email_error_pattern": "Insere um email válido",
+	"formlogin_submit_error": "Ocorreu um erro ao fazer login. Tenta novamente.",
+	"formlogin_submit_success": "Link de login enviado! Verifica o teu email.",
+	"formlogin_submit_button": "Enviar link de login",
+	"homepage_gotoapp": "Ir para a app",
+	"homepage_hero_title": "Mantém-te na ",
+	"homepage_hero_title_underline": "linha de corrida.",
+	"homepage_hero_subtitle": "O Dá-lhe! é um rastreador de voltas de corrida que te ajuda a monitorizar o teu progresso e competir com amigos.",
+	"homepage_hero_cta": "Começar a dar-lhe!",
+	"homepage_features_tracking_title": "Regista as tuas voltas",
+	"homepage_features_tracking_description": "Guarda e monitoriza facilmente as tuas voltas ao longo do tempo.",
+	"homepage_features_comparison_title": "Compara com amigos",
+	"homepage_features_comparison_description": "Vê como te comparas com os teus amigos e rivais.",
+	"homepage_features_insights_title": "Ganha uma nova perspetiva",
+	"homepage_features_insights_description": "Analisa o teu desempenho e identifica áreas para melhorar.",
+	"user_dropdown_account": "Conta",
+	"user_dropdown_profile": "Perfil",
+	"user_dropdown_settings": "Definições",
+	"user_dropdown_theme": "Tema",
+	"user_dropdown_theme_light": "Claro",
+	"user_dropdown_theme_dark": "Escuro",
+	"user_dropdown_theme_system": "Sistema",
+	"user_dropdown_language": "Idioma",
+	"user_dropdown_language_pt": "Português",
+	"user_dropdown_language_en": "Inglês",
+	"user_dropdown_logout": "Sair",
+	"laptime_createdat_now": "Agora mesmo",
+	"laptime_createdat_minutes": [
+		{
+			"match": {
+				"minutes=1": "há {minutes} minuto",
+				"minutes>1": "há {minutes} minutos"
+			}
+		}
+	],
+	"laptime_createdat_hours": [
+		{
+			"match": {
+				"hours=1": "há {hours} hora",
+				"hours>1": "há {hours} horas"
+			}
+		}
+	],
+	"laptime_createdat_days": [
+		{
+			"match": {
+				"days=1": "há {days} dia",
+				"days>1": "há {days} dias"
+			}
+		}
+	],
+	"laptime_createdat_months": [
+		{
+			"match": {
+				"months=1": "há {months} mês",
+				"months>1": "há {months} meses"
+			}
+		}
+	],
+	"laptime_createdat_years": [
+		{
+			"match": {
+				"years=1": "há {years} ano",
+				"years>1": "há {years} anos"
+			}
+		}
+	],
+	"laptime_details_at_track": "em",
+	"laptime_details_with_car": "com",
+	"laptime_track_record": "Recorde da pista!",
+	"laptime_personal_best": "Melhor tempo pessoal!",
+	"laptime_options_goto_driver": "Ver piloto",
+	"laptime_options_goto_leaderboard": "Ver pista",
+	"laptime_options_compare": "Comparar comigo",
+	"laptime_options_compare_soon": "Brevemente",
+	"home_recent_laptimes": "Voltas Recentes",
+	"home_recent_laptimes_description": "As últimas voltas da comunidade",
+	"home_no_laptimes": "Ainda não há voltas",
+	"home_no_laptimes_description": "Começa a adicionar as tuas voltas para as veres aqui!",
+	"filters_track": "Pista",
+	"filters_track_placeholder": "Seleciona uma pista",
+	"filters_category": "Categoria",
+	"filters_category_placeholder": "Categoria",
+	"driver_profile_progress": "Progresso",
+	"driver_profile_stats": "Estatísticas",
+	"driver_profile_latest": "Últimas voltas",
+	"driver_stat_podiums": "Pódios",
+	"driver_stat_current_podiums": "Pódios Atuais",
+	"driver_stat_poles": "Primeiros Lugares",
+	"driver_stat_current_poles": "Primeiros Lugares Atuais",
+	"driver_stat_leader_pts": "Pontos de Líder",
+	"driver_stat_leader_pts_info": "Os pontos de líder são atribuídos quando outros pilotos adicionam tempos que são mais lentos do que a sua posição de pole.",
+	"driver_stat_total_laps": "Total de Voltas",
+	"formdriver_header": "Editar Perfil",
+	"formdriver_header_description": "Atualiza as informações do teu perfil.",
+	"formdriver_username_label": "Nome de Utilizador",
+	"formdriver_username_placeholder": "Introduz o teu nome de utilizador",
+	"formdriver_username_error_required": "O nome de utilizador é obrigatório",
+	"formdriver_avatar_label": "Avatar",
+	"formdriver_bio_label": "Bio",
+	"formdriver_bio_placeholder": "Diz-nos um pouco sobre ti!",
+	"formdriver_cancel_button": "Cancelar",
+	"formdriver_submit_button": "Guardar Alterações",
+	"formdriver_submit_error": "Ocorreu um erro ao atualizar o teu perfil. Por favor, tenta novamente.",
+	"formdriver_submit_success": "Perfil atualizado com sucesso!",
+	"rig_connect_title": "Conectar a {rigName}",
+	"rig_connect_to_rig": "Conectar ao cockpit",
+	"rig_connect_label": "Estás prestes a conectar-te a:",
+	"rig_connect_warning": "Irás desconectar o condutor atual:",
+	"rig_connected": "Ligado",
+	"rig_connecting": "A ligar...",
+	"rig_disconnect_from_rig": "Sair do cockpit",
+	"rig_disconnected": "Desconectado"
 }

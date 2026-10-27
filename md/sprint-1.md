@@ -32,9 +32,9 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 
 ### Missing for this sprint
 
-| Item | Purpose |
-|---|---|
-| `rig_status(rig)` (function or view) | Returns `sessionActive` and the driver, with lazy expiry. Used by the poll endpoint and the lounge load. Reused later by `get_my_rigs`. |
+| Item                                                                                                        | Purpose                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rig_status(rig)` (function or view)                                                                        | Returns `sessionActive` and the driver, with lazy expiry. Used by the poll endpoint and the lounge load. Reused later by `get_my_rigs`.             |
 | `upsert_session_stats` / `upsert_live_lap_stats` (one or two functions, depending on the stats table shape) | Checks for a non-stale active session and writes in one round trip. No session: write nothing, return `ignored`. Must not touch `last_activity_at`. |
 
 ### To verify in existing rpcs
@@ -55,7 +55,8 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 ## Front A: Rig to App
 
 ### A1. Endpoint plumbing
-*As the system, I need every rig endpoint to share identification, validation and response conventions, so new endpoints are small.*
+
+_As the system, I need every rig endpoint to share identification, validation and response conventions, so new endpoints are small._
 
 - Unknown rig key returns 404, without leaking whether the rig exists.
 - Invalid payload returns 400 with a readable message; schemas derive from the existing TS types.
@@ -63,14 +64,16 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 - Routes contain no business rules; they call `$lib/server/rigs/*`.
 
 ### A2. Poll endpoint + `rig_status`
-*As the overlay, I want to ask the app whether my rig has an active session, so I know whether to send stats.*
+
+_As the overlay, I want to ask the app whether my rig has an active session, so I know whether to send stats._
 
 - Returns rig name, `sessionActive`, and driver (or null).
 - Expired sessions (by `last_activity_at`) report as inactive without any write.
 - Polling does not refresh the session.
 
 ### A3. Lap endpoint
-*As the overlay, I want to submit a valid lap, so it is recorded for the right session and driver.*
+
+_As the overlay, I want to submit a valid lap, so it is recorded for the right session and driver._
 
 - A valid lap is inserted via `insert_lap`; the response includes the lap id.
 - Resending the same lap returns 200 with `duplicate: true` and creates no second row.
@@ -78,7 +81,8 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 - The session's `last_activity_at` is updated.
 
 ### A4. Stats endpoints (session stats + live lap stats)
-*As the overlay, I want to send session and live lap stats, so the lounge can show them.*
+
+_As the overlay, I want to send session and live lap stats, so the lounge can show them._
 
 - With an active session: stats are stored (latest values only); response is 200.
 - With no active or a stale session: nothing is written; the response is still 200 with `ignored: true`.
@@ -86,7 +90,8 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 - If time slips, defer this story. The lounge is demoable with laps alone.
 
 ### A5. Fake-rig script
-*As the developer, I want to simulate a rig from the terminal, so I can test without SimHub.*
+
+_As the developer, I want to simulate a rig from the terminal, so I can test without SimHub._
 
 - Scenarios: poll, valid lap, duplicate lap, stats with a session, stats without a session, unknown rig, stale session.
 - Output shows status code and body per call.
@@ -97,7 +102,8 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 ## Front B: User to App
 
 ### B1. Connect action
-*As a family member, I want to connect to a rig after scanning its QR, so my laps are mine.*
+
+_As a family member, I want to connect to a rig after scanning its QR, so my laps are mine._
 
 - Calls `connect_to_rig`, then redirects to the lounge room.
 - The rig association is created, or `last_connected_at` is updated.
@@ -105,20 +111,23 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 - Unauthenticated or unknown-rig requests fail cleanly.
 
 ### B2. Spectate action
-*As a family member, I want to watch a rig without driving it, so I can follow along.*
+
+_As a family member, I want to watch a rig without driving it, so I can follow along._
 
 - The secondary button on the connect page redirects to the lounge room.
 - No association, no session change, no database write.
 
 ### B3. Disconnect action
-*As the driver, I want to leave the rig, so the next person's laps aren't mine.*
+
+_As the driver, I want to leave the rig, so the next person's laps aren't mine._
 
 - Calls `disconnect_from_rig` and shows the rig as free.
 - A non-driver (or stale tab) pressing it changes nothing.
 - No active session is a quiet no-op, not an error.
 
 ### B4. Lounge room load
-*As a viewer, I want the lounge to deliver everything it needs in one typed load.*
+
+_As a viewer, I want the lounge to deliver everything it needs in one typed load._
 
 - Returns: rig, status (`rig_status`), **session stats, live lap stats**, recent laps (limited), and the rig's unclaimed laps (no driver, not dismissed).
 - Works for a connected user, a spectator, and a rig with no session (empty states, not errors).
@@ -126,7 +135,8 @@ Existing rpcs: `connect_to_rig`, `disconnect_from_rig`, `get_or_create_active_se
 - No data fetching happens in components.
 
 ### B5. Lounge room UI
-*As a viewer, I want to see who's driving and how they're doing.*
+
+_As a viewer, I want to see who's driving and how they're doing._
 
 - Renders B4's data, mobile first: header, session card, live lap card, recent laps, unclaimed laps (read-only).
 - Shows "Disconnect" only to the current driver.

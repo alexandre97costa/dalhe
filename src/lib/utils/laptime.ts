@@ -1,61 +1,63 @@
 import { m } from '$lib/paraglide/messages.js';
-import * as z from "zod";
+import * as z from 'zod';
 
 export function formatLaptime(milliseconds: number | null): string {
-    if (milliseconds === null) return '--:--.--';
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    const ms = milliseconds % 1000;
+	if (milliseconds === null) return '--:--.--';
+	const totalSeconds = Math.floor(milliseconds / 1000);
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = totalSeconds % 60;
+	const ms = milliseconds % 1000;
 
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
 }
 
 export function convertTimeStringToMilliseconds(timeString: string): number | null {
+	const isoTime = z.iso.time();
+	const validate = isoTime.safeParse(timeString);
+	if (!validate.success) return null;
 
-    const isoTime = z.iso.time();
-    const validate = isoTime.safeParse(timeString);
-    if (!validate.success) return null;
+	const parts = timeString.split(':');
+	const hours = parseInt(parts[0]);
+	const minutes = parseInt(parts[1]);
+	const seconds = parseFloat(parts[2]); /* 10.8620000 -> 10.862 */
 
-    const parts = timeString.split(':');
-    const hours = parseInt(parts[0]);
-    const minutes = parseInt(parts[1]);
-    const seconds = parseFloat(parts[2]); /* 10.8620000 -> 10.862 */
-
-    return (hours * 3600 + minutes * 60 + seconds) * 1000;
+	return (hours * 3600 + minutes * 60 + seconds) * 1000;
 }
 
 export function formatTimeSinceCreation(createdAt: string | Date): string {
-    const created = new Date(createdAt);
-    const now = new Date();
-    const diffMs = now.getTime() - created.getTime();
-    const diffSecs = Math.floor(diffMs / 1000);
+	const created = new Date(createdAt);
+	const now = new Date();
+	const diffMs = now.getTime() - created.getTime();
+	const diffSecs = Math.floor(diffMs / 1000);
 
-    if (diffSecs < 60) return m.laptime_createdat_now();
-    const diffMins = Math.floor(diffSecs / 60);
-    if (diffMins < 60) return m.laptime_createdat_minutes({ minutes: diffMins });
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return m.laptime_createdat_hours({ hours: diffHours });
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays < 30) return m.laptime_createdat_days({ days: diffDays });
-    const diffMonths = Math.floor(diffDays / 30);
-    if (diffMonths < 12) return m.laptime_createdat_months({ months: diffMonths });
-    const diffYears = Math.floor(diffMonths / 12);
-    return m.laptime_createdat_years({ years: diffYears });
+	if (diffSecs < 60) return m.laptime_createdat_now();
+	const diffMins = Math.floor(diffSecs / 60);
+	if (diffMins < 60) return m.laptime_createdat_minutes({ minutes: diffMins });
+	const diffHours = Math.floor(diffMins / 60);
+	if (diffHours < 24) return m.laptime_createdat_hours({ hours: diffHours });
+	const diffDays = Math.floor(diffHours / 24);
+	if (diffDays < 30) return m.laptime_createdat_days({ days: diffDays });
+	const diffMonths = Math.floor(diffDays / 30);
+	if (diffMonths < 12) return m.laptime_createdat_months({ months: diffMonths });
+	const diffYears = Math.floor(diffMonths / 12);
+	return m.laptime_createdat_years({ years: diffYears });
 }
 
-export function compareLaptimes(laptime: number | null, previousLap: number | null): { diff: string; isFaster: boolean } {
-    if (previousLap === null || laptime === null) {
-        return { diff: '0.0s', isFaster: false };
-    }
+export function compareLaptimes(
+	laptime: number | null,
+	previousLap: number | null
+): { diff: string; isFaster: boolean } {
+	if (previousLap === null || laptime === null) {
+		return { diff: '0.0s', isFaster: false };
+	}
 
-    const difference = previousLap - laptime;
-    const isFaster = difference > 0;
-    const absDiff = Math.abs(difference);
-    const diffSeconds = (absDiff / 1000).toFixed(3);
+	const difference = previousLap - laptime;
+	const isFaster = difference > 0;
+	const absDiff = Math.abs(difference);
+	const diffSeconds = (absDiff / 1000).toFixed(3);
 
-    return {
-        diff: `${isFaster ? '-' : '+'}${diffSeconds}s`,
-        isFaster
-    };
+	return {
+		diff: `${isFaster ? '-' : '+'}${diffSeconds}s`,
+		isFaster
+	};
 }

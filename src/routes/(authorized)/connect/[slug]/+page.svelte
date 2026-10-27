@@ -10,7 +10,7 @@
 	let { data }: PageProps = $props();
 	const rigName = data.rig.name;
 
-	title.set(m.rig_connect_title({ rigName })); 
+	title.set(m.rig_connect_title({ rigName }));
 </script>
 
 <main class="flex min-h-[calc(100svh-10.5rem)] items-center justify-center">
@@ -26,28 +26,27 @@
 				{rigName}
 			</h1>
 			<img
-			class=" w-75 object-cover p-8 pt-0 mix-blend-exclusion invert opacity-70"
-			src={Rig80}
-			alt="Signo 80 rig"
+				class=" w-75 object-cover p-8 pt-0 opacity-70 mix-blend-exclusion invert"
+				src={Rig80}
+				alt="Signo 80 rig"
 			/>
-			
+
 			{#if data.rig.profiles?.username && data.rig.profiles?.id !== data?.user?.id}
-			<div class="w-full py-2 rounded-sm flex flex-col items-center text-center bg-amber-600/20">
-				<div id="rig-label" class="flex items-center gap-2 text-amber-600 dark:text-amber-500">
-					<TriangleAlert class="inline-block " size=16 />
-					<p class="text-sm font-light tracking-wide sm:text-lg">
-						{m.rig_connect_warning()}
-					</p>
+				<div class="flex w-full flex-col items-center rounded-sm bg-amber-600/20 py-2 text-center">
+					<div id="rig-label" class="flex items-center gap-2 text-amber-600 dark:text-amber-500">
+						<TriangleAlert class="inline-block " size="16" />
+						<p class="text-sm font-light tracking-wide sm:text-lg">
+							{m.rig_connect_warning()}
+						</p>
+					</div>
+					<span class="text-foreground font-semibold">{data.rig.profiles?.username}</span>
 				</div>
-				<span class="font-semibold text-foreground">{data.rig.profiles?.username}</span>
-			</div>
 			{/if}
 			<form method="POST" class="w-full">
 				<Button type="submit" size="lg" variant="cta" class="w-full sm:w-auto">
 					{m.rig_connect_to_rig()}
 				</Button>
 			</form>
-			
 		</div>
 	</section>
 </main>

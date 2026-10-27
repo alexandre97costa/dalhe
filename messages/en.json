@@ -1,145 +1,145 @@
 {
-    "$schema": "https://inlang.com/schema/inlang-message-format",
-    "hello_world": "Welcome to Dá-lhe! 🚗💨",
-    "nav_home": "Home",
-    "nav_leaders": "Leaders",
-    "nav_add": "New Laptime",
-    "nav_tournaments": "Tournaments",
-    "nav_profile": "Career",
-    "nav_driver": "Driver",
-    "nav_add_cancel": "Cancel",
-    "nav_add_save": "Create Laptime",
-    "formadd_header": "New Laptime",
-    "formadd_header_description": "Add your best laptime!",
-    "formadd_laptime_label": "Laptime",
-    "formadd_laptime_placeholder": "Enter your best laptime!",
-    "formadd_laptime_error_required": "Laptime is required",
-    "formadd_laptime_error_pattern": "Laptime must be in the format MMSSMMM",
-    "mode_light": "Light Mode",
-    "mode_dark": "Dark Mode",
-    "formadd_car_make_label": "Car",
-    "formadd_car_make_placeholder": "Make",
-    "formadd_car_make_error_required": "Car make is required",
-    "formadd_car_model_placeholder": "Model",
-    "formadd_race_track_label": "Track",
-    "formadd_race_track_placeholder": "Select a track",
-    "loading": "Loading...",
-    "login_button": "Login",
-    "formlogin_description": "Enter your email to receive a login link.",
-    "formlogin_email_label": "Email",
-    "formlogin_email_placeholder": "Enter your email",
-    "formlogin_email_error_required": "Email is required",
-    "formlogin_email_error_pattern": "Enter a valid email",
-    "formlogin_submit_error": "An error occurred while logging in. Please try again.",
-    "formlogin_submit_success": "Login link sent! Check your email.",
-    "formlogin_submit_button": "Send login link",
-    "homepage_gotoapp": "Go to the app",
-    "homepage_hero_title": "Keep yourself ",
-    "homepage_hero_title_underline": "on track.",
-    "homepage_hero_subtitle": "Dá-lhe! is a racing laptime tracker that helps you monitor your progress and compete with friends.",
-    "homepage_hero_cta": "Get Started",
-    "homepage_features_tracking_title": "Track Your Laptimes",
-    "homepage_features_tracking_description": "Easily log and monitor your laptimes over time.",
-    "homepage_features_comparison_title": "Compare with Friends",
-    "homepage_features_comparison_description": "See how you stack up against your friends and rivals.",
-    "homepage_features_insights_title": "Gain Insights",
-    "homepage_features_insights_description": "Analyze your performance and identify areas for improvement.",
-    "user_dropdown_account": "Account",
-    "user_dropdown_profile": "Profile",
-    "user_dropdown_settings": "Settings",
-    "user_dropdown_theme": "Theme",
-    "user_dropdown_theme_light": "Light",
-    "user_dropdown_theme_dark": "Dark",
-    "user_dropdown_theme_system": "System",
-    "user_dropdown_language": "Language",
-    "user_dropdown_language_pt": "Portuguese",
-    "user_dropdown_language_en": "English",
-    "user_dropdown_logout": "Logout",
-    "laptime_createdat_now": "Just now",
-    "laptime_createdat_minutes": [
-        {
-            "match": {
-                "minutes=1": "{minutes} minute ago",
-                "minutes>1": "{minutes} minutes ago"
-            }
-        }
-    ],
-    "laptime_createdat_hours": [
-        {
-            "match": {
-                "hours=1": "{hours} hour ago",
-                "hours>1": "{hours} hours ago"
-            }
-        }
-    ],
-    "laptime_createdat_days": [
-        {
-            "match": {
-                "days=1": "{days} day ago",
-                "days>1": "{days} days ago"
-            }
-        }
-    ],
-    "laptime_createdat_months": [
-        {
-            "match": {
-                "months=1": "{months} month ago",
-                "months>1": "{months} months ago"
-            }
-        }
-    ],
-    "laptime_createdat_years": [
-        {
-            "match": {
-                "years=1": "{years} year ago",
-                "years>1": "{years} years ago"
-            }
-        }
-    ],
-    "laptime_details_at_track": "at",
-    "laptime_details_with_car": "with",
-    "laptime_track_record": "Track Record!",
-    "laptime_personal_best": "Personal Best!",
-    "laptime_options_goto_driver": "Go to driver",
-    "laptime_options_goto_leaderboard": "Go to track's leaderboard",
-    "laptime_options_compare": "Compare with me",
-    "laptime_options_compare_soon": "Coming soon",
-    "home_recent_laptimes": "Recent Laptimes",
-    "home_recent_laptimes_description": "See the latest laptimes from the community",
-    "home_no_laptimes": "No laptimes yet",
-    "home_no_laptimes_description": "Start adding your laptimes to see them here!",
-    "filters_track": "Track",
-    "filters_track_placeholder": "Select a track",
-    "filters_category": "Category",
-    "filters_category_placeholder": "Category",
-    "driver_profile_progress": "Progress",
-    "driver_profile_stats": "Stats",
-    "driver_profile_latest": "Latest laps",
-    "driver_stat_podiums": "Podiums",
-    "driver_stat_current_podiums": "Current Podiums",
-    "driver_stat_poles": "Pole Positions",
-    "driver_stat_current_poles": "Current Pole Positions",
-    "driver_stat_leader_pts": "Leader points",
-    "driver_stat_leader_pts_info": "Leader points are given to you when other drivers add laptimes that are slower than your pole position.",
-    "driver_stat_total_laps": "Total Laps",
-    "formdriver_header": "Edit Profile",
-    "formdriver_header_description": "Update your profile information.",
-    "formdriver_username_label": "Username",
-    "formdriver_username_placeholder": "Enter your username",
-    "formdriver_username_error_required": "Username is required",
-    "formdriver_avatar_label": "Avatar",
-    "formdriver_bio_label": "Bio",
-    "formdriver_bio_placeholder": "Tell us a bit about yourself!",
-    "formdriver_cancel_button": "Cancel",
-    "formdriver_submit_button": "Save Changes",
-    "formdriver_submit_error": "An error occurred while updating your profile. Please try again.",
-    "formdriver_submit_success": "Profile updated successfully!",
-    "rig_connect_title": "Connect to {rigName}",
-    "rig_connect_to_rig": "Connect to Rig",
-    "rig_connect_label": "You're about to connect to:",
-    "rig_connect_warning": "You will disconnect the current driver:",
-    "rig_connected": "Connected",
-    "rig_connecting": "Connecting...",
-    "rig_disconnect_from_rig": "Disconnect from Rig",
-    "rig_disconnected": "Disconnected"
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"hello_world": "Welcome to Dá-lhe! 🚗💨",
+	"nav_home": "Home",
+	"nav_leaders": "Leaders",
+	"nav_add": "New Laptime",
+	"nav_tournaments": "Tournaments",
+	"nav_profile": "Career",
+	"nav_driver": "Driver",
+	"nav_add_cancel": "Cancel",
+	"nav_add_save": "Create Laptime",
+	"formadd_header": "New Laptime",
+	"formadd_header_description": "Add your best laptime!",
+	"formadd_laptime_label": "Laptime",
+	"formadd_laptime_placeholder": "Enter your best laptime!",
+	"formadd_laptime_error_required": "Laptime is required",
+	"formadd_laptime_error_pattern": "Laptime must be in the format MMSSMMM",
+	"mode_light": "Light Mode",
+	"mode_dark": "Dark Mode",
+	"formadd_car_make_label": "Car",
+	"formadd_car_make_placeholder": "Make",
+	"formadd_car_make_error_required": "Car make is required",
+	"formadd_car_model_placeholder": "Model",
+	"formadd_race_track_label": "Track",
+	"formadd_race_track_placeholder": "Select a track",
+	"loading": "Loading...",
+	"login_button": "Login",
+	"formlogin_description": "Enter your email to receive a login link.",
+	"formlogin_email_label": "Email",
+	"formlogin_email_placeholder": "Enter your email",
+	"formlogin_email_error_required": "Email is required",
+	"formlogin_email_error_pattern": "Enter a valid email",
+	"formlogin_submit_error": "An error occurred while logging in. Please try again.",
+	"formlogin_submit_success": "Login link sent! Check your email.",
+	"formlogin_submit_button": "Send login link",
+	"homepage_gotoapp": "Go to the app",
+	"homepage_hero_title": "Keep yourself ",
+	"homepage_hero_title_underline": "on track.",
+	"homepage_hero_subtitle": "Dá-lhe! is a racing laptime tracker that helps you monitor your progress and compete with friends.",
+	"homepage_hero_cta": "Get Started",
+	"homepage_features_tracking_title": "Track Your Laptimes",
+	"homepage_features_tracking_description": "Easily log and monitor your laptimes over time.",
+	"homepage_features_comparison_title": "Compare with Friends",
+	"homepage_features_comparison_description": "See how you stack up against your friends and rivals.",
+	"homepage_features_insights_title": "Gain Insights",
+	"homepage_features_insights_description": "Analyze your performance and identify areas for improvement.",
+	"user_dropdown_account": "Account",
+	"user_dropdown_profile": "Profile",
+	"user_dropdown_settings": "Settings",
+	"user_dropdown_theme": "Theme",
+	"user_dropdown_theme_light": "Light",
+	"user_dropdown_theme_dark": "Dark",
+	"user_dropdown_theme_system": "System",
+	"user_dropdown_language": "Language",
+	"user_dropdown_language_pt": "Portuguese",
+	"user_dropdown_language_en": "English",
+	"user_dropdown_logout": "Logout",
+	"laptime_createdat_now": "Just now",
+	"laptime_createdat_minutes": [
+		{
+			"match": {
+				"minutes=1": "{minutes} minute ago",
+				"minutes>1": "{minutes} minutes ago"
+			}
+		}
+	],
+	"laptime_createdat_hours": [
+		{
+			"match": {
+				"hours=1": "{hours} hour ago",
+				"hours>1": "{hours} hours ago"
+			}
+		}
+	],
+	"laptime_createdat_days": [
+		{
+			"match": {
+				"days=1": "{days} day ago",
+				"days>1": "{days} days ago"
+			}
+		}
+	],
+	"laptime_createdat_months": [
+		{
+			"match": {
+				"months=1": "{months} month ago",
+				"months>1": "{months} months ago"
+			}
+		}
+	],
+	"laptime_createdat_years": [
+		{
+			"match": {
+				"years=1": "{years} year ago",
+				"years>1": "{years} years ago"
+			}
+		}
+	],
+	"laptime_details_at_track": "at",
+	"laptime_details_with_car": "with",
+	"laptime_track_record": "Track Record!",
+	"laptime_personal_best": "Personal Best!",
+	"laptime_options_goto_driver": "Go to driver",
+	"laptime_options_goto_leaderboard": "Go to track's leaderboard",
+	"laptime_options_compare": "Compare with me",
+	"laptime_options_compare_soon": "Coming soon",
+	"home_recent_laptimes": "Recent Laptimes",
+	"home_recent_laptimes_description": "See the latest laptimes from the community",
+	"home_no_laptimes": "No laptimes yet",
+	"home_no_laptimes_description": "Start adding your laptimes to see them here!",
+	"filters_track": "Track",
+	"filters_track_placeholder": "Select a track",
+	"filters_category": "Category",
+	"filters_category_placeholder": "Category",
+	"driver_profile_progress": "Progress",
+	"driver_profile_stats": "Stats",
+	"driver_profile_latest": "Latest laps",
+	"driver_stat_podiums": "Podiums",
+	"driver_stat_current_podiums": "Current Podiums",
+	"driver_stat_poles": "Pole Positions",
+	"driver_stat_current_poles": "Current Pole Positions",
+	"driver_stat_leader_pts": "Leader points",
+	"driver_stat_leader_pts_info": "Leader points are given to you when other drivers add laptimes that are slower than your pole position.",
+	"driver_stat_total_laps": "Total Laps",
+	"formdriver_header": "Edit Profile",
+	"formdriver_header_description": "Update your profile information.",
+	"formdriver_username_label": "Username",
+	"formdriver_username_placeholder": "Enter your username",
+	"formdriver_username_error_required": "Username is required",
+	"formdriver_avatar_label": "Avatar",
+	"formdriver_bio_label": "Bio",
+	"formdriver_bio_placeholder": "Tell us a bit about yourself!",
+	"formdriver_cancel_button": "Cancel",
+	"formdriver_submit_button": "Save Changes",
+	"formdriver_submit_error": "An error occurred while updating your profile. Please try again.",
+	"formdriver_submit_success": "Profile updated successfully!",
+	"rig_connect_title": "Connect to {rigName}",
+	"rig_connect_to_rig": "Connect to Rig",
+	"rig_connect_label": "You're about to connect to:",
+	"rig_connect_warning": "You will disconnect the current driver:",
+	"rig_connected": "Connected",
+	"rig_connecting": "Connecting...",
+	"rig_disconnect_from_rig": "Disconnect from Rig",
+	"rig_disconnected": "Disconnected"
 }

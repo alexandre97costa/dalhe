@@ -25,12 +25,12 @@ Login is by magic link. Locally, emails never leave your machine: they land in M
 
 ### Local URLs
 
-| What | URL |
-| --- | --- |
-| App | http://localhost:5173 |
-| Studio (database UI) | http://127.0.0.1:54323 |
+| What                  | URL                    |
+| --------------------- | ---------------------- |
+| App                   | http://localhost:5173  |
+| Studio (database UI)  | http://127.0.0.1:54323 |
 | Mailpit (local inbox) | http://127.0.0.1:54324 |
-| API | http://127.0.0.1:54321 |
+| API                   | http://127.0.0.1:54321 |
 
 ### Database scripts
 
