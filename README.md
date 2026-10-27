@@ -37,6 +37,11 @@ Login is by magic link. Locally, emails never leave your machine: they land in M
 - `pnpm db:reset`: recreate the local database from `supabase/migrations/` and `supabase/seed.sql`, then regenerate types.
 - `pnpm db:types`: regenerate `src/lib/types/supabase.types.ts` from the local database.
 
+### Checks
+
+- `pnpm check`: type-check with `svelte-check`. Known baseline: 13 errors, 3 warnings, listed in `docs/backlog.md`. A change should not add any.
+- `pnpm lint`: Prettier check (`pnpm format` fixes it).
+
 ### Against the hosted database
 
 Hosted values live in Vercel. To run local code against the hosted database for a one-off, keep them in an untracked `.env.hosted` and swap it in for `.env` temporarily. Remember that this writes to production data.

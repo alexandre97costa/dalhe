@@ -3,13 +3,14 @@
 // and what to do when importing types
 import { SupabaseClient, Session } from '@supabase/supabase-js';
 import type { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
+import type { Database } from '$lib/types/supabase.types';
 
 declare global {
 	namespace App {
 		// interface Error {}
 
 		interface Locals {
-			supabase: SupabaseClient;
+			supabase: SupabaseClient<Database>;
 			safeGetSession: () => Promise<{
 				session: Session | null;
 				user?: Session['user'] | null;
