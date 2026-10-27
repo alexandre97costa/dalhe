@@ -126,6 +126,10 @@ file_size_limit = "50MiB"
 # allowed_mime_types = ["image/png", "image/jpeg"]
 # objects_path = "./images"
 
+# Mirrors the hosted project's avatars bucket (private, no limits set there).
+[storage.buckets.avatars]
+public = false
+
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]
 enabled = true
