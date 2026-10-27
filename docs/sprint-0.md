@@ -32,10 +32,10 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 ## Decisions to settle before starting
 
 1. ~~**Home OS.**~~ **Settled:** Windows. Docker Desktop with the WSL2 backend.
-2. **Seed data.** The repo is **public**. Real data (family emails, names) must never be committed. Options: synthetic seed only, or a scrubbed dump. Recommendation: synthetic, written by hand or by Claude Code.
-3. **The test flag after this sprint.** Local dev no longer needs test laps in prod. But Vercel preview deploys and real-rig testing still hit the only hosted database. Keep the flag for that, or drop it? Recommendation: keep it, and move the filter into the database (views/rpcs) during Sprint 1 instead of per query in TS.
-4. **Prod migrations.** Manual `supabase db push` at release time, or a GitHub Action on merge to `prod` (S7)? Recommendation: manual first, automate after a few releases.
-5. **Planning docs.** The claude.ai Project is where docs are edited. `docs/sprints/` in the repo is a mirror, updated at sprint start and end. Confirm.
+2. ~~**Seed data.**~~ **Settled:** synthetic users, rigs, sessions, laps and tournaments (`@example.com`, nothing real; the repo is public). Catalog tables (game, cars, car makes/categories, tracks, reference times) are copied from the hosted database, which holds no personal data.
+3. ~~**The test flag after this sprint.**~~ **Settled:** keep `for_testing` and `GET_TEST_RECORDS`. Harmless, dropping the column in a migration is riskier than keeping it, and it may help when testing rig endpoints in Sprint 1. Local `.env` sets `GET_TEST_RECORDS=false`.
+4. ~~**Prod migrations.**~~ **Settled:** manual `supabase db push` at release time. S7 moves to the backlog.
+5. ~~**Planning docs.**~~ **Settled:** the claude.ai Project is the source of truth (it is also where the business model is discussed). The repo holds a copy of the latest sprint docs and other docs.
 
 ---
 

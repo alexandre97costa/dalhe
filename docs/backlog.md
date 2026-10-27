@@ -16,6 +16,8 @@ Items deferred from sprints. Each one notes where it came from.
 
 ## Tooling
 
+- **Migrations on merge to `prod`** (Sprint 0, S7; Decision 4). Releases run `supabase db push` by hand for now. Automate with a GitHub Action after a few manual releases.
+
 - **`pnpm lint` fails on line endings** (from Sprint 0, S4). On Windows, `core.autocrlf=true` checks files out as CRLF while the index stores LF (`git ls-files --eol` shows `i/lf w/crlf`). Prettier defaults to `endOfLine: "lf"`, so `prettier --check .` flags ~260 files that are otherwise formatted. Fix: add `* text=auto eol=lf` to `.gitattributes` (keeping the `-text` rule for migrations), renormalize the working copy, then run `pnpm format` once and commit the result on its own. Best done with C4, so `lint` and `check` both start clean.
 
 ## Database
