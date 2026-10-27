@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { m } from '$lib/paraglide/messages.js';
-	
+
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { formatTimeSinceCreation, formatLaptime, compareLaptimes } from '$lib/utils/laptime';
 	import type { RecentLaptime } from '$lib/types/listings.js';
@@ -11,11 +11,9 @@
 	const { diff, isFaster } = compareLaptimes(laptime.laptime, laptime.previous_laptime ?? null);
 </script>
 
-
-
 <Accordion.Trigger
 	class={cn(
-		`to-background shadow-md/5 hover:no-underline cursor-pointer flex items-center gap-2 rounded-md border bg-linear-to-bl pl-3 pr-2 py-2`,
+		`to-background flex cursor-pointer items-center gap-2 rounded-md border bg-linear-to-bl py-2 pr-2 pl-3 shadow-md/5 hover:no-underline`,
 		laptime.is_track_record
 			? 'border-purple-500/30 from-purple-500/15 '
 			: laptime.is_personal_best

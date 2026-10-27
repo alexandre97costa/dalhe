@@ -18,7 +18,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
-	import { Separator } from "$lib/components/ui/separator/index.js";
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { toast } from 'svelte-sonner';
 
 	let {
@@ -88,7 +88,7 @@
 
 {#snippet formIcon(name: typeof IconType)}
 	{@const Icon = name}
-	<Icon size="18" color="oklch(70.8% 0 0)"/>
+	<Icon size="18" color="oklch(70.8% 0 0)" />
 {/snippet}
 
 {#snippet InputOTPSlot(cell: any)}
@@ -247,7 +247,7 @@
 {/snippet}
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="border-muted-foreground/30 border-2 bg-white dark:bg-muted">
+	<Dialog.Content class="border-muted-foreground/30 dark:bg-muted border-2 bg-white">
 		<Dialog.Header>
 			<Dialog.Title>{m.formadd_header()}</Dialog.Title>
 			<Separator class="mt-4 mb-2" />

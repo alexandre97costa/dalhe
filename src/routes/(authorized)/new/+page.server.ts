@@ -1,12 +1,12 @@
 import type { Actions } from './$types';
-import { superValidate } from "sveltekit-superforms";
+import { superValidate } from 'sveltekit-superforms';
 import { laptimeSchema } from '$lib/schemas/laptimeSchema';
-import { zod4 } from "sveltekit-superforms/adapters";
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const actions: Actions = {
 	default: async ({ request, locals: { safeGetSession, supabase } }) => {
-        console.log('Received form submission!');
+		console.log('Received form submission!');
 
 		const form = await superValidate(request, zod4(laptimeSchema));
 
@@ -41,7 +41,7 @@ export const actions: Actions = {
 			return fail(500, { form, error: error.message });
 		}
 
-        console.log('Lap time submitted successfully');
+		console.log('Lap time submitted successfully');
 
 		// Return the form with success flag for SPA handling
 		return { form, success: true };

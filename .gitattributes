@@ -1,3 +1,7 @@
+# Store and check out text files with LF on every OS, so Prettier (endOfLine: lf) agrees
+# with the working copy on Windows too.
+* text=auto eol=lf
+
 # Migrations must be stored byte-for-byte: some function bodies in the hosted
 # database contain CRLF, and any line-ending conversion breaks `db diff`.
 supabase/migrations/*.sql -text

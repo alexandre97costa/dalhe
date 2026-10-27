@@ -39,7 +39,6 @@
 		use:enhance={handleSubmit}
 		bind:this={profileForm}
 	>
-
 		<div>
 			<label for="email">Email</label>
 			<input id="email" type="text" value={session?.user.email} disabled />
@@ -70,7 +69,6 @@
 			/>
 		</div>
 		-->
-
 	</form>
 	<!-- 
 	<form method="post" action="?/signout" use:enhance={handleSignOut}>

@@ -9,6 +9,7 @@ The main entrypoint is going to be timely polled when SimHub is running the dash
 The overlay will feature a QR code when its not in a race, so that drivers can connect to it through the mobile app. The scan will take users to an authorized page, which means it will prompt the user to login first in order to connect to a rig. If the user is already connected, the QR code will take them to the connect page which is an entrance hall to the lounge room. It lets you either connect to the rig or spectate it - connecting in will log out other drivers that were connected previously.
 
 The rig (or rather, the simhub dashboard) will also send some other requests under certain conditions, all under the `/send/*` route.
+
 - `/live`: will send information about the current lap. Current lap time, split, delta to the best time, and sector times.
 - `/session`: will send information about the current session. Track name, car name, car category, weather info, etc. This won't be updated as fast as `/live`.
-- `/new`: This request is the only one that needs an event set up in order to function. When a new *valid* lap is made, the dashboard will send a request with the complete information of this last lap that was made - laptime, sector times, the works. 
+- `/new`: This request is the only one that needs an event set up in order to function. When a new _valid_ lap is made, the dashboard will send a request with the complete information of this last lap that was made - laptime, sector times, the works.

@@ -8,13 +8,16 @@ import {
 	rigNotFound,
 	validateRouteParams
 } from '$lib/server/rigs';
-import * as z from "zod";
+import * as z from 'zod';
 import { type NewLap, zNewLap, type NewLapConverted, zNewLapConverted } from '$lib/types/rig';
-import { formatLaptime, convertTimeStringToMilliseconds, formatTimeSinceCreation, compareLaptimes } from '$lib/utils/laptime';
+import {
+	formatLaptime,
+	convertTimeStringToMilliseconds,
+	formatTimeSinceCreation,
+	compareLaptimes
+} from '$lib/utils/laptime';
 
 export async function GET({ params }): Promise<Response> {
-
-	
 	const rig = await resolveRig(params.slug);
 	if (!rig) {
 		return rigNotFound();

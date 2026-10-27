@@ -1,60 +1,55 @@
 import type { Handle } from '@sveltejs/kit';
 import { paraglideMiddleware } from '$lib/paraglide/server';
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr';
 import type { Database } from '$lib/types/supabase.types';
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public'
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public';
 
 export const handle: Handle = async ({ event, resolve }) => {
-
-	event.locals.supabase = createServerClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
-		cookies: {
-			getAll: () => event.cookies.getAll(),
-			setAll: (cookiesToSet) => {
-				cookiesToSet.forEach(({ name, value, options }) => {
-					event.cookies.set(name, value, { ...options, path: '/' })
-				})
-			},
-		},
-	})
+	event.locals.supabase = createServerClient<Database>(
+		PUBLIC_SUPABASE_URL,
+		PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+		{
+			cookies: {
+				getAll: () => event.cookies.getAll(),
+				setAll: (cookiesToSet) => {
+					cookiesToSet.forEach(({ name, value, options }) => {
+						event.cookies.set(name, value, { ...options, path: '/' });
+					});
+				}
+			}
+		}
+	);
 
 	event.locals.safeGetSession = async () => {
 		const {
 			data: { user },
-			error,
-		} = await event.locals.supabase.auth.getUser()
+			error
+		} = await event.locals.supabase.auth.getUser();
 		if (error) {
-			return { session: null, user: null }
+			return { session: null, user: null };
 		}
 		const {
-			data: { session },
-		} = await event.locals.supabase.auth.getSession()
-		return { session, user }
-	}
+			data: { session }
+		} = await event.locals.supabase.auth.getSession();
+		return { session, user };
+	};
 
 	const { session, user } = await event.locals.safeGetSession();
 
 	const freeAccess = {
-		absolutePaths: [
-			'/',
-			'/login',
-			'/login/confirm',
-			'/login/error',
-			'/privacy-policy',
-		],
-		slugPaths: [ /* Paths with slugs after them (eg. /connect/:id) */
+		absolutePaths: ['/', '/login', '/login/confirm', '/login/error', '/privacy-policy'],
+		slugPaths: [
+			/* Paths with slugs after them (eg. /connect/:id) */
 			// '/connect/',
-			'/rig/',
+			'/rig/'
 		]
-	}
+	};
 
 	const isFreeAccessPath =
 		freeAccess.absolutePaths.includes(event.url.pathname) ||
-		freeAccess.slugPaths.some((path) => event.url.pathname.startsWith(path))
+		freeAccess.slugPaths.some((path) => event.url.pathname.startsWith(path));
 
-	if (
-		!isFreeAccessPath &&
-		(!session || !user)
-	) {
+	if (!isFreeAccessPath && (!session || !user)) {
 		console.log(event.url.pathname + ': user not logged in, redirecting to login');
 		const redirectUrl = new URL('/login', event.url.origin);
 		redirectUrl.searchParams.set('redirectTo', event.url.pathname + event.url.search);
@@ -67,8 +62,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event, {
 			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale),
 			filterSerializedResponseHeaders(name: string) {
-				return name === 'content-range' || name === 'x-supabase-api-version'
-			},
+				return name === 'content-range' || name === 'x-supabase-api-version';
+			}
 		});
 	});
-}
+};

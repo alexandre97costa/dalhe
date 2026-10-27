@@ -92,7 +92,7 @@
 	</Field.Field>
 </div>
 
-<div class="flex flex-col gap-4 mt-4">
+<div class="mt-4 flex flex-col gap-4">
 	{#each data.laptimes as laptime}
 		<LeaderboardEntry {laptime} />
 	{:else}
