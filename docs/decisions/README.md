@@ -5,7 +5,7 @@ Short notes on choices that shape how this repo works, and why. One file per dec
 | Decision                                  | Summary                                                                             | Since         |
 | ----------------------------------------- | ----------------------------------------------------------------------------------- | ------------- |
 | [Local database first](local-database.md) | Develop against the local Supabase stack; migrations in the repo are the schema.    | Sprint 0      |
-| [Release flow](release-flow.md)           | `chore/*` → `preview`; `main` untouched for now; push only non-breaking migrations. | Sprint 0      |
+| [Release flow](release-flow.md)           | `chore/*` → `preview`; `prod` untouched for now; push only non-breaking migrations. | Sprint 0      |
 | [Seed data](seed-data.md)                 | Fake users only; catalog tables copied from the hosted database.                    | Sprint 0      |
 | [Test flag](test-flag.md)                 | Keep `for_testing` and `GET_TEST_RECORDS`.                                          | Sprint 0      |
 | [Planning docs](planning-docs.md)         | The claude.ai Project is the source of truth; `docs/sprints/` is a copy.            | Sprint 0      |

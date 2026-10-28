@@ -4,9 +4,9 @@ The repo is the source of truth for the schema: `supabase/migrations/` defines i
 
 ## Branches and the hosted database
 
-- `main` is the release branch (what prod users run). It stays untouched for now: `preview` removed manual lap entry while the rig flow isn't ready.
+- `prod` is the release branch (what users run). It stays untouched for now: `preview` removed manual lap entry while the rig flow isn't ready.
 - Work happens on `chore/*` branches and moves into `preview`.
-- There is **one** hosted database, shared by `main` (prod) and `preview` deploys. A migration pushed to it affects the code running on `main` immediately, whatever branch it came from.
+- There is **one** hosted database, shared by `prod` and `preview` deploys. A migration pushed to it affects the code running on `prod` immediately, whatever branch it came from.
 
 ## Changing the schema
 
@@ -32,16 +32,16 @@ on conflict (id) do nothing;
 
 ## Pushing to the hosted database
 
-Push only migrations that **don't break the code on `main`**. Always dry-run first:
+Push only migrations that **don't break the code on `prod`**. Always dry-run first:
 
 ```bash
 pnpm exec supabase db push --dry-run
 ```
 
-Read the list of migrations it would apply and judge each one against `main`:
+Read the list of migrations it would apply and judge each one against `prod`:
 
-- **Safe to push:** additive changes (new tables, nullable columns, new functions, comments, indexes, catalog inserts, policies that don't remove access `main` relies on).
-- **Keep local until release:** dropping or renaming tables, columns or functions; changing a function's arguments or return type; new `NOT NULL` columns without a default; tightened policies that `main` depends on.
+- **Safe to push:** additive changes (new tables, nullable columns, new functions, comments, indexes, catalog inserts, policies that don't remove access `prod` relies on).
+- **Keep local until release:** dropping or renaming tables, columns or functions; changing a function's arguments or return type; new `NOT NULL` columns without a default; tightened policies that `prod` depends on.
 
 Then push:
 
