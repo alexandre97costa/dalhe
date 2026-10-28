@@ -1,0 +1,67 @@
+# Dá-lhe!
+
+A web app for sim racing friends and family: lap times from shared rigs, leaderboards and (soon) a live lounge per rig. Rigs talk to the app through SimHub. Planning and decisions live in [`docs/`](docs/); the current sprint is in [`docs/sprints/`](docs/sprints/).
+
+## Stack
+
+SvelteKit 2 with Svelte 5 runes, Supabase (`@supabase/ssr`), shadcn-svelte (bits-ui) on Tailwind 4, Paraglide for i18n (en/pt), zod and sveltekit-superforms for forms. Deployed on Vercel. Windows dev machine; Node 22, pnpm.
+
+## Commands
+
+| Command                               | What it does                                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `pnpm exec supabase start` / `status` | Local Supabase stack in Docker / its URLs and keys                                               |
+| `pnpm dev`                            | Dev server on http://localhost:5173                                                              |
+| `pnpm check`                          | Type check. Known baseline: 13 errors, 3 warnings (listed in `docs/backlog.md`); don't add to it |
+| `pnpm lint` / `pnpm format`           | Prettier check / fix                                                                             |
+| `pnpm build`                          | Production build                                                                                 |
+| `pnpm db:reset`                       | Recreate the local database from migrations + `supabase/seed.sql`, then regenerate types         |
+| `pnpm db:types`                       | Regenerate `src/lib/types/supabase.types.ts` from the local database (never edit it by hand)     |
+
+Local login: request a magic link for a seed user (`alice@example.com`, `bruno@…`, `carla@…`, `diogo@…`) and open it from Mailpit at http://127.0.0.1:54324.
+
+## Where things are
+
+- `src/routes/(authorized)/`: the app (home, leaders, driver, connect + lounge, profile, tournaments). `(landingpage)/`: public landing page. `login/`: magic-link flow. `rig/[slug]/`: endpoints SimHub calls.
+- `src/lib/queries/`: Supabase queries, one function each, taking a `TypedSupabaseClient`.
+- `src/lib/server/rigs/`: rig endpoint logic (resolve rig/car/track, validation, `rigJson`). `src/lib/server/supabaseAdmin.ts`: service-role client.
+- `src/lib/types/`: generated database types, the client type and the client rule, listing types.
+- `src/lib/components/ui/`: shadcn-svelte components (use the `shadcn-svelte` skill to add or change them).
+- `supabase/migrations/`, `supabase/seed.sql`, `supabase/templates/`: schema, local data, local auth emails.
+
+## Conventions
+
+- **Thin routes.** Load functions and actions call `$lib/queries` or database functions; no query logic inline in pages.
+- **The database is the source of truth.** Business rules (lap inserts, ratings, sessions) live in Postgres functions and triggers; the app calls them via `rpc`.
+- **Supabase clients** ([decision](docs/decisions/supabase-clients.md)): server code uses `locals.supabase` (per request, RLS applies). `supabaseAdmin` only in rig endpoints, with a reason at the call site. Never a module-level shared client.
+- **Rig endpoints** respond through `rigJson`/`rigNotFound` in `$lib/server/rigs/`, which set `Cache-Control: no-store` so SimHub never caches a response.
+
+## Database workflow
+
+Full steps in [`docs/database-workflow.md`](docs/database-workflow.md).
+
+- Schema changes are migrations: `supabase migration new <name>` (or `supabase db diff`), then `pnpm db:reset`, then commit.
+- The hosted dashboard is **read-only** for schema. Never edit a migration that was already pushed.
+- `supabase db push` to the hosted database only for migrations that don't break `prod`, after reviewing `--dry-run`, and only when asked.
+- Migrations are stored byte-for-byte (`-text`): some function bodies contain CRLF. Don't reformat or re-save them with an editor tool.
+
+## Branches
+
+`chore/*` branch per task → pull request → `preview`. `prod` is the release branch and stays untouched for now ([decision](docs/decisions/release-flow.md)). Plan and ask before editing or committing; don't push unless asked.
+
+## Hard rules
+
+- **No real personal data** in the repo (it's public): seed users are `@example.com`.
+- **Never send HTTP requests to `/rig/[slug]/*`**, not even GETs: SimHub can only send GETs, so these endpoints create sessions and laps. Read and edit the code freely.
+- **No secret keys in committed files.** GitHub push protection rejects them, even the local CLI default. Local secrets go in `.env` (untracked); hosted values live in Vercel.
+
+## Why
+
+Short reasons for the choices above. Details in [`docs/decisions/`](docs/decisions/).
+
+- [Local database first](docs/decisions/local-database.md): _TODO (Alex)_
+- [Release flow](docs/decisions/release-flow.md): _TODO (Alex)_
+- [Seed data](docs/decisions/seed-data.md): _TODO (Alex)_
+- [Test flag](docs/decisions/test-flag.md): _TODO (Alex)_
+- [Planning docs](docs/decisions/planning-docs.md): _TODO (Alex)_
+- [Supabase clients](docs/decisions/supabase-clients.md): _TODO (Alex)_
