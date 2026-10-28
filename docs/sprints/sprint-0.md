@@ -186,3 +186,23 @@ Cut line: C4, D3 and S7 can slip. S2, S4 and S6 cannot; they are the point of th
 - "Database review" items (`rig_status`, stats upserts, `insert_lap` duplicate handling) become migrations.
 - The fake-rig script (A5) targets the local stack by default.
 - Decision "Rig identity" (`api_key`) becomes a migration plus seed values.
+
+---
+
+## Outcome (2026-10-28)
+
+All stories done except S7 (backlogged, Decision 4). Merged into `preview` through alexandre97costa/dalhe#22, plus the D2/D3 pull request.
+
+- **C1–C2:** dead and demo code removed, JS/TS twins deduped. `store.js` and `hooks.js` conversion left in the backlog.
+- **C3:** the shared `$lib/supabaseClient.ts` is gone; `locals.supabase` everywhere, admin client only in rig code. Typing the admin client caught a wrong return type on `insertNewLap`.
+- **C4:** `pnpm check` runs clean of noise but not of errors: a baseline of **13 errors, 3 warnings**, all real (profile page uses a nonexistent `website` column; connect pages read a `profiles` field `connect_to_rig` doesn't return; a dead branch on the landing page). Listed in `docs/backlog.md`, left for Alex to decide. Also added: LF line endings for the whole repo and one Prettier pass, so `pnpm lint` passes.
+- **S1–S2:** local stack on Windows (Docker Desktop, WSL2); baseline migrations pulled and in sync with hosted.
+- **S3:** seed with fake users, rigs, sessions, 120 laps and a tournament; catalog tables copied from hosted. Local login through Mailpit.
+- **S4:** `pnpm db:types` generates and formats the types from the local database.
+- **S5:** `.env` targets the local stack; hosted values in Vercel / untracked `.env.hosted`. GitHub push protection rejected the local CLI secret key in `.env.example`, so it is left empty there (copy `SECRET_KEY` from `supabase status`).
+- **S6:** `docs/database-workflow.md`; first migration (a column comment) pushed through it. Branch flow settled: `chore/*` → PR → `preview`, `prod` untouched for now. Docs had called the release branch `main`; corrected to `prod`.
+- **D1:** docs gathered under `docs/` (sprints, decisions, rig endpoints); shadcn-svelte skill moved to `.claude/skills/`.
+- **D2:** `CLAUDE.md` and `.mcp.json` (hosted Supabase read-only, plus local).
+- **D3:** this section; to be copied into the Project.
+
+**Left for Alex:** the "Why" texts in `CLAUDE.md` / `docs/decisions/`, the 13 `pnpm check` errors, and comparing the hosted magic-link email template with `supabase/templates/`.
