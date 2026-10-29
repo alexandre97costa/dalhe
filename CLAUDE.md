@@ -17,6 +17,8 @@ SvelteKit 2 with Svelte 5 runes, Supabase (`@supabase/ssr`), shadcn-svelte (bits
 | `pnpm build`                          | Production build                                                                                 |
 | `pnpm db:reset`                       | Recreate the local database from migrations + `supabase/seed.sql`, then regenerate types         |
 | `pnpm db:types`                       | Regenerate `src/lib/types/supabase.types.ts` from the local database (never edit it by hand)     |
+| `pnpm rig <scenario…\|all>`           | Fake rig: call the rig endpoints against the local stack (`pnpm rig` lists scenarios)            |
+| `pnpm exec supabase test db`          | pgTAP database tests in `supabase/tests/database/`                                               |
 
 Local login: request a magic link for a seed user (`alice@example.com`, `bruno@…`, `carla@…`, `diogo@…`) and open it from Mailpit at http://127.0.0.1:54324.
 

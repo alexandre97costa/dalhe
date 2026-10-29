@@ -46,3 +46,9 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 - **Read a key:** `select api_key from public.rig_key where rig_id = '<uuid>'` in the dashboard's SQL editor, then paste it into the overlay config.
 - **Change a key** (e.g. it leaked): `update public.rig_key set api_key = encode(extensions.gen_random_bytes(16), 'hex') where rig_id = '<uuid>'`, then paste the new key into the overlay config. The UUID, QR code, URLs and lap history don't change.
 - **Local stack:** the seed rigs have fixed keys, `local-sala-key` (Sala) and `local-garagem-key` (Garagem).
+
+## Testing locally: the fake rig
+
+`pnpm rig <scenario...>` calls these endpoints the way the overlay does and prints each call (without the key), the status code, the body and PASS/FAIL against this contract. `pnpm rig` lists the scenarios, `pnpm rig all` runs them all. It targets Garagem by default (`--rig sala` for Sala) and the dev server on `http://localhost:5173` (`FAKE_RIG_URL` to change it).
+
+It refuses to run unless both the app URL and `PUBLIC_SUPABASE_URL` are local, since these endpoints write even on GET. Some scenarios write laps and sessions; `pnpm db:reset` cleans up.
