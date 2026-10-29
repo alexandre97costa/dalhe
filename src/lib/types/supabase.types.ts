@@ -447,6 +447,33 @@ export type Database = {
 					}
 				];
 			};
+			rig_key: {
+				Row: {
+					api_key: string;
+					created_at: string;
+					rig_id: string;
+				};
+				ComputedFields: never;
+				Insert: {
+					api_key?: string;
+					created_at?: string;
+					rig_id: string;
+				};
+				Update: {
+					api_key?: string;
+					created_at?: string;
+					rig_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'rig_key_rig_id_fkey';
+						columns: ['rig_id'];
+						isOneToOne: true;
+						referencedRelation: 'rig';
+						referencedColumns: ['id'];
+					}
+				];
+			};
 			rig_session: {
 				Row: {
 					created_at: string;

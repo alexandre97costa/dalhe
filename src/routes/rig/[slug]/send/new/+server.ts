@@ -18,7 +18,7 @@ import {
 } from '$lib/utils/laptime';
 
 export async function GET({ params, url }): Promise<Response> {
-	const rig = await resolveRig(params.slug);
+	const rig = await resolveRig(params.slug, url.searchParams.get('k'));
 	if (!rig) return rigNotFound();
 
 	const validateUrl = validateRouteParams(url.searchParams, zNewLap);

@@ -21,13 +21,17 @@ export function rigJson<T>(body: T, status = 200): Response {
 	return json(body, { status, headers: NO_STORE });
 }
 
-// One fixed body for every "can't find it" case: unknown rig, malformed UUID.
+// One fixed body for every "can't find it" case: unknown rig, malformed UUID, missing or wrong key.
 // Never include the id or a reason, or you leak whether the rig exists.
 export function rigNotFound(): Response {
 	return rigJson({ error: 'not_found' }, 404);
 }
 
-export async function resolveRig(rigId: string): Promise<{
+// Every rig endpoint goes through here. `key` is the rig's secret (`?k=`); never log it.
+export async function resolveRig(
+	rigId: string,
+	key: string | null
+): Promise<{
 	driver_id: string;
 	driver_name: string;
 	rig_id: string;
@@ -37,7 +41,21 @@ export async function resolveRig(rigId: string): Promise<{
 } | null> {
 	const uuid = z.uuid({ version: 'v4' });
 	const validate = uuid.safeParse(rigId);
-	if (!validate.success) return null;
+	if (!validate.success || !key) return null;
+
+	// Admin client: rig_key has no policies or client grants, only the service role can read it.
+	const { data: rigKey, error: keyError } = await supabaseAdmin
+		.from('rig_key')
+		.select('rig_id')
+		.eq('rig_id', rigId)
+		.eq('api_key', key)
+		.maybeSingle();
+
+	if (keyError) {
+		console.log('resolveRig key error:', keyError.message);
+		return null;
+	}
+	if (!rigKey) return null;
 
 	const { data, error } = await supabaseAdmin.rpc('rig_status', {
 		p_expiry_minutes: parseInt(SESSION_TIMEOUT_MINS),

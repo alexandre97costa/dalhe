@@ -1,6 +1,11 @@
 # Rig entrypoint documentation
 
-This entrypoint is reserved for rigs with the `Dá-lhe!` SimHub dashboard that are trying to communicate with the `Dá-lhe!` app. Its unauthenticated, so technically anyone can connect to this entrypoiny. It expects a slug with the rig's UUID, which is pre-created in the database, and then inserted into the plugin's files. The plugin then sends GET requests with that UUID, which hints to the server about who is trying to send or request information.
+This entrypoint is reserved for rigs with the `Dá-lhe!` SimHub dashboard that are trying to communicate with the `Dá-lhe!` app. There is no user login: the rig identifies itself with two values, both pre-created in the database and inserted into the plugin's files.
+
+- The rig's **UUID**, in the URL slug (`/rig/[uuid]/...`). It is public: the QR code, connect and lounge URLs all contain it.
+- The rig's **api key**, as the `k` query param on every request (`/rig/[uuid]?k=...`). It is secret: it lives only in the `rig_key` table (service role only) and the overlay config, and the app never returns or logs it.
+
+An unknown rig, a malformed UUID, and a missing or wrong key all get the same `404 {"error": "not_found"}`, so a caller can't tell whether a rig exists. Seeing the QR code is not enough to submit laps; that needs the key from the rig PC. See [Sprint 1, Decision 1](sprints/sprint-1.md) for why.
 
 Because of limitations with dashboard development, Simhub can only send GET requests. This means publications of laptimes are made with said GET requests. The entrypoints are fairly protected against duplicate requests, and try to fail gracefully instead of error-ing, so that the SimHub overlay doesn't cache an error to that call, effectively blocking future requests.
 
@@ -13,3 +18,21 @@ The rig (or rather, the simhub dashboard) will also send some other requests und
 - `/live`: will send information about the current lap. Current lap time, split, delta to the best time, and sector times.
 - `/session`: will send information about the current session. Track name, car name, car category, weather info, etc. This won't be updated as fast as `/live`.
 - `/new`: This request is the only one that needs an event set up in order to function. When a new _valid_ lap is made, the dashboard will send a request with the complete information of this last lap that was made - laptime, sector times, the works.
+
+## Response contract
+
+The overlay retries a lap until it is handled, so every handled outcome returns **200** with a `status` (Sprint 1, Decision 5). Only "never got here" is non-200. Bodies use camelCase. The endpoints reach this contract during Sprint 1 (A2–A4); until then some still answer with the older shape.
+
+| Response       | When                                                                                                                                                 |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `404`          | Unknown rig, malformed UUID, missing or wrong key (same body for all).                                                                               |
+| `200` + status | Laps (`/send/new`): `created` (with `lapId`), `duplicate`, `rejected` (with a `reason`: invalid params, sectors don't add up, unknown car or track). |
+| `200` + status | Stats (`/send/live`, `/send/session`): `ok`, `ignored` (no active session), `rejected` (invalid params).                                             |
+| `5xx`          | Server error; the overlay may retry.                                                                                                                 |
+
+## Managing keys
+
+- **New rig:** insert the `rig` row, then a `rig_key` row with only `rig_id` (`insert into public.rig_key (rig_id) values ('<uuid>')`). The key is generated (32 hex characters). A rig without a key row answers 404 to everything.
+- **Read a key:** `select api_key from public.rig_key where rig_id = '<uuid>'` in the dashboard's SQL editor, then paste it into the overlay config.
+- **Change a key** (e.g. it leaked): `update public.rig_key set api_key = encode(extensions.gen_random_bytes(16), 'hex') where rig_id = '<uuid>'`, then paste the new key into the overlay config. The UUID, QR code, URLs and lap history don't change.
+- **Local stack:** the seed rigs have fixed keys, `local-sala-key` (Sala) and `local-garagem-key` (Garagem).

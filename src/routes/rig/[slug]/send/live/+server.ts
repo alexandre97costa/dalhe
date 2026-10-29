@@ -17,8 +17,8 @@ import {
 	compareLaptimes
 } from '$lib/utils/laptime';
 
-export async function GET({ params }): Promise<Response> {
-	const rig = await resolveRig(params.slug);
+export async function GET({ params, url }): Promise<Response> {
+	const rig = await resolveRig(params.slug, url.searchParams.get('k'));
 	if (!rig) {
 		return rigNotFound();
 	}
