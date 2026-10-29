@@ -697,8 +697,14 @@ export type Database = {
 			};
 		};
 		Functions: {
-			connect_to_rig: { Args: { p_driver_id: string; p_rig_id: string }; Returns: string };
-			disconnect_from_rig: { Args: { p_rig_id: string }; Returns: string };
+			connect_to_rig: {
+				Args: { p_expected_driver_id: string; p_rig_id: string; p_timeout_minutes: number };
+				Returns: string;
+			};
+			disconnect_from_rig: {
+				Args: { p_rig_id: string; p_timeout_minutes: number };
+				Returns: string;
+			};
 			get_driver_timeline: {
 				Args: { driverid: string; testing: boolean };
 				Returns: {
