@@ -2,11 +2,13 @@
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { LOGIN_REDIRECT_COOKIE, safeRedirectPath } from '$lib/server/loginRedirect';
 
-export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
+export const GET: RequestHandler = async ({ url, cookies, locals: { supabase } }) => {
 	const token_hash = url.searchParams.get('token_hash');
 	const type = url.searchParams.get('type') as EmailOtpType | null;
-	const next = url.searchParams.get('next') ?? '/';
+	const next =
+		url.searchParams.get('next') ?? safeRedirectPath(cookies.get(LOGIN_REDIRECT_COOKIE)) ?? '/';
 
 	/**
 	 * Clean up the redirect URL by deleting the Auth flow parameters.
@@ -24,6 +26,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 			console.log('Email confirmed successfully');
 			console.log('Session: ', data.session);
 			redirectTo.searchParams.delete('next');
+			cookies.delete(LOGIN_REDIRECT_COOKIE, { path: '/' });
 			redirect(303, redirectTo);
 		} else {
 			console.error('Error confirming email:', error.message);

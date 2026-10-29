@@ -141,5 +141,10 @@
 	"rig_connected": "Ligado",
 	"rig_connecting": "A ligar...",
 	"rig_disconnect_from_rig": "Sair do cockpit",
-	"rig_disconnected": "Desconectado"
+	"rig_disconnected": "Desconectado",
+	"rig_connect_driving": "{driverName} está a conduzir",
+	"rig_connect_confirm_question": "Tens a certeza? A sessão de {driverName} vai terminar.",
+	"rig_connect_confirm": "Sim, assumir o lugar",
+	"rig_connect_cancel": "Cancelar",
+	"rig_connect_driver_changed": "O condutor mudou enquanto estavas nesta página."
 }

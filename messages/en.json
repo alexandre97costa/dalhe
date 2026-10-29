@@ -141,5 +141,10 @@
 	"rig_connected": "Connected",
 	"rig_connecting": "Connecting...",
 	"rig_disconnect_from_rig": "Disconnect from Rig",
-	"rig_disconnected": "Disconnected"
+	"rig_disconnected": "Disconnected",
+	"rig_connect_driving": "{driverName} is driving",
+	"rig_connect_confirm_question": "Are you sure? {driverName}'s session will end.",
+	"rig_connect_confirm": "Yes, take over",
+	"rig_connect_cancel": "Cancel",
+	"rig_connect_driver_changed": "The driver changed while you were on this page."
 }

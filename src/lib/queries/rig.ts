@@ -96,3 +96,24 @@ export async function getUnclaimedLaps(supabaseClient: TypedSupabaseClient, rigI
 }
 
 export type LoungeLap = Awaited<ReturnType<typeof getSessionLaps>>[number];
+
+export type ConnectResult = 'connected' | 'driver_changed';
+
+// Connects the logged-in user (the rpc takes them from auth.uid()). `expectedDriverId` is the
+// driver the page showed, or null; if someone else connected since, nothing changes and the
+// result is 'driver_changed'.
+export async function connectToRig(
+	supabaseClient: TypedSupabaseClient,
+	rigId: string,
+	expectedDriverId: string | null
+): Promise<ConnectResult> {
+	const { data, error } = await supabaseClient.rpc('connect_to_rig', {
+		p_rig_id: rigId,
+		// The generated type says string, but the rpc takes null for "nobody was driving".
+		p_expected_driver_id: expectedDriverId as string,
+		p_timeout_minutes: parseInt(SESSION_TIMEOUT_MINS)
+	});
+	if (error) throw error;
+
+	return data as ConnectResult;
+}
