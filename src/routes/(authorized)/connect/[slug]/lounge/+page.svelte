@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import type { PageProps } from './$types';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
@@ -12,7 +13,20 @@
 	import PreviousLaps from './PreviousLaps.svelte';
 
 	let { data }: PageProps = $props();
-	let rigStats = $state(data.rigStats);
+	// Interim (B4): map the new load onto the draft's fields until B5 replaces the page.
+	const toRigStats = (d: typeof data) => ({
+		session_stats: d.simSession as Json,
+		lap_stats: d.liveLap as unknown as Json,
+		session_updated_at: d.statsUpdatedAt.simSession,
+		lap_updated_at: d.statsUpdatedAt.liveLap
+	});
+	let rigStats = $state(toRigStats(data));
+	let activeTab = $derived(
+		page.url.searchParams.get('tab') === 'unclaimed-laps' ? 'unclaimed-laps' : 'live-session'
+	);
+	let bestLap = $derived(
+		data.sessionLaps.length ? Math.min(...data.sessionLaps.map((l) => l.time_milliseconds)) : null
+	);
 	let selectedLapIds = $state<string[]>([]);
 	let sessionStatsOpen = $state(true);
 	let currentTime = $state(Date.now());
@@ -69,7 +83,7 @@
 		: [];
 
 	$effect(() => {
-		rigStats = data.rigStats;
+		rigStats = toRigStats(data);
 	});
 
 	onMount(() => {
@@ -151,7 +165,7 @@
 	let lapProgress = $derived(readNumber(lapStats, 'lapProgress'));
 	let currentLapNumber = $derived(readNumber(lapStats, 'lapNumber'));
 	let deltaToBest = $derived(
-		currentLapTime !== null && data.bestLap !== null ? currentLapTime * 1000 - data.bestLap : null
+		currentLapTime !== null && bestLap !== null ? currentLapTime * 1000 - bestLap : null
 	);
 	let liveLapCard: LiveLapCardData = $derived(
 		currentLapTime === null
@@ -210,26 +224,26 @@
 		<a
 			id="live-session-tab"
 			href="?tab=live-session"
-			aria-current={data.activeTab === 'live-session' ? 'page' : undefined}
+			aria-current={activeTab === 'live-session' ? 'page' : undefined}
 			aria-controls="live-session-panel"
 			class="flex min-h-10 flex-1 items-center justify-center border-b-2 px-2 text-sm font-semibold transition-colors"
-			class:border-[#bd55ff]={data.activeTab === 'live-session'}
-			class:border-transparent={data.activeTab !== 'live-session'}
-			class:text-[#f4f2f8]={data.activeTab === 'live-session'}
-			class:text-[#a6a4b8]={data.activeTab !== 'live-session'}
+			class:border-[#bd55ff]={activeTab === 'live-session'}
+			class:border-transparent={activeTab !== 'live-session'}
+			class:text-[#f4f2f8]={activeTab === 'live-session'}
+			class:text-[#a6a4b8]={activeTab !== 'live-session'}
 		>
 			Live session
 		</a>
 		<a
 			id="unclaimed-laps-tab"
 			href="?tab=unclaimed-laps"
-			aria-current={data.activeTab === 'unclaimed-laps' ? 'page' : undefined}
+			aria-current={activeTab === 'unclaimed-laps' ? 'page' : undefined}
 			aria-controls="unclaimed-laps-panel"
 			class="flex min-h-10 flex-1 items-center justify-center gap-2 border-b-2 px-2 text-sm font-semibold transition-colors"
-			class:border-[#bd55ff]={data.activeTab === 'unclaimed-laps'}
-			class:border-transparent={data.activeTab !== 'unclaimed-laps'}
-			class:text-[#f4f2f8]={data.activeTab === 'unclaimed-laps'}
-			class:text-[#a6a4b8]={data.activeTab !== 'unclaimed-laps'}
+			class:border-[#bd55ff]={activeTab === 'unclaimed-laps'}
+			class:border-transparent={activeTab !== 'unclaimed-laps'}
+			class:text-[#f4f2f8]={activeTab === 'unclaimed-laps'}
+			class:text-[#a6a4b8]={activeTab !== 'unclaimed-laps'}
 		>
 			Unclaimed
 			<span
@@ -240,7 +254,7 @@
 		</a>
 	</nav>
 
-	{#if data.activeTab === 'live-session'}
+	{#if activeTab === 'live-session'}
 		<section id="live-session-panel" aria-labelledby="live-session-tab" class="flex flex-col gap-4">
 			<Collapsible.Root bind:open={sessionStatsOpen}>
 				<div class="overflow-hidden rounded-2xl border border-[#454451] bg-[#13131b]">
@@ -283,15 +297,10 @@
 							>
 								<span class="text-sm text-[#a6a4b8]">Driver</span>
 								<strong class="truncate text-base font-semibold">
-									{data.rig.profiles?.username ??
-										(data.rig.profiles?.id ? 'Driver' : 'No driver connected')}
+									{data.status.driver_name ?? 'No driver connected'}
 								</strong>
 								<span class="text-[#a6a4b8]">
-									{data.rig.profiles?.id && data.rig.profiles.id === data.session?.user.id
-										? 'You'
-										: data.rig.profiles?.id
-											? 'Rig driver'
-											: 'Not connected'}
+									{data.isDriver ? 'You' : data.status.driver_id ? 'Rig driver' : 'Not connected'}
 								</span>
 							</div>
 						</div>
@@ -356,7 +365,7 @@
 						<span class="text-xs font-semibold whitespace-nowrap text-white/90">
 							{liveLapCard.isPreview
 								? 'sample delta'
-								: data.bestLap === null
+								: bestLap === null
 									? 'No rig best yet'
 									: 'vs rig best'}
 						</span>
@@ -415,7 +424,7 @@
 				</div>
 			</section>
 
-			<PreviousLaps laps={data.previousLaps} bestLap={data.bestLap} />
+			<PreviousLaps laps={data.sessionLaps} {bestLap} />
 		</section>
 	{:else}
 		<section

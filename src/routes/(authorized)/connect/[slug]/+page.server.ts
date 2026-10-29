@@ -1,23 +1,24 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { getRigById } from '$lib/queries/rig';
+import { getRigStatus } from '$lib/queries/rig';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { supabase, safeGetSession } = locals;
 	const { session, user } = await safeGetSession();
 
-	const rig = await getRigById(supabase, params.slug);
+	const status = await getRigStatus(supabase, params.slug);
 
-	if (!rig) {
+	if (!status) {
 		throw error(404, 'Rig not found');
 	}
 
-	if (user && rig.driver_id === user.id) {
+	if (user && status.session_active && status.driver_id === user.id) {
 		throw redirect(303, `/connect/${params.slug}/lounge`);
 	}
 
 	return {
-		rig,
+		rig: { id: status.rig_id, name: status.rig_name },
+		status,
 		rigId: params.slug,
 		session
 	};
