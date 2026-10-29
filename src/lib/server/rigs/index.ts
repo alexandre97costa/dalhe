@@ -27,18 +27,34 @@ export function rigNotFound(): Response {
 	return rigJson({ error: 'not_found' }, 404);
 }
 
-// Every rig endpoint goes through here. `key` is the rig's secret (`?k=`); never log it.
-export async function resolveRig(
-	rigId: string,
-	key: string | null
-): Promise<{
-	driver_id: string;
-	driver_name: string;
+// One row of rig_status. The generated type marks every field non-null, but the
+// session and driver fields are null when no session is active or nobody connected.
+export type RigStatus = {
 	rig_id: string;
 	rig_name: string;
 	session_active: boolean;
-	session_id: string;
-} | null> {
+	session_id: string | null;
+	driver_id: string | null;
+	driver_name: string | null;
+};
+
+// What the overlay gets back: no ids (Sprint 1, Decision 3).
+export type RigPoll = {
+	rigName: string;
+	sessionActive: boolean;
+	driverName: string | null;
+};
+
+export function pollResponse(rig: RigStatus): RigPoll {
+	return {
+		rigName: rig.rig_name,
+		sessionActive: rig.session_active,
+		driverName: rig.driver_name
+	};
+}
+
+// Every rig endpoint goes through here. `key` is the rig's secret (`?k=`); never log it.
+export async function resolveRig(rigId: string, key: string | null): Promise<RigStatus | null> {
 	const uuid = z.uuid({ version: 'v4' });
 	const validate = uuid.safeParse(rigId);
 	if (!validate.success || !key) return null;

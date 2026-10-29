@@ -11,6 +11,9 @@ select plan(33);
 
 -- Fixtures (as postgres) ----------------------------------------------------
 
+-- The seed's active session is only recent right after a reset
+update public.rig_session set last_activity_at = now() where id = md5('session-active')::uuid;
+
 insert into public.rig_stats (id, session_stats) values
   ('b0000000-0000-4000-8000-000000000002', '{"seed": true}');
 

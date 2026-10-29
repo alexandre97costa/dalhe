@@ -9,7 +9,17 @@ An unknown rig, a malformed UUID, and a missing or wrong key all get the same `4
 
 Because of limitations with dashboard development, Simhub can only send GET requests. This means publications of laptimes are made with said GET requests. The entrypoints are fairly protected against duplicate requests, and try to fail gracefully instead of error-ing, so that the SimHub overlay doesn't cache an error to that call, effectively blocking future requests.
 
-The main entrypoint is going to be timely polled when SimHub is running the dashboard, and simply asks what's the rig name in the app, and who's driving. An empty driver name will infer that no one is driving the cockpit currently.
+The main entrypoint is going to be timely polled when SimHub is running the dashboard, and simply asks what's the rig name in the app, and who's driving. It never writes to the database and never returns ids.
+
+`GET /rig/[uuid]?k=...` answers `200` with:
+
+| Case                                                                                  | Body                                                                   |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Someone connected                                                                     | `{"rigName": "Garagem", "sessionActive": true, "driverName": "carla"}` |
+| Anonymous session (laps arrived, nobody connected)                                    | `{"rigName": "Garagem", "sessionActive": true, "driverName": null}`    |
+| No session, or the last one expired (`SESSION_TIMEOUT_MINS` without a lap or connect) | `{"rigName": "Garagem", "sessionActive": false, "driverName": null}`   |
+
+`driverName` is the driver's username, as everywhere else in the app.
 
 The overlay will feature a QR code when its not in a race, so that drivers can connect to it through the mobile app. The scan will take users to an authorized page, which means it will prompt the user to login first in order to connect to a rig. If the user is already connected, the QR code will take them to the connect page which is an entrance hall to the lounge room. It lets you either connect to the rig or spectate it - connecting in will log out other drivers that were connected previously.
 

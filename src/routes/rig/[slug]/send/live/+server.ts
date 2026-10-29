@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import {
 	insertNewLap,
+	pollResponse,
 	resolveRig,
 	resolveCar,
 	resolveTrack,
@@ -22,5 +23,5 @@ export async function GET({ params, url }): Promise<Response> {
 	if (!rig) {
 		return rigNotFound();
 	}
-	return rigJson(rig);
+	return rigJson(pollResponse(rig));
 }
