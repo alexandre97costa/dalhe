@@ -76,55 +76,50 @@
 	</div>
 
 	<div class="flex items-center gap-2">
-		{#if session}
-			<Button size="sm" href="/home">Go to the app</Button>
-			<UserSession user={session?.user} />
-		{:else}
-			<Button
-				onclick={toggleLanguage}
-				variant="outline"
-				size="icon"
-				class="dark:bg-background  cursor-pointer"
-			>
-				<span class="h-[1.2rem] w-[1.2rem] scale-100">
-					{#if language == 'en'}
-						EN
-					{:else}
-						PT
-					{/if}
-				</span>
-				<span class="sr-only">Toggle language</span>
-			</Button>
-			<LightSwitch />
+		<Button
+			onclick={toggleLanguage}
+			variant="outline"
+			size="icon"
+			class="dark:bg-background  cursor-pointer"
+		>
+			<span class="h-[1.2rem] w-[1.2rem] scale-100">
+				{#if language == 'en'}
+					EN
+				{:else}
+					PT
+				{/if}
+			</span>
+			<span class="sr-only">Toggle language</span>
+		</Button>
+		<LightSwitch />
 
-			{#if isDesktop.current}
-				<Popover.Root bind:open>
-					<Popover.Trigger
-						class={buttonVariants({ variant: 'default', size: 'sm' }) +
-							' text-foreground border' +
-							' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
-							' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
-					>
-						{m.login_button()}
-					</Popover.Trigger>
-					<Popover.Content class="mx-3 my-1 w-80 rounded-xl p-5">
-						<LoginForm {form} />
-					</Popover.Content>
-				</Popover.Root>
-			{:else}
-				<Dialog.Root bind:open>
-					<Dialog.Trigger
-						class={buttonVariants({ variant: 'default', size: 'sm' }) +
-							' text-foreground! border' +
-							' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
-							' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
-						>{m.login_button()}</Dialog.Trigger
-					>
-					<Dialog.Content class="bg-popover w-11/12 max-w-md rounded-xl p-5">
-						<LoginForm {form} />
-					</Dialog.Content>
-				</Dialog.Root>
-			{/if}
+		{#if isDesktop.current}
+			<Popover.Root bind:open>
+				<Popover.Trigger
+					class={buttonVariants({ variant: 'default', size: 'sm' }) +
+						' text-foreground border' +
+						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
+						' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
+				>
+					{m.login_button()}
+				</Popover.Trigger>
+				<Popover.Content class="mx-3 my-1 w-80 rounded-xl p-5">
+					<LoginForm {form} />
+				</Popover.Content>
+			</Popover.Root>
+		{:else}
+			<Dialog.Root bind:open>
+				<Dialog.Trigger
+					class={buttonVariants({ variant: 'default', size: 'sm' }) +
+						' text-foreground! border' +
+						' dark:border-purple-600  dark:bg-purple-500/20 dark:hover:border-purple-500 dark:hover:bg-purple-500/30' +
+						' border-purple-300 bg-purple-500/15 hover:border-purple-400 hover:bg-purple-500/25  '}
+					>{m.login_button()}</Dialog.Trigger
+				>
+				<Dialog.Content class="bg-popover w-11/12 max-w-md rounded-xl p-5">
+					<LoginForm {form} />
+				</Dialog.Content>
+			</Dialog.Root>
 		{/if}
 	</div>
 </div>

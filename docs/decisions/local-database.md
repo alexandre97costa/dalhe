@@ -13,5 +13,6 @@
 - The hosted database is the only one, and prod users depend on it. Experimenting there is risky.
 - A schema in the repo can be reviewed, diffed and recreated; dashboard edits can't.
 - Manual pushes are enough for a one-person project until a few releases have gone through; automating too early would hide mistakes.
+- Database branching is a paid feature which we don't have access to - we have to resort to local if we want branching in practice.
 
 See [database-workflow.md](../database-workflow.md) for the steps.

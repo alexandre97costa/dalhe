@@ -59,9 +59,9 @@ Full steps in [`docs/database-workflow.md`](docs/database-workflow.md).
 
 Short reasons for the choices above. Details in [`docs/decisions/`](docs/decisions/).
 
-- [Local database first](docs/decisions/local-database.md): _TODO (Alex)_
-- [Release flow](docs/decisions/release-flow.md): _TODO (Alex)_
-- [Seed data](docs/decisions/seed-data.md): _TODO (Alex)_
-- [Test flag](docs/decisions/test-flag.md): _TODO (Alex)_
-- [Planning docs](docs/decisions/planning-docs.md): _TODO (Alex)_
-- [Supabase clients](docs/decisions/supabase-clients.md): _TODO (Alex)_
+- [Local database first](docs/decisions/local-database.md): Database branching (same schema, different contents) is a paid feature in Supabase, which we don't have access to. Local database development allows me to work with actual data without interfering with the prod DB.
+- [Release flow](docs/decisions/release-flow.md): `prod` branch should only be touched when changes are ready to be shown to the public. `preview` is the working copy and should reflect the most recent (stable) changes.
+- [Seed data](docs/decisions/seed-data.md): Some fixed table data (game, car, car_category, car_make, race_track) should stay fixed and mirror prod. Any changes here require small migrations. All other tables have fairly random contents.
+- [Test flag](docs/decisions/test-flag.md): Obsolete since the local database advent, but could be useful for rig communication testing. Lets leave it for now, delete later.
+- [Planning docs](docs/decisions/planning-docs.md): The source of truth is a claude.ai project which is where i discuss the planning and sprints. Everytime plans and sprints are updated, they are commited to the docs folder.
+- [Supabase clients](docs/decisions/supabase-clients.md): Most information is queried through the supabase client for authenticated users. There's an exception for the rig communication, which is made by supabaseAdmin and bypasses RLS. Any connection made through admin should have stern validation and safe guards.
