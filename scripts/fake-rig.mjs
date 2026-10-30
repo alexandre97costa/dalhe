@@ -91,6 +91,117 @@ function randomLap(overrides = {}) {
 	});
 }
 
+// Stats as the overlay sends them (src/lib/types/rig.ts: zLapStats, zSessionStats)
+const LAP_STATS = {
+	lapNumber: '6',
+	lapTotalCount: '20',
+	laptime_ms: '41230',
+	deltaBest: '-0.21',
+	progress: '0.48',
+	valid: 'true',
+	currentSector: '2',
+	currentSplit: '29012',
+	s1_ms: '29012',
+	bestS1_ms: '28599',
+	bestS2_ms: '30120',
+	bestS3_ms: '25590'
+};
+const SESSION_STATS = {
+	CurrentGame: 'AssettoCorsaCompetizione',
+	TrackId: SEED_TRACK,
+	SessionTypeName: 'PRACTICE',
+	CarId: SEED_CAR,
+	CarClass: 'GT3',
+	TCLevel: '3',
+	ABSLevel: '2',
+	BrakeBias: '-15',
+	AirTemperature: '21',
+	TrackTemperature: '27',
+	rainIntesity: 'ACC_NO_RAIN',
+	rainIntensityIn10min: 'ACC_DRIZZLE',
+	rainIntensityIn30min: 'ACC_LIGHT_RAIN'
+};
+
+async function openSession(rig) {
+	const { data, error } = await admin()
+		.from('rig_session')
+		.select('id, last_activity_at')
+		.eq('rig_id', rig.id)
+		.is('ended_at', null)
+		.maybeSingle();
+	if (error) throw error;
+	return data;
+}
+
+async function lastActivity(sessionId) {
+	const { data } = await admin()
+		.from('rig_session')
+		.select('last_activity_at')
+		.eq('id', sessionId)
+		.single();
+	return data?.last_activity_at;
+}
+
+async function storedStats(rig, column) {
+	const { data } = await admin().from('rig_stats').select(column).eq('id', rig.id).maybeSingle();
+	return data?.[column] ?? null;
+}
+
+// Runs fn with the rig's session past the timeout (an anonymous one if there is none),
+// then puts the rig back the way it was.
+async function withStaleSession(rig, fn) {
+	const db = admin();
+	const open = await openSession(rig);
+	const stale = new Date(Date.now() - (TIMEOUT_MINS + 1) * 60_000).toISOString();
+	let sessionId = open?.id;
+	if (open) {
+		await db.from('rig_session').update({ last_activity_at: stale }).eq('id', open.id);
+	} else {
+		const { data, error } = await db
+			.from('rig_session')
+			.insert({ rig_id: rig.id, last_activity_at: stale })
+			.select('id')
+			.single();
+		if (error) throw error;
+		sessionId = data.id;
+	}
+	try {
+		return await fn(sessionId);
+	} finally {
+		if (open) {
+			await db
+				.from('rig_session')
+				.update({ last_activity_at: open.last_activity_at })
+				.eq('id', open.id);
+		} else {
+			await db.from('rig_session').delete().eq('id', sessionId);
+		}
+	}
+}
+
+// Runs fn with an active session on the rig: the current one if it is recent,
+// otherwise a fresh anonymous one that is removed afterwards.
+async function withActiveSession(rig, fn) {
+	const open = await openSession(rig);
+	const recent =
+		open && new Date(open.last_activity_at) > new Date(Date.now() - TIMEOUT_MINS * 60_000);
+	if (recent) return fn(open.id);
+	if (open) throw new Error('the rig has a stale open session; send a lap or connect first');
+
+	const db = admin();
+	const { data, error } = await db
+		.from('rig_session')
+		.insert({ rig_id: rig.id })
+		.select('id')
+		.single();
+	if (error) throw error;
+	try {
+		return await fn(data.id);
+	} finally {
+		await db.from('rig_session').delete().eq('id', data.id);
+	}
+}
+
 function sameKeys(body, keys) {
 	return body !== null && Object.keys(body).sort().join() === [...keys].sort().join();
 }
@@ -204,51 +315,68 @@ const scenarios = {
 			return r.status === 404 && r.text === NOT_FOUND;
 		}
 	},
+	'stats-live': {
+		about: 'live lap stats with an active session: ok, stored, activity untouched',
+		async run(rig) {
+			return withActiveSession(rig, async (sessionId) => {
+				const before = await lastActivity(sessionId);
+				const r = await call(rig, '/send/live', LAP_STATS);
+				const stored = await storedStats(rig, 'lap_stats');
+				return (
+					r.status === 200 &&
+					r.body?.status === 'ok' &&
+					stored?.lapNumber === 6 &&
+					stored?.valid === true &&
+					!('k' in stored) &&
+					(await lastActivity(sessionId)) === before
+				);
+			});
+		}
+	},
+	'stats-session': {
+		about: 'sim session stats with an active session: ok, stored',
+		async run(rig) {
+			return withActiveSession(rig, async () => {
+				const r = await call(rig, '/send/session', SESSION_STATS);
+				const stored = await storedStats(rig, 'session_stats');
+				return (
+					r.status === 200 && r.body?.status === 'ok' && stored?.TCLevel === 3 && !('k' in stored)
+				);
+			});
+		}
+	},
+	'stats-ignored': {
+		about: 'stats while the session is past the timeout: ignored, nothing written',
+		async run(rig) {
+			return withStaleSession(rig, async () => {
+				const before = JSON.stringify(await storedStats(rig, 'lap_stats'));
+				const r = await call(rig, '/send/live', { ...LAP_STATS, lapNumber: '99' });
+				const after = JSON.stringify(await storedStats(rig, 'lap_stats'));
+				return r.status === 200 && r.body?.status === 'ignored' && before === after;
+			});
+		}
+	},
+	'stats-rejected': {
+		about: 'live lap stats with an invalid param: rejected',
+		async run(rig) {
+			const r = await call(rig, '/send/live', { ...LAP_STATS, progress: '2' });
+			return (
+				r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'invalid_params'
+			);
+		}
+	},
 	'stale-session': {
 		about: 'poll while the session is past the timeout: inactive, nothing written',
 		async run(rig) {
-			const db = admin();
-			const { data: open, error } = await db
-				.from('rig_session')
-				.select('id, last_activity_at')
-				.eq('rig_id', rig.id)
-				.is('ended_at', null)
-				.maybeSingle();
-			if (error) throw error;
-
-			const stale = new Date(Date.now() - (TIMEOUT_MINS + 1) * 60_000).toISOString();
-			let sessionId = open?.id;
-			if (open) {
-				await db.from('rig_session').update({ last_activity_at: stale }).eq('id', open.id);
-			} else {
-				const { data, error } = await db
-					.from('rig_session')
-					.insert({ rig_id: rig.id, last_activity_at: stale })
-					.select('id')
-					.single();
-				if (error) throw error;
-				sessionId = data.id;
-			}
-
-			try {
+			return withStaleSession(rig, async (sessionId) => {
 				const r = await call(rig);
-				const { data: after } = await db
+				const { data: after } = await admin()
 					.from('rig_session')
 					.select('ended_at')
 					.eq('id', sessionId)
 					.single();
 				return r.status === 200 && r.body?.sessionActive === false && after?.ended_at === null;
-			} finally {
-				// Put the rig back the way it was
-				if (open) {
-					await db
-						.from('rig_session')
-						.update({ last_activity_at: open.last_activity_at })
-						.eq('id', open.id);
-				} else {
-					await db.from('rig_session').delete().eq('id', sessionId);
-				}
-			}
+			});
 		}
 	}
 };

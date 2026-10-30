@@ -15,7 +15,8 @@ select plan(33);
 update public.rig_session set last_activity_at = now() where id = md5('session-active')::uuid;
 
 insert into public.rig_stats (id, session_stats) values
-  ('b0000000-0000-4000-8000-000000000002', '{"seed": true}');
+  ('b0000000-0000-4000-8000-000000000002', '{"seed": true}')
+on conflict (id) do update set session_stats = excluded.session_stats;
 
 -- A lap Alice doesn't hold: the fastest lap on a track where the record is someone else's
 create temporary table record_lap as

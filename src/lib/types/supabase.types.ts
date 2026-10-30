@@ -793,6 +793,10 @@ export type Database = {
 					session_id: string;
 				}[];
 			};
+			upsert_rig_stats: {
+				Args: { p_kind: string; p_rig_id: string; p_stats: Json; p_timeout_minutes: number };
+				Returns: string;
+			};
 		};
 		Enums: {
 			TournamentScoring: 'Aggregate' | 'Points-Based (Participants)' | 'Points-Based (F1)';

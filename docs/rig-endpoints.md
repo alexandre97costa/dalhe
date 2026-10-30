@@ -31,7 +31,7 @@ The rig (or rather, the simhub dashboard) will also send some other requests und
 
 ## Response contract
 
-The overlay retries a lap until it is handled, so every handled outcome returns **200** with a `status` (Sprint 1, Decision 5). Only "never got here" is non-200. Bodies use camelCase. The endpoints reach this contract during Sprint 1 (A2–A4); until then some still answer with the older shape.
+The overlay retries a lap until it is handled, so every handled outcome returns **200** with a `status` (Sprint 1, Decision 5). Only "never got here" is non-200. Bodies use camelCase.
 
 | Response       | When                                                                                                                                                 |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -57,6 +57,22 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 | `500 {"error": "server_error"}`                        | Not handled; retry.                                                                                                      |
 
 Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it.
+
+### Stats: `/send/live` and `/send/session`
+
+The overlay sends the current lap (`/send/live`, often) and the sim session (`/send/session`, less often) as query params. The app keeps only the latest values per rig, in `rig_stats.lap_stats` and `rig_stats.session_stats`, for the lounge. The params are validated by `zLapStats` and `zSessionStats` in `src/lib/types/rig.ts`; the key is never stored.
+
+- `/send/live`: `lapNumber`, `lapTotalCount`?, `laptime_ms`, `deltaBest`, `progress` (0–1), `valid` (`true`/`false`), `currentSector` (1–3), `currentSplit`, and optionally `s1_ms`, `s2_ms`, `bestS1_ms`, `bestS2_ms`, `bestS3_ms`.
+- `/send/session`: SimHub's names: `CurrentGame` (`AssettoCorsaCompetizione`), `TrackId`, `SessionTypeName` (`PRACTICE`, `HOTLAP`, `RACE`, `7` hotstint, `8` superpole), `CarId`, `CarClass`?, `TCLevel`, `ABSLevel`, `BrakeBias`, `AirTemperature`, `TrackTemperature`, `rainIntesity`, `rainIntensityIn10min`, `rainIntensityIn30min` (`ACC_NO_RAIN` … `ACC_THUNDERSTORM`).
+
+| Body                                                 | Meaning                                                                            |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `{"status": "ok"}`                                   | Stored. The rig has an active session.                                             |
+| `{"status": "ignored"}`                              | Nothing written: no active session (none, or past the timeout). Never creates one. |
+| `{"status": "rejected", "reason": "invalid_params"}` | A param is missing or out of range.                                                |
+| `500 {"error": "server_error"}`                      | Not handled.                                                                       |
+
+Stats never refresh the session's activity: only laps and connects do. Connecting or disconnecting clears the rig's stats.
 
 ## Managing keys
 

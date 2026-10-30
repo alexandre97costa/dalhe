@@ -1,27 +1,15 @@
-import { json } from '@sveltejs/kit';
-import {
-	insertNewLap,
-	pollResponse,
-	resolveRig,
-	resolveCar,
-	resolveTrack,
-	rigJson,
-	rigNotFound,
-	validateRouteParams
-} from '$lib/server/rigs';
-import * as z from 'zod';
-import { type NewLap, zNewLap, type NewLapConverted, zNewLapConverted } from '$lib/types/rig';
-import {
-	formatLaptime,
-	convertTimeStringToMilliseconds,
-	formatTimeSinceCreation,
-	compareLaptimes
-} from '$lib/utils/laptime';
+import { resolveRig, rigJson, rigNotFound, submitStats } from '$lib/server/rigs';
 
+// Sim session stats from the overlay: 200 with ok (stored), ignored (no active session) or rejected.
 export async function GET({ params, url }): Promise<Response> {
 	const rig = await resolveRig(params.slug, url.searchParams.get('k'));
-	if (!rig) {
-		return rigNotFound();
+	if (!rig) return rigNotFound();
+
+	try {
+		return rigJson(await submitStats(rig.rig_id, 'session', url.searchParams));
+	} catch (error) {
+		// Through rigJson, so SimHub doesn't cache the error
+		console.error('Stats not handled:', error);
+		return rigJson({ error: 'server_error' }, 500);
 	}
-	return rigJson(pollResponse(rig));
 }

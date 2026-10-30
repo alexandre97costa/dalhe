@@ -6,8 +6,10 @@ import {
 	type SessionStats,
 	type LapStats,
 	type NewLapConverted,
+	zLapStats,
 	zNewLap,
-	zNewLapConverted
+	zNewLapConverted,
+	zSessionStats
 } from '$lib/types/rig';
 import {
 	formatLaptime,
@@ -190,4 +192,41 @@ export async function insertNewLap(l: NewLapConverted): Promise<LapOutcome> {
 		return { status: 'created', lapId: row.lap_id };
 	if (row?.status === 'duplicate') return { status: 'duplicate' };
 	throw new Error(`insert_lap returned an unexpected row: ${JSON.stringify(row)}`);
+}
+
+// Every handled stats call gets a 200 with one of these (Sprint 1, Decision 5)
+export type StatsOutcome =
+	| { status: 'ok' }
+	| { status: 'ignored' }
+	| { status: 'rejected'; reason: 'invalid_params' };
+
+// Stores the latest live lap stats (`lap`, /send/live) or sim session stats (`session`, /send/session)
+// for the rig, only while it has an active session. Never creates a session or refreshes its activity.
+// Throws only on server errors.
+export async function submitStats(
+	rigId: string,
+	kind: 'lap' | 'session',
+	params: URLSearchParams
+): Promise<StatsOutcome> {
+	const schema = kind === 'lap' ? zLapStats : zSessionStats;
+	const parsed = validateRouteParams(params, schema);
+	if (!parsed.success) {
+		// Stats arrive often: log which fields failed, not the params
+		console.warn(
+			`Stats rejected (${kind}):`,
+			parsed.error.issues.map((i) => i.path.join('.'))
+		);
+		return { status: 'rejected', reason: 'invalid_params' };
+	}
+
+	const { data, error } = await supabaseAdmin.rpc('upsert_rig_stats', {
+		p_rig_id: rigId,
+		p_timeout_minutes: parseInt(SESSION_TIMEOUT_MINS),
+		p_kind: kind,
+		p_stats: parsed.data
+	});
+	if (error) throw error;
+
+	if (data === 'ok' || data === 'ignored') return { status: data };
+	throw new Error(`upsert_rig_stats returned an unexpected value: ${data}`);
 }
