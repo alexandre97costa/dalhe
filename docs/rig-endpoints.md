@@ -56,14 +56,18 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 | `{"status": "rejected", "reason": "unknown_track"}`    | `trackId` isn't in the catalog.                                                                                          |
 | `500 {"error": "server_error"}`                        | Not handled; retry.                                                                                                      |
 
+**Sector sum: strict.** Each sector is converted to whole milliseconds (rounded), and `s1 + s2 + s3` must equal `laptime_ms` exactly, with no tolerance. Sprint 1.5 (X2) set out to measure the drift on real laps, but no stored lap had sectors yet. If real laps get `sectors_mismatch` by a millisecond or two, add a tolerance constant next to the check in `submitLap` and note it here.
+
 Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it.
+
+Every car and track in use needs its SimHub id. `pnpm simhub:check` lists catalog cars and tracks without one (and how many laps each has) on the local stack, read-only. For hosted, run the SQL at the top of `scripts/simhub-ids.mjs` in the dashboard's SQL editor.
 
 ### Stats: `/send/live` and `/send/session`
 
 The overlay sends the current lap (`/send/live`, often) and the sim session (`/send/session`, less often) as query params. The app keeps only the latest values per rig, in `rig_stats.lap_stats` and `rig_stats.session_stats`, for the lounge. The params are validated by `zLapStats` and `zSessionStats` in `src/lib/types/rig.ts`; the key is never stored.
 
-- `/send/live`: `lapNumber`, `lapTotalCount`?, `laptime_ms`, `deltaBest`, `progress` (0–1), `valid` (`true`/`false`), `currentSector` (1–3), `currentSplit`, and optionally `s1_ms`, `s2_ms`, `bestS1_ms`, `bestS2_ms`, `bestS3_ms`.
-- `/send/session`: SimHub's names: `CurrentGame` (`AssettoCorsaCompetizione`), `TrackId`, `SessionTypeName` (`PRACTICE`, `HOTLAP`, `RACE`, `7` hotstint, `8` superpole), `CarId`, `CarClass`?, `TCLevel`, `ABSLevel`, `BrakeBias`, `AirTemperature`, `TrackTemperature`, `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` (`ACC_NO_RAIN` … `ACC_THUNDERSTORM`).
+- `/send/live`: `lapNumber`, `lapTotalCount`?, `laptime_ms`, `deltaBest`, `progress` (0–1), `valid` (`true`/`false`), `currentSector` (1–3), `currentSplit`, and optionally `s1_ms`, `s2_ms`, `bestS1_ms`, `bestS2_ms`, `bestS3_ms`. The `bestSx_ms` values are accepted and stored but no longer used by the lounge: its bests come from the database ([Sprint 1.5, Decision 2](sprints/sprint-1.5.md)).
+- `/send/session`: SimHub's names: `CurrentGame` (`AssettoCorsaCompetizione`), `TrackId`, `SessionTypeName` (`PRACTICE`, `HOTLAP`, `RACE`, `7` hotstint, `8` superpole), `CarId`, `CarClass`?, `TCLevel`, `ABSLevel`, `BrakeBias`, `AirTemperature`, `TrackTemperature`, `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` (`ACC_NO_RAIN` … `ACC_THUNDERSTORM`). The old spelling `rainIntesity` is now `rejected` (`invalid_params`), so the overlay config must switch to `rainIntensity` in the same release. `SessionTypeName` keeps strings and numbers on purpose (SimHub sends both); the app humanizes `7` as Hotstint, `8` as Superpole and anything unknown as Session.
 
 | Body                                                 | Meaning                                                                            |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -79,6 +83,7 @@ Stats never refresh the session's activity: only laps and connects do. Connectin
 - **New rig:** insert the `rig` row, then a `rig_key` row with only `rig_id` (`insert into public.rig_key (rig_id) values ('<uuid>')`). The key is generated (32 hex characters). A rig without a key row answers 404 to everything.
 - **Read a key:** `select api_key from public.rig_key where rig_id = '<uuid>'` in the dashboard's SQL editor, then paste it into the overlay config.
 - **Change a key** (e.g. it leaked): `update public.rig_key set api_key = encode(extensions.gen_random_bytes(16), 'hex') where rig_id = '<uuid>'`, then paste the new key into the overlay config. The UUID, QR code, URLs and lap history don't change.
+- **QR image:** upload `<uuid>.png` (the connect URL, never the key) to the public `rig-qr` bucket in Studio; the overlay reads it from `<supabase url>/storage/v1/object/public/rig-qr/<uuid>.png`. Clients can't write to the bucket. Locally the seed rigs' images are uploaded on `supabase start` / `db reset`.
 - **Local stack:** the seed rigs have fixed keys, `local-sala-key` (Sala) and `local-garagem-key` (Garagem).
 
 ## Testing locally: the fake rig
