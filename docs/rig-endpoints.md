@@ -56,6 +56,8 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 | `{"status": "rejected", "reason": "unknown_track"}`    | `trackId` isn't in the catalog.                                                                                          |
 | `500 {"error": "server_error"}`                        | Not handled; retry.                                                                                                      |
 
+**Sector sum: strict.** Each sector is converted to whole milliseconds (rounded), and `s1 + s2 + s3` must equal `laptime_ms` exactly, with no tolerance. Sprint 1.5 (X2) set out to measure the drift on real laps, but no stored lap had sectors yet. If real laps get `sectors_mismatch` by a millisecond or two, add a tolerance constant next to the check in `submitLap` and note it here.
+
 Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it.
 
 ### Stats: `/send/live` and `/send/session`

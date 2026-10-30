@@ -125,7 +125,7 @@ No ids in the response (Decision 3).
 
 Rules:
 
-- The three sectors must add up to `laptime_ms`.
+- The three sectors must add up to `laptime_ms` exactly: each sector is rounded to whole ms, no tolerance (Sprint 1.5, X2). No stored lap had sectors to measure a drift against; revisit if real laps get `sectors_mismatch` by 1–2 ms.
 - The car and track must exist in the catalog (by SimHub id).
 - The lap goes to whoever drives the active session. No active session: an anonymous one is created and the lap lands there, unclaimed.
 - **Duplicate** = same track, car, lap time and all three sectors. Not scoped to the rig or the driver.
