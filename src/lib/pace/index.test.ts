@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { bestsFor, bestsKey, classifyPace, hasPaceBadge, type LoungeBests } from './index';
+import {
+	bestsFor,
+	bestsKey,
+	classifyLap,
+	classifyPace,
+	hasPaceBadge,
+	type LoungeBests
+} from './index';
 import { PACE_BAND } from '$lib/config/lounge';
 
 // Record 90.000, session best 100.000 (green up to 101.000 with a 1% band).
@@ -120,5 +127,30 @@ describe('hasPaceBadge', () => {
 		expect(
 			['record', 'sessionBest', 'onPace', 'offPace', 'neutral'].map((p) => hasPaceBadge(p as never))
 		).toEqual([true, true, true, false, false]);
+	});
+});
+
+describe('classifyLap', () => {
+	const map = { [bestsKey(3, 1)]: bests };
+	it('classifies the lap and each sector with the lap’s own bests', () => {
+		expect(
+			classifyLap(
+				{ timeMs: 95_000, s1Ms: 29_000, s2Ms: 34_300, s3Ms: 40_000, trackId: 3, categoryId: 1 },
+				map
+			)
+		).toEqual({ lap: 'sessionBest', s1: 'record', s2: 'onPace', s3: 'offPace' });
+	});
+	it('a lap without sectors has neutral sectors', () => {
+		expect(
+			classifyLap(
+				{ timeMs: 100_000, s1Ms: null, s2Ms: null, s3Ms: null, trackId: 3, categoryId: 1 },
+				map
+			)
+		).toEqual({ lap: 'sessionBest', s1: 'neutral', s2: 'neutral', s3: 'neutral' });
+	});
+	it('a lap with no bests row is neutral throughout', () => {
+		expect(
+			classifyLap({ timeMs: 1, s1Ms: 1, s2Ms: 1, s3Ms: 1, trackId: 9, categoryId: 1 }, map)
+		).toEqual({ lap: 'neutral', s1: 'neutral', s2: 'neutral', s3: 'neutral' });
 	});
 });

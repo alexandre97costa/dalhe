@@ -71,3 +71,24 @@ export function classifyPace(
 export function hasPaceBadge(pace: Pace): pace is 'record' | 'sessionBest' | 'onPace' {
 	return pace === 'record' || pace === 'sessionBest' || pace === 'onPace';
 }
+
+// The fields of a lap that classifyLap needs (SessionLap has them all).
+export type PaceableLap = {
+	timeMs: number | null;
+	s1Ms: number | null;
+	s2Ms: number | null;
+	s3Ms: number | null;
+	trackId: number | null;
+	categoryId: number | null;
+};
+
+// The pace of a lap and each of its sectors, against the bests of its own track + category.
+export function classifyLap(lap: PaceableLap, bests: BestsByKey): Record<PaceKind, Pace> {
+	const own = bestsFor(bests, lap);
+	return {
+		lap: classifyPace(lap.timeMs, own, 'lap'),
+		s1: classifyPace(lap.s1Ms, own, 's1'),
+		s2: classifyPace(lap.s2Ms, own, 's2'),
+		s3: classifyPace(lap.s3Ms, own, 's3')
+	};
+}
