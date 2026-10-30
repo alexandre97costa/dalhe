@@ -63,7 +63,7 @@ Rejected laps are logged on the server with their params (never the key), so a l
 The overlay sends the current lap (`/send/live`, often) and the sim session (`/send/session`, less often) as query params. The app keeps only the latest values per rig, in `rig_stats.lap_stats` and `rig_stats.session_stats`, for the lounge. The params are validated by `zLapStats` and `zSessionStats` in `src/lib/types/rig.ts`; the key is never stored.
 
 - `/send/live`: `lapNumber`, `lapTotalCount`?, `laptime_ms`, `deltaBest`, `progress` (0–1), `valid` (`true`/`false`), `currentSector` (1–3), `currentSplit`, and optionally `s1_ms`, `s2_ms`, `bestS1_ms`, `bestS2_ms`, `bestS3_ms`.
-- `/send/session`: SimHub's names: `CurrentGame` (`AssettoCorsaCompetizione`), `TrackId`, `SessionTypeName` (`PRACTICE`, `HOTLAP`, `RACE`, `7` hotstint, `8` superpole), `CarId`, `CarClass`?, `TCLevel`, `ABSLevel`, `BrakeBias`, `AirTemperature`, `TrackTemperature`, `rainIntesity`, `rainIntensityIn10min`, `rainIntensityIn30min` (`ACC_NO_RAIN` … `ACC_THUNDERSTORM`).
+- `/send/session`: SimHub's names: `CurrentGame` (`AssettoCorsaCompetizione`), `TrackId`, `SessionTypeName` (`PRACTICE`, `HOTLAP`, `RACE`, `7` hotstint, `8` superpole), `CarId`, `CarClass`?, `TCLevel`, `ABSLevel`, `BrakeBias`, `AirTemperature`, `TrackTemperature`, `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` (`ACC_NO_RAIN` … `ACC_THUNDERSTORM`).
 
 | Body                                                 | Meaning                                                                            |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |

@@ -6,6 +6,9 @@ import { createClient } from '@supabase/supabase-js';
 
 const BASE_URL = process.env.FAKE_RIG_URL ?? 'http://localhost:5173';
 const TIMEOUT_MINS = parseInt(process.env.SESSION_TIMEOUT_MINS ?? '120');
+// Mirrors src/lib/config/lounge.ts (this script can't import TypeScript)
+const FREEZE_WINDOW_S = 20;
+const STATS_STALE_AFTER_S = 120;
 
 // Seed rigs and their local keys (supabase/seed.sql)
 const RIGS = {
@@ -117,10 +120,67 @@ const SESSION_STATS = {
 	BrakeBias: '-15',
 	AirTemperature: '21',
 	TrackTemperature: '27',
-	rainIntesity: 'ACC_NO_RAIN',
+	rainIntensity: 'ACC_NO_RAIN',
 	rainIntensityIn10min: 'ACC_DRIZZLE',
 	rainIntensityIn30min: 'ACC_LIGHT_RAIN'
 };
+
+// Live stats in each sector of a lap (Sprint 1.5, F8). currentSplit: time so far in the
+// sector being driven; s1_ms / s2_ms: the sectors already completed in this lap.
+const LIVE_IN_SECTOR = {
+	1: {
+		...LAP_STATS,
+		laptime_ms: '12040',
+		progress: '0.15',
+		currentSector: '1',
+		currentSplit: '12040',
+		s1_ms: undefined
+	},
+	2: {
+		...LAP_STATS,
+		laptime_ms: '41230',
+		progress: '0.48',
+		currentSector: '2',
+		currentSplit: '15780',
+		s1_ms: '25450'
+	},
+	3: {
+		...LAP_STATS,
+		laptime_ms: '70100',
+		progress: '0.82',
+		currentSector: '3',
+		currentSplit: '14850',
+		s1_ms: '25450',
+		s2_ms: '29800'
+	}
+};
+// A SimHub car id that isn't in the catalog: stats are stored, the lounge falls back to labels.
+const UNMAPPED_CAR = 'fake_unmapped_gt3';
+
+function withoutUndefined(params) {
+	return Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined));
+}
+
+function liveSectorScenario(sector) {
+	return {
+		about: `live lap stats in sector ${sector}: ok, stored with currentSector ${sector}`,
+		async run(rig) {
+			return withActiveSession(rig, async () => {
+				const r = await call(rig, '/send/live', withoutUndefined(LIVE_IN_SECTOR[sector]));
+				const stored = await storedStats(rig, 'lap_stats');
+				const expected = LIVE_IN_SECTOR[sector];
+				return (
+					r.status === 200 &&
+					r.body?.status === 'ok' &&
+					stored?.currentSector === sector &&
+					stored?.currentSplit === Number(expected.currentSplit) &&
+					(stored?.s1_ms ?? null) === (expected.s1_ms ? Number(expected.s1_ms) : null) &&
+					(stored?.s2_ms ?? null) === (expected.s2_ms ? Number(expected.s2_ms) : null)
+				);
+			});
+		}
+	};
+}
 
 async function openSession(rig) {
 	const { data, error } = await admin()
@@ -363,6 +423,87 @@ const scenarios = {
 			return (
 				r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'invalid_params'
 			);
+		}
+	},
+	'stats-old-rain-name': {
+		about: 'sim session stats with the old rainIntesity spelling: rejected (Sprint 1.5 rename)',
+		async run(rig) {
+			const { rainIntensity, ...rest } = SESSION_STATS;
+			const r = await call(rig, '/send/session', { ...rest, rainIntesity: rainIntensity });
+			return (
+				r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'invalid_params'
+			);
+		}
+	},
+	'live-sector-1': liveSectorScenario(1),
+	'live-sector-2': liveSectorScenario(2),
+	'live-sector-3': liveSectorScenario(3),
+	freeze: {
+		about: `a new lap: the newest of the active session, under ${FREEZE_WINDOW_S}s old (load the lounge now to see the freeze)`,
+		async run(rig) {
+			const r = await call(rig, '/send/new', randomLap());
+			if (r.body?.status !== 'created') return false;
+			const open = await openSession(rig);
+			const { data: newest, error } = await admin()
+				.from('lap_time')
+				.select('id, created_at')
+				.eq('session_id', open?.id)
+				.order('created_at', { ascending: false })
+				.limit(1)
+				.single();
+			if (error) throw error;
+			const ageS = (Date.now() - new Date(newest.created_at).getTime()) / 1000;
+			console.log(`  newest lap ${newest.id}, ${ageS.toFixed(1)}s old`);
+			return newest.id === r.body.lapId && ageS <= FREEZE_WINDOW_S;
+		}
+	},
+	'stats-stale': {
+		about: `session and live stats older than ${STATS_STALE_AFTER_S}s (stale; load the lounge to see "Updated n min ago")`,
+		async run(rig) {
+			return withActiveSession(rig, async () => {
+				const session = await call(rig, '/send/session', SESSION_STATS);
+				const live = await call(rig, '/send/live', LAP_STATS);
+				// Backdate both timestamps directly: the endpoints always store now()
+				const old = new Date(Date.now() - (STATS_STALE_AFTER_S + 300) * 1000).toISOString();
+				const { error } = await admin()
+					.from('rig_stats')
+					.update({ session_updated_at: old, lap_updated_at: old })
+					.eq('id', rig.id);
+				if (error) throw error;
+				const { data } = await admin()
+					.from('rig_stats')
+					.select('session_updated_at, lap_updated_at')
+					.eq('id', rig.id)
+					.single();
+				const age = (t) => (Date.now() - new Date(t).getTime()) / 1000;
+				return (
+					session.body?.status === 'ok' &&
+					live.body?.status === 'ok' &&
+					age(data.session_updated_at) > STATS_STALE_AFTER_S &&
+					age(data.lap_updated_at) > STATS_STALE_AFTER_S
+				);
+			});
+		}
+	},
+	'unmapped-car': {
+		about: `live and session stats for a car missing from the catalog (${UNMAPPED_CAR}): ok, stored`,
+		async run(rig) {
+			return withActiveSession(rig, async () => {
+				const { data: car } = await admin()
+					.from('car')
+					.select('id')
+					.eq('simhub_carid', UNMAPPED_CAR)
+					.maybeSingle();
+				const session = await call(rig, '/send/session', { ...SESSION_STATS, CarId: UNMAPPED_CAR });
+				const live = await call(rig, '/send/live', withoutUndefined(LIVE_IN_SECTOR[2]));
+				const stored = await storedStats(rig, 'session_stats');
+				return (
+					car === null &&
+					session.body?.status === 'ok' &&
+					live.body?.status === 'ok' &&
+					stored?.CarId === UNMAPPED_CAR
+				);
+			});
 		}
 	},
 	'stale-session': {
