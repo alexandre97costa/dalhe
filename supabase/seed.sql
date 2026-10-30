@@ -228,6 +228,88 @@ on conflict do nothing;
 drop table seed_session;
 
 -- ---------------------------------------------------------------------------
+-- Lounge states (Sprint 1.5, F8). Built from existing catalog rows only.
+--
+-- App-wide records in an older session (Bruno on Sala, 3 days ago), faster
+-- than every generated lap above:
+--   Brands Hatch GT3: lap 81.500, best sectors 25.300 / 29.200 / 26.800
+--   (from two different laps); Spa GT3: lap 133.500.
+--
+-- The active session on Garagem (Carla) goes Brands -> Spa -> Brands with two
+-- GT3 cars at Brands (Porsche 911 II, McLaren 720S Evo: one shared category at
+-- one track) and a lap without sectors. Against those bests (PACE_BAND 1%) it
+-- shows every colour:
+--   lap 1 Brands Porsche 83.400  yellow
+--   lap 2 Brands Porsche 82.700  green
+--   lap 3 Brands McLaren 82.100  blue (session best), S1 purple (sector record)
+--   lap 4 Brands McLaren 82.500  green, no sectors (neutral dots)
+--   lap 5 Spa    Porsche 136.000 yellow
+--   lap 6 Spa    Porsche 133.400 purple (track record), purple sectors
+--   lap 7 Spa    Porsche 134.600 green
+--   lap 8 Brands Porsche 82.900  green
+-- ---------------------------------------------------------------------------
+
+insert into public.rig_session (id, rig_id, driver_id, started_at, ended_at, last_activity_at, created_at)
+values (
+  md5('session-records')::uuid, 'b0000000-0000-4000-8000-000000000001',
+  'a0000000-0000-4000-8000-000000000002',
+  now() - interval '3 days', now() - interval '3 days' + interval '1 hour',
+  now() - interval '3 days' + interval '1 hour', now() - interval '3 days'
+);
+
+insert into public.lap_time (
+  created_at, driver_id, track_id, car_id, game_id, rig_id, session_id,
+  time_milliseconds, sector1_ms, sector2_ms, sector3_ms
+)
+select
+  now() - interval '3 days' + make_interval(mins => l.mins),
+  'a0000000-0000-4000-8000-000000000002', l.track_id, 28, 1,
+  'b0000000-0000-4000-8000-000000000001', md5('session-records')::uuid,
+  l.ms, l.s1, l.s2, l.s3
+from (values
+  (10, 3, 81500, 25300, 29200, 27000),
+  (14, 3, 81700, 25500, 29400, 26800),
+  (40, 9, 133500, 41385, 48060, 44055)
+) as l (mins, track_id, ms, s1, s2, s3)
+order by l.mins;
+
+insert into public.lap_time (
+  created_at, driver_id, track_id, car_id, game_id, rig_id, session_id,
+  time_milliseconds, sector1_ms, sector2_ms, sector3_ms
+)
+select
+  now() - make_interval(mins => l.mins_ago),
+  'a0000000-0000-4000-8000-000000000003', l.track_id, l.car_id, 1,
+  'b0000000-0000-4000-8000-000000000002', md5('session-active')::uuid,
+  l.ms, l.s1, l.s2, l.s3
+from (values
+  (18, 3, 28, 83400, 26000, 30100, 27300),
+  (15, 3, 28, 82700, 25600, 29800, 27300),
+  (12, 3, 22, 82100, 25280, 29700, 27120),
+  (10, 3, 22, 82500, null, null, null),
+  (8, 9, 28, 136000, 42160, 48960, 44880),
+  (6, 9, 28, 133400, 41354, 48024, 44022),
+  (4, 9, 28, 134600, 41700, 48500, 44400),
+  (2, 3, 28, 82900, 25500, 29900, 27500)
+) as l (mins_ago, track_id, car_id, ms, s1, s2, s3)
+order by l.mins_ago desc;
+
+-- What the overlay last sent for Garagem: Practice at Brands Hatch in the
+-- Porsche (mapped), lap 9 in sector 2 (currentSplit: time in the sector).
+insert into public.rig_stats (id, session_stats, session_updated_at, lap_stats, lap_updated_at)
+values (
+  'b0000000-0000-4000-8000-000000000002',
+  '{"CurrentGame": "AssettoCorsaCompetizione", "TrackId": "brands_hatch", "SessionTypeName": "PRACTICE",
+    "CarId": "porsche_991ii_gt3_r", "CarClass": "GT3", "TCLevel": 0, "ABSLevel": 2, "BrakeBias": -17,
+    "AirTemperature": 21, "TrackTemperature": 27, "rainIntensity": "ACC_NO_RAIN",
+    "rainIntensityIn10min": "ACC_DRIZZLE", "rainIntensityIn30min": "ACC_LIGHT_RAIN"}',
+  now(),
+  '{"lapNumber": 9, "lapTotalCount": 20, "laptime_ms": 41230, "deltaBest": -0.21, "progress": 0.48,
+    "valid": true, "currentSector": 2, "currentSplit": 15780, "s1_ms": 25450}',
+  now()
+);
+
+-- ---------------------------------------------------------------------------
 -- Synthetic tournament
 -- ---------------------------------------------------------------------------
 
