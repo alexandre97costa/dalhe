@@ -447,6 +447,33 @@ export type Database = {
 					}
 				];
 			};
+			rig_key: {
+				Row: {
+					api_key: string;
+					created_at: string;
+					rig_id: string;
+				};
+				ComputedFields: never;
+				Insert: {
+					api_key?: string;
+					created_at?: string;
+					rig_id: string;
+				};
+				Update: {
+					api_key?: string;
+					created_at?: string;
+					rig_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: 'rig_key_rig_id_fkey';
+						columns: ['rig_id'];
+						isOneToOne: true;
+						referencedRelation: 'rig';
+						referencedColumns: ['id'];
+					}
+				];
+			};
 			rig_session: {
 				Row: {
 					created_at: string;
@@ -697,8 +724,14 @@ export type Database = {
 			};
 		};
 		Functions: {
-			connect_to_rig: { Args: { p_driver_id: string; p_rig_id: string }; Returns: string };
-			disconnect_from_rig: { Args: { p_rig_id: string }; Returns: string };
+			connect_to_rig: {
+				Args: { p_expected_driver_id: string; p_rig_id: string; p_timeout_minutes: number };
+				Returns: string;
+			};
+			disconnect_from_rig: {
+				Args: { p_rig_id: string; p_timeout_minutes: number };
+				Returns: string;
+			};
 			get_driver_timeline: {
 				Args: { driverid: string; testing: boolean };
 				Returns: {
@@ -744,7 +777,10 @@ export type Database = {
 					p_timeout_minutes: number;
 					p_track_id: number;
 				};
-				Returns: number;
+				Returns: {
+					lap_id: number;
+					status: string;
+				}[];
 			};
 			rig_status: {
 				Args: { p_expiry_minutes: number; p_rig_id: string };
@@ -756,6 +792,10 @@ export type Database = {
 					session_active: boolean;
 					session_id: string;
 				}[];
+			};
+			upsert_rig_stats: {
+				Args: { p_kind: string; p_rig_id: string; p_stats: Json; p_timeout_minutes: number };
+				Returns: string;
 			};
 		};
 		Enums: {

@@ -17,6 +17,8 @@ SvelteKit 2 with Svelte 5 runes, Supabase (`@supabase/ssr`), shadcn-svelte (bits
 | `pnpm build`                          | Production build                                                                                 |
 | `pnpm db:reset`                       | Recreate the local database from migrations + `supabase/seed.sql`, then regenerate types         |
 | `pnpm db:types`                       | Regenerate `src/lib/types/supabase.types.ts` from the local database (never edit it by hand)     |
+| `pnpm rig <scenario…\|all>`           | Fake rig: call the rig endpoints against the local stack (`pnpm rig` lists scenarios)            |
+| `pnpm exec supabase test db`          | pgTAP database tests in `supabase/tests/database/`                                               |
 
 Local login: request a magic link for a seed user (`alice@example.com`, `bruno@…`, `carla@…`, `diogo@…`) and open it from Mailpit at http://127.0.0.1:54324.
 
@@ -52,7 +54,7 @@ Full steps in [`docs/database-workflow.md`](docs/database-workflow.md).
 ## Hard rules
 
 - **No real personal data** in the repo (it's public): seed users are `@example.com`.
-- **Never send HTTP requests to `/rig/[slug]/*`**, not even GETs: SimHub can only send GETs, so these endpoints create sessions and laps. Read and edit the code freely.
+- **HTTP requests to `/rig/[slug]/*` only against the local stack.** SimHub can only send GETs, so these endpoints create sessions and laps even on GET. Testing them is fine on `preview` or a branch of it, with the dev server and `.env` pointing at the local database (`PUBLIC_SUPABASE_URL=http://127.0.0.1:54321`). Never against the hosted database, a Vercel deployment, or from `prod`.
 - **No secret keys in committed files.** GitHub push protection rejects them, even the local CLI default. Local secrets go in `.env` (untracked); hosted values live in Vercel.
 
 ## Why

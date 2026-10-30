@@ -26,3 +26,7 @@ Items deferred from sprints. Each one notes where it came from.
 ## Database
 
 - **Anonymous avatar uploads** (from Sprint 0, S2). The storage policy "Anyone can upload an avatar." allows `INSERT` on the `avatars` bucket for role `public`, so visitors who aren't logged in can upload files. Restrict it to `authenticated`, and ideally to the user's own folder, in a new migration.
+
+- **Pole rating for unclaimed laps** (from Sprint 1, A0; before Sprint 3 claiming). `pole_rating` gives a track record +1 for every later lap by _another_ driver that doesn't beat it; a driver's own laps never count, so nobody can boost their record with slow laps. `update_pole_rating` runs on insert and compares `driver_id`s, so an unclaimed lap (`driver_id` null) never counts, now or later.
+  - **Intended:** an unclaimed lap updates the pole rating only when it is claimed, because only then is it known whose it is and the same-driver rule can apply. Claiming runs the same check as an insert: if the lap's track record belongs to someone else (and the lap doesn't beat it), the record gets +1.
+  - Open: which record counts, the one at the time the lap was driven or the one at claim time.

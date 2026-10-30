@@ -158,6 +158,11 @@ insert into public.rig (id, name) values
   ('b0000000-0000-4000-8000-000000000001', 'Sala'),
   ('b0000000-0000-4000-8000-000000000002', 'Garagem');
 
+-- Known keys, so the fake rig can call the local endpoints (?k=). Local only.
+insert into public.rig_key (rig_id, api_key) values
+  ('b0000000-0000-4000-8000-000000000001', 'local-sala-key'),
+  ('b0000000-0000-4000-8000-000000000002', 'local-garagem-key');
+
 insert into public.rig_drivers (rig_id, driver_id) values
   ('b0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001'),
   ('b0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000002'),

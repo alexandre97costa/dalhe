@@ -1,103 +1,16 @@
-import { json } from '@sveltejs/kit';
-import {
-	insertNewLap,
-	resolveRig,
-	resolveCar,
-	resolveTrack,
-	rigJson,
-	rigNotFound,
-	validateRouteParams
-} from '$lib/server/rigs';
-import * as z from 'zod';
-import { type NewLap, zNewLap, type NewLapConverted, zNewLapConverted } from '$lib/types/rig';
-import {
-	formatLaptime,
-	convertTimeStringToMilliseconds,
-	formatTimeSinceCreation,
-	compareLaptimes
-} from '$lib/utils/laptime';
+import { resolveRig, rigJson, rigNotFound, submitLap } from '$lib/server/rigs';
 
+// A finished lap from the overlay. Every handled lap answers 200 with a status
+// (created, duplicate, rejected); only unknown rig / wrong key (404) and server errors (500) don't.
 export async function GET({ params, url }): Promise<Response> {
-	const rig = await resolveRig(params.slug);
+	const rig = await resolveRig(params.slug, url.searchParams.get('k'));
 	if (!rig) return rigNotFound();
 
-	const validateUrl = validateRouteParams(url.searchParams, zNewLap);
-	if (!validateUrl.success) {
-		return rigJson(
-			{
-				success: false,
-				step: 'Invalid URL',
-				error_message: JSON.parse(validateUrl.error.message)
-					.map(
-						({ path, message }: { path: (string | number)[]; message: string }) =>
-							`${path.join(', ')}: ${message}`
-					)
-					.join('; ')
-			},
-			400
-		);
+	try {
+		return rigJson(await submitLap(rig.rig_id, url.searchParams));
+	} catch (error) {
+		// Through rigJson, so SimHub doesn't cache the error and keeps retrying
+		console.error('Lap not handled:', error);
+		return rigJson({ error: 'server_error' }, 500);
 	}
-
-	const newLap: NewLap = validateUrl.data;
-	const car = await resolveCar(newLap.carId);
-	const track = await resolveTrack(newLap.trackId);
-
-	const validateLap = zNewLapConverted.safeParse({
-		rigId: rig.rig_id,
-		laptime_ms: newLap.laptime_ms,
-		s1_ms: convertTimeStringToMilliseconds(newLap.s1_time),
-		s2_ms: convertTimeStringToMilliseconds(newLap.s2_time),
-		s3_ms: convertTimeStringToMilliseconds(newLap.s3_time),
-		carId: car?.id,
-		trackId: track?.id
-	});
-
-	if (!validateLap.success) {
-		return rigJson(
-			{
-				success: false,
-				step: 'Invalid stats',
-				error_message: JSON.parse(validateLap.error.message)
-					.map(
-						({ path, message }: { path: (string | number)[]; message: string }) =>
-							`${path.join(', ')}: ${message}`
-					)
-					.join('; ')
-			},
-			400
-		);
-	}
-
-	if (
-		validateLap.data.laptime_ms !==
-		validateLap.data.s1_ms + validateLap.data.s2_ms + validateLap.data.s3_ms
-	) {
-		return rigJson(
-			{
-				success: false,
-				step: 'Invalid lap',
-				error_message: "Sector times don't add up to the laptime"
-			},
-			400
-		);
-	}
-
-	const newLapConverted: NewLapConverted = validateLap.data;
-
-	const newLapId = await insertNewLap(newLapConverted);
-
-	if (!newLapId) {
-		return rigJson(
-			{
-				success: false,
-				error_message: 'Error inserting. Lap was not created.'
-			},
-			400
-		);
-	}
-
-	return rigJson({
-		success: true,
-		lap_id: newLapId
-	});
 }
