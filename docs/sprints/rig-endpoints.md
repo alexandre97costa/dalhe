@@ -47,9 +47,7 @@ The QR encodes the connect URL with the UUID only. Never the key.
   https://<project-ref>.supabase.co/storage/v1/object/public/rig-qr/<rig uuid>.png
   ```
 
-The bucket is public on purpose: the UUID is public anyway, and the overlay can't send auth headers.
-
-> **Gap:** the `rig-qr` bucket doesn't exist yet (not in `config.toml`, not in a migration). See Open issues.
+The bucket is public on purpose: the UUID is public anyway, and the overlay can't send auth headers. It's created by the `rig_qr_bucket` migration (PNG only, 1 MiB max) and has no client write policies: upload through Studio. Locally, the seed rigs' QR images (`supabase/storage/rig-qr/`) are uploaded on `supabase start` / `db reset` (`[storage.buckets.rig-qr]` in `config.toml`).
 
 ### 3. Overlay config (on the rig PC)
 
@@ -264,7 +262,6 @@ Found while writing this. Each is small; each needs an owner.
 
 1. **Sector conversion bug (A3 blocker).** `convertTimeStringToMilliseconds` multiplies a float by 1000 without rounding. About 8% of sector values come out non-integer (e.g. `10861.999…`), fail the `.int()` check and the lap is rejected. Fix: `Math.round`.
 2. **Sector sum tolerance.** The check is strict equality. If SimHub ever rounds a sector differently from the lap time, valid laps get `sectors_mismatch`. Decide: strict, or ±1–2 ms tolerance. Worth checking against a few real laps before A3 closes.
-3. **QR bucket missing.** No `rig-qr` bucket in `config.toml` or migrations. Needs a small story: bucket declared (public read, no client writes), seed rigs get a QR locally.
 4. **Duplicate key is global.** `lap_time_dedupe_uniq` ignores rig and driver. Two people setting the exact same time and sectors on the same car and track (to the millisecond) would collide. Practically impossible; noted so nobody "discovers" it later.
 5. **`zSessionStats` is wrong in places.** `rainIntensities` lists `ACC_NO_RAIN` three times, the param is spelled `rainIntesity`, and `SessionTypeName` mixes strings and numbers. `LapStats` has no zod schema yet. Both belong to A4.
 6. **Poll cost.** Decide the poll interval before it ships; the overlay runs all day on some rigs.

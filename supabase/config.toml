@@ -130,6 +130,16 @@ file_size_limit = "50MiB"
 [storage.buckets.avatars]
 public = false
 
+# Rig QR codes for the overlay. The bucket itself comes from the rig_qr_bucket migration (hosted
+# too); keep these settings in sync with it. objects_path uploads the seed rigs' QR images
+# (http://localhost:5173/connect/<uuid>) on `supabase start` / `db reset`. Local only: never run
+# `supabase seed buckets --project-ref`, the hosted rigs get their QR by hand.
+[storage.buckets.rig-qr]
+public = true
+file_size_limit = "1MiB"
+allowed_mime_types = ["image/png"]
+objects_path = "./storage/rig-qr"
+
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]
 enabled = true
