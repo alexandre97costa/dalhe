@@ -171,12 +171,14 @@ The game's practice/race session (the **sim session**), for the lounge room's se
 |---|---|
 | `CurrentGame` | `AssettoCorsaCompetizione` |
 | `TrackId` | `brands_hatch` |
-| `SessionTypeName` | `PRACTICE`, `HOTLAP`, `RACE`, … |
+| `SessionTypeName` | `PRACTICE`, `HOTLAP`, `RACE`, `7` (hotstint), `8` (superpole): strings and numbers, as SimHub sends them; humanized by the app (unknown → Session) |
 | `CarId` | `audi_r8_lms_evo` |
 | `CarClass` | `GT3` |
 | `TCLevel`, `ABSLevel`, `BrakeBias` | `6`, `5`, `-17` |
 | `AirTemperature`, `TrackTemperature` | `30`, `37` |
 | `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` | `ACC_NO_RAIN` |
+
+The old spelling `rainIntesity` (before Sprint 1.5) is now `rejected` with `invalid_params`: the overlay config must send `rainIntensity` from the same release.
 
 ### Stats responses (both endpoints, all `200`)
 
@@ -262,5 +264,4 @@ Found while writing this. Each is small; each needs an owner.
 
 2. **Sector sum tolerance.** Decided in Sprint 1.5 (X2): strict, because no stored lap had sectors to measure against. Revisit with the first real laps: if valid laps get `sectors_mismatch` by 1–2 ms (check the server logs for "Lap rejected"), add a tolerance constant next to the check in `submitLap`.
 4. **Duplicate key is global.** `lap_time_dedupe_uniq` ignores rig and driver. Two people setting the exact same time and sectors on the same car and track (to the millisecond) would collide. Practically impossible; noted so nobody "discovers" it later.
-5. **`zSessionStats` is wrong in places.** The param is spelled `rainIntesity`, and `SessionTypeName` mixes strings and numbers.
 6. **Poll cost.** Decide the poll interval before it ships; the overlay runs all day on some rigs.
