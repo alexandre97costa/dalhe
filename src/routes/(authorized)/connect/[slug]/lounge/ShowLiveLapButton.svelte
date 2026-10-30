@@ -4,6 +4,7 @@
 	// the sweep. The accessible name stays "Show live lap" so the countdown isn't announced.
 	import { m } from '$lib/paraglide/messages.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { onMount } from 'svelte';
 
 	let {
 		durationS,
@@ -16,6 +17,12 @@
 		remainingS: number;
 		onclick: () => void;
 	} = $props();
+
+	// The sweep starts on mount, with the countdown timer, not when the server HTML is painted.
+	let started = $state(false);
+	onMount(() => {
+		started = true;
+	});
 </script>
 
 <Button
@@ -27,6 +34,7 @@
 	<span
 		aria-hidden="true"
 		class="sweep bg-primary/25 absolute inset-0 origin-left motion-reduce:hidden"
+		class:running={started}
 		style:animation-duration="{durationS}s"
 	></span>
 	<span aria-hidden="true" class="relative motion-reduce:hidden">{m.lounge_show_live_lap()}</span>
@@ -38,6 +46,9 @@
 <style>
 	.sweep {
 		transform: scaleX(0);
+	}
+
+	.sweep.running {
 		animation-name: sweep;
 		animation-timing-function: linear;
 		animation-fill-mode: forwards;

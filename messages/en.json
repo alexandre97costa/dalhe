@@ -153,7 +153,6 @@
 	"lounge_refresh": "Refresh",
 	"lounge_no_session_title": "Nobody is driving",
 	"lounge_no_session_description": "Connect to start a session, or wait here for someone to drive.",
-	"lounge_new_lap": "New lap",
 	"lounge_sim_session": "Session",
 	"lounge_sim_session_empty": "Waiting for session info from the rig.",
 	"lounge_air_temp": "Air {temp}°C",

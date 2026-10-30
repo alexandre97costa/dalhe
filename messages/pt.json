@@ -153,7 +153,6 @@
 	"lounge_refresh": "Atualizar",
 	"lounge_no_session_title": "Ninguém está a conduzir",
 	"lounge_no_session_description": "Liga-te para começar uma sessão, ou espera aqui que alguém conduza.",
-	"lounge_new_lap": "Nova volta",
 	"lounge_sim_session": "Sessão",
 	"lounge_sim_session_empty": "À espera da informação da sessão.",
 	"lounge_air_temp": "Ar {temp}°C",

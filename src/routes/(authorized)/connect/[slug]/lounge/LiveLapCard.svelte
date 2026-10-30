@@ -86,6 +86,10 @@
 				seen.add(lap.id);
 				frozen = lap;
 				startTimers();
+			} else if (frozen) {
+				// The latest lap changed to one that doesn't freeze (e.g. another rig's lounge
+				// in the same mounted card): drop the old frozen lap at once.
+				unfreeze();
 			}
 		});
 	});

@@ -89,9 +89,22 @@
 	let setup = $derived(
 		simSession
 			? [
-					{ label: m.lounge_setup_tc(), value: assistValue(simSession.TCLevel) },
-					{ label: m.lounge_setup_abs(), value: assistValue(simSession.ABSLevel) },
-					{ label: m.lounge_setup_bb(), value: String(simSession.BrakeBias ?? '–') }
+					// Short labels fit three columns on a phone; the full name is the abbreviation's title.
+					{
+						label: m.lounge_setup_tc_short(),
+						title: m.lounge_setup_tc(),
+						value: assistValue(simSession.TCLevel)
+					},
+					{
+						label: m.lounge_setup_abs(),
+						title: m.lounge_setup_abs(),
+						value: assistValue(simSession.ABSLevel)
+					},
+					{
+						label: m.lounge_setup_bb_short(),
+						title: m.lounge_setup_bb(),
+						value: String(simSession.BrakeBias ?? '–')
+					}
 				]
 			: []
 	);
@@ -167,7 +180,9 @@
 						<dl class="grid grid-cols-3 gap-2">
 							{#each setup as item (item.label)}
 								<div class="flex min-w-0 flex-col">
-									<dt class="text-muted-foreground truncate text-xs">{item.label}</dt>
+									<dt class="text-muted-foreground truncate text-xs">
+										<abbr title={item.title} class="no-underline">{item.label}</abbr>
+									</dt>
 									<dd class="font-semibold tabular-nums">{item.value}</dd>
 								</div>
 							{/each}
