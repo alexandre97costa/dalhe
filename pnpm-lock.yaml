@@ -52,8 +52,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3
       bits-ui:
-        specifier: ^2.19.5
-        version: 2.19.5(@internationalized/date@3.12.0)(@sveltejs/kit@2.48.4(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)
+        specifier: ^2.20.2
+        version: 2.20.2(@internationalized/date@3.12.0)(@sveltejs/kit@2.48.4(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -387,11 +387,20 @@ packages:
   '@floating-ui/core@1.7.3':
     resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
 
+  '@floating-ui/core@1.8.0':
+    resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
+
   '@floating-ui/dom@1.7.4':
     resolution: {integrity: sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==}
 
+  '@floating-ui/dom@1.8.0':
+    resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
+
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@floating-ui/utils@0.2.12':
+    resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
   '@gcornut/valibot-json-schema@0.42.0':
     resolution: {integrity: sha512-4Et4AN6wmqeA0PfU5Clkv/IS27wiefsWf6TemAZrb75uzkClYEFavim7SboeKwbll9Nbsn2Iv0LT/HS5H7orZg==}
@@ -1125,8 +1134,8 @@ packages:
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
 
-  bits-ui@2.19.5:
-    resolution: {integrity: sha512-TEwkLSYElE5SE0fIdcItiFPfyg9vrR67N1Mt6VvZCqZo24dwTA1MpGVV3WeyIg7rfVAaZ0So8a0/dcnPngCoew==}
+  bits-ui@2.20.2:
+    resolution: {integrity: sha512-cb1eQD1wZEhJWb1dTLiAdYWqeUI5v7f+7EAHmetxBuELI9lo4cpAIfGEjald/PR4wTR80Fu5DFH+IaY1OKn+tg==}
     engines: {node: '>=20'}
     peerDependencies:
       '@internationalized/date': ^3.8.1
@@ -1935,8 +1944,8 @@ packages:
       '@sveltejs/kit': 1.x || 2.x
       svelte: 3.x || 4.x || >=5.0.0-next.51
 
-  tabbable@6.3.0:
-    resolution: {integrity: sha512-EIHvdY5bPLuWForiR/AN2Bxngzpuwn1is4asboytXtpTgsArc+WmSJKVLlhdh71u7jFcryDqB2A8lQvj78MkyQ==}
+  tabbable@6.5.1:
+    resolution: {integrity: sha512-dMCuwDUY6Noz3zVKLefBC4wq+aJV20yc7vWmM7uTNGwtQSFF5kX7OUIUsxuVajz/bdt5Xqdah3/0NLjth+cM5A==}
 
   tailwind-merge@3.3.1:
     resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
@@ -2348,12 +2357,23 @@ snapshots:
     dependencies:
       '@floating-ui/utils': 0.2.10
 
+  '@floating-ui/core@1.8.0':
+    dependencies:
+      '@floating-ui/utils': 0.2.12
+
   '@floating-ui/dom@1.7.4':
     dependencies:
       '@floating-ui/core': 1.7.3
       '@floating-ui/utils': 0.2.10
 
+  '@floating-ui/dom@1.8.0':
+    dependencies:
+      '@floating-ui/core': 1.8.0
+      '@floating-ui/utils': 0.2.12
+
   '@floating-ui/utils@0.2.10': {}
+
+  '@floating-ui/utils@0.2.12': {}
 
   '@gcornut/valibot-json-schema@0.42.0(esbuild@0.25.12)(typescript@5.9.3)':
     dependencies:
@@ -3005,16 +3025,16 @@ snapshots:
     dependencies:
       file-uri-to-path: 1.0.0
 
-  bits-ui@2.19.5(@internationalized/date@3.12.0)(@sveltejs/kit@2.48.4(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2):
+  bits-ui@2.20.2(@internationalized/date@3.12.0)(@sveltejs/kit@2.48.4(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2):
     dependencies:
-      '@floating-ui/core': 1.7.3
-      '@floating-ui/dom': 1.7.4
+      '@floating-ui/core': 1.8.0
+      '@floating-ui/dom': 1.8.0
       '@internationalized/date': 3.12.0
       esm-env: 1.2.2
       runed: 0.35.1(@sveltejs/kit@2.48.4(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)
       svelte: 5.43.2
       svelte-toolbelt: 0.10.6(@sveltejs/kit@2.48.4(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)(vite@6.4.1(@types/node@24.9.2)(jiti@2.7.0)(lightningcss@1.30.2)))(svelte@5.43.2)
-      tabbable: 6.3.0
+      tabbable: 6.5.1
     transitivePeerDependencies:
       - '@sveltejs/kit'
 
@@ -3815,7 +3835,7 @@ snapshots:
       - esbuild
       - typescript
 
-  tabbable@6.3.0: {}
+  tabbable@6.5.1: {}
 
   tailwind-merge@3.3.1: {}
 

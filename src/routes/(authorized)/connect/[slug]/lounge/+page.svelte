@@ -1,486 +1,271 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { page } from '$app/state';
 	import type { PageProps } from './$types';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-	import * as Marker from '$lib/components/ui/marker/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { invalidateAll } from '$app/navigation';
+	import { title } from '$lib/store.js';
+	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils';
-	import { formatLaptime } from '$lib/utils/laptime';
-	import type { Json } from '$lib/types/supabase.types';
-	import { ArrowLeft, ChevronDown, Sun } from '@lucide/svelte';
-	import PreviousLaps from './PreviousLaps.svelte';
+	import { formatDelta, formatLapClock, formatTimeSinceCreation } from '$lib/utils/laptime';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
+	import * as Empty from '$lib/components/ui/empty/index.js';
+	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
+	import { ArrowLeft, ChevronDown, Flag, RefreshCw, Timer, User } from '@lucide/svelte';
+	import LapList from './LapList.svelte';
 
 	let { data }: PageProps = $props();
-	// Interim (B4): map the new load onto the draft's fields until B5 replaces the page.
-	const toRigStats = (d: typeof data) => ({
-		session_stats: d.simSession as Json,
-		lap_stats: d.liveLap as unknown as Json,
-		session_updated_at: d.statsUpdatedAt.simSession,
-		lap_updated_at: d.statsUpdatedAt.liveLap
-	});
-	let rigStats = $state(toRigStats(data));
-	let activeTab = $derived(
-		page.url.searchParams.get('tab') === 'unclaimed-laps' ? 'unclaimed-laps' : 'live-session'
-	);
-	let bestLap = $derived(
-		data.sessionLaps.length ? Math.min(...data.sessionLaps.map((l) => l.time_milliseconds)) : null
-	);
-	let selectedLapIds = $state<string[]>([]);
-	let sessionStatsOpen = $state(true);
-	let currentTime = $state(Date.now());
 
-	type PreviewLap = {
-		id: string;
-		lapNumber: number;
-		track: string;
-		car: string;
-		timeMilliseconds: number;
-	};
+	let refreshing = $state(false);
+	let sessionOpen = $state(true);
 
-	type LiveLapCardData = {
-		lapNumber: number | null;
-		lapTimeSeconds: number | null;
-		deltaMilliseconds: number | null;
-		progress: number | null;
-		currentSector: number | null;
-		sectorTimes: Record<string, number | null>;
-		isPreview: boolean;
-	};
-
-	const previewLiveLapCard: LiveLapCardData = {
-		lapNumber: 7,
-		lapTimeSeconds: 81.067,
-		deltaMilliseconds: -230,
-		progress: 0.76,
-		currentSector: 3,
-		sectorTimes: {
-			'1': 34.102,
-			'2': 40.912,
-			'3': 6.053
-		},
-		isPreview: true
-	};
-
-	const unclaimedLaps: PreviewLap[] = import.meta.env.DEV
-		? [
-				{
-					id: 'preview-lap-1',
-					lapNumber: 12,
-					track: 'Example circuit',
-					car: 'Example car',
-					timeMilliseconds: 91_620
-				},
-				{
-					id: 'preview-lap-2',
-					lapNumber: 13,
-					track: 'Example circuit',
-					car: 'Example car',
-					timeMilliseconds: 90_845
-				}
-			]
-		: [];
+	let status = $derived(data.status);
+	let sim = $derived(data.simSession);
+	let live = $derived(data.liveLap);
 
 	$effect(() => {
-		rigStats = toRigStats(data);
+		title.set(m.lounge_title({ rigName: data.rig.name }));
 	});
 
-	onMount(() => {
-		const statusInterval = window.setInterval(() => {
-			currentTime = Date.now();
-		}, 15_000);
-
-		// const channel = data.supabase
-		// 	.channel(`rig-stats:${data.rigId}`)
-		// 	.on(
-		// 		'postgres_changes',
-		// 		{
-		// 			event: 'UPDATE',
-		// 			schema: 'public',
-		// 			table: 'rig_stats',
-		// 			filter: `id=eq.${data.rigId}`
-		// 		},
-		// 		({ new: updatedStats }) => {
-		// 			rigStats = updatedStats;
-		// 		}
-		// 	)
-		// 	.subscribe((status, error) => {
-		// 		if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-		// 			console.error(`Rig stats subscription failed for ${data.rigId}:`, error);
-		// 		}
-		// 	});
-		// return () => {
-		// 	void data.supabase.removeChannel(channel);
-		// };
-
-		return () => window.clearInterval(statusInterval);
-	});
-
-	function asRecord(value: Json | null | undefined): Record<string, Json | undefined> | null {
-		if (
-			value === null ||
-			value === undefined ||
-			typeof value !== 'object' ||
-			Array.isArray(value)
-		) {
-			return null;
+	async function refresh() {
+		refreshing = true;
+		try {
+			await invalidateAll();
+		} finally {
+			refreshing = false;
 		}
-		return value;
 	}
 
-	function readText(record: Record<string, Json | undefined> | null, key: string): string | null {
-		const value = record?.[key];
-		return typeof value === 'string' ? value : null;
+	// SimHub ids (brands_hatch, audi_r8_lms_evo) read well enough with spaces and capitals.
+	// Rain values keep SimHub's raw strings (ACC_NO_RAIN) in the data; only the badge drops ACC_.
+	function humanize(id: string | number | null | undefined): string | null {
+		if (id === null || id === undefined) return null;
+		if (id === 8) return 'Superpole';
+		if (id === 7) return 'Hotstint';
+		return String(id)
+			.toLowerCase()
+			.split('_')
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
 	}
 
-	function readNumber(record: Record<string, Json | undefined> | null, key: string): number | null {
-		const value = record?.[key];
-		return typeof value === 'number' && Number.isFinite(value) ? value : null;
-	}
-
-	function formatBroadcastTime(seconds: number | null): string {
-		if (seconds === null) return '--:--.---';
-
-		const milliseconds = Math.max(0, Math.round(seconds * 1000));
-		const minutes = Math.floor(milliseconds / 60_000);
-		const remainingSeconds = Math.floor((milliseconds % 60_000) / 1000);
-		const remainingMilliseconds = milliseconds % 1000;
-
-		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}.${remainingMilliseconds
-			.toString()
-			.padStart(3, '0')}`;
-	}
-
-	function toggleLap(id: string, checked: boolean) {
-		selectedLapIds = checked
-			? [...selectedLapIds, id]
-			: selectedLapIds.filter((selectedId) => selectedId !== id);
-	}
-
-	let sessionStats = $derived(asRecord(rigStats?.session_stats));
-	let lapStats = $derived(asRecord(rigStats?.lap_stats));
-	let sectorTimes = $derived(asRecord(lapStats?.sectorTimes));
-	let currentLapTime = $derived(readNumber(lapStats, 'currentLapTime'));
-	let lapProgress = $derived(readNumber(lapStats, 'lapProgress'));
-	let currentLapNumber = $derived(readNumber(lapStats, 'lapNumber'));
-	let deltaToBest = $derived(
-		currentLapTime !== null && bestLap !== null ? currentLapTime * 1000 - bestLap : null
-	);
-	let liveLapCard: LiveLapCardData = $derived(
-		currentLapTime === null
-			? previewLiveLapCard
-			: {
-					lapNumber: currentLapNumber,
-					lapTimeSeconds: currentLapTime,
-					deltaMilliseconds: deltaToBest,
-					progress: lapProgress,
-					currentSector: readNumber(lapStats, 'currentSector'),
-					sectorTimes: {
-						'1': readNumber(sectorTimes, '1'),
-						'2': readNumber(sectorTimes, '2'),
-						'3': readNumber(sectorTimes, '3')
-					},
-					isPreview: false
-				}
-	);
-	let telemetryConnected = $derived.by(() => {
-		const updatedAt = rigStats?.lap_updated_at ?? rigStats?.session_updated_at;
-		if (!updatedAt) return false;
-		const age = currentTime - Date.parse(updatedAt);
-		return Number.isFinite(age) && age >= 0 && age < 90_000;
+	// Sector tiles: completed sectors from the stats, the current one still running.
+	let sectors = $derived.by(() => {
+		if (!live) return [];
+		const done = [live.s1_ms, live.s2_ms];
+		const best = [live.bestS1_ms, live.bestS2_ms, live.bestS3_ms];
+		return [1, 2, 3].map((sector) => {
+			const current = live.currentSector === sector;
+			const completed = sector < live.currentSector ? done[sector - 1] : undefined;
+			const elapsed = done
+				.slice(0, sector - 1)
+				.reduce<number>((total, value) => total - (value ?? 0), live.laptime_ms);
+			const time = completed ?? (current ? elapsed : null);
+			const bestTime = best[sector - 1];
+			return {
+				sector,
+				current,
+				time,
+				fastest: completed !== undefined && bestTime !== undefined && completed <= bestTime
+			};
+		});
 	});
+
+	// deltaBest comes from SimHub in seconds.
+	let deltaMs = $derived(live ? Math.round(live.deltaBest * 1000) : null);
 </script>
 
-<svelte:head>
-	<title>{data.rig.name} | Rig room</title>
-</svelte:head>
-
-<main class="mx-auto flex w-full max-w-[36rem] flex-col gap-4 pb-8 text-[#f4f2f8]">
-	<header class="flex items-center gap-3">
-		<a
-			href="../"
-			aria-label="Back to rig"
-			class="flex size-8 shrink-0 items-center justify-center rounded-full text-[#e8e6ee] transition-colors hover:bg-white/10"
+<main class="mx-auto flex w-full max-w-xl flex-col gap-4 pb-8">
+	<header class="flex items-center gap-2">
+		<Button
+			href={`/connect/${data.rig.id}`}
+			variant="ghost"
+			size="icon"
+			aria-label={m.rig_connect_title({ rigName: data.rig.name })}
 		>
-			<ArrowLeft size={20} />
-		</a>
-		<div class="min-w-0 flex-1">
-			<h1 class="text-2xl leading-none font-bold tracking-tight">Lounge</h1>
-			<p class="mt-1 flex items-center gap-1.5 truncate text-sm text-[#a6a4b8]">
-				<span
-					class="size-2 shrink-0 rounded-full"
-					class:bg-[#43df83]={telemetryConnected}
-					class:bg-[#777586]={!telemetryConnected}
-				></span>
-				<span class="truncate"
-					>{data.rig.name} · {telemetryConnected ? 'Connected' : 'Waiting for rig'}</span
-				>
+			<ArrowLeft />
+		</Button>
+		<div class="flex min-w-0 flex-1 flex-col gap-0.5">
+			<h1 class="truncate text-2xl leading-tight font-bold tracking-tight">{data.rig.name}</h1>
+			<p class="text-muted-foreground flex items-center gap-1.5 truncate text-sm">
+				<User class="size-3.5 shrink-0" />
+				{#if !status.session_active}
+					{m.lounge_no_session_title()}
+				{:else if data.isDriver}
+					{m.lounge_you_are_driving()}
+				{:else if status.driver_name}
+					{m.rig_connect_driving({ driverName: status.driver_name })}
+				{:else}
+					{m.lounge_anonymous_driver()}
+				{/if}
 			</p>
 		</div>
+		<Button variant="outline" size="sm" onclick={refresh} disabled={refreshing}>
+			<RefreshCw data-icon="inline-start" class={cn(refreshing && 'animate-spin')} />
+			{m.lounge_refresh()}
+		</Button>
 	</header>
 
-	<nav aria-label="Rig room views" class="flex w-full border-b border-[#292833]">
-		<a
-			id="live-session-tab"
-			href="?tab=live-session"
-			aria-current={activeTab === 'live-session' ? 'page' : undefined}
-			aria-controls="live-session-panel"
-			class="flex min-h-10 flex-1 items-center justify-center border-b-2 px-2 text-sm font-semibold transition-colors"
-			class:border-[#bd55ff]={activeTab === 'live-session'}
-			class:border-transparent={activeTab !== 'live-session'}
-			class:text-[#f4f2f8]={activeTab === 'live-session'}
-			class:text-[#a6a4b8]={activeTab !== 'live-session'}
-		>
-			Live session
-		</a>
-		<a
-			id="unclaimed-laps-tab"
-			href="?tab=unclaimed-laps"
-			aria-current={activeTab === 'unclaimed-laps' ? 'page' : undefined}
-			aria-controls="unclaimed-laps-panel"
-			class="flex min-h-10 flex-1 items-center justify-center gap-2 border-b-2 px-2 text-sm font-semibold transition-colors"
-			class:border-[#bd55ff]={activeTab === 'unclaimed-laps'}
-			class:border-transparent={activeTab !== 'unclaimed-laps'}
-			class:text-[#f4f2f8]={activeTab === 'unclaimed-laps'}
-			class:text-[#a6a4b8]={activeTab !== 'unclaimed-laps'}
-		>
-			Unclaimed
-			<span
-				class="flex size-5 items-center justify-center rounded-full bg-[#a947f1] text-xs font-bold text-[#160b20]"
-			>
-				{unclaimedLaps.length}
-			</span>
-		</a>
-	</nav>
+	{#if !status.session_active}
+		<Empty.Root class="border">
+			<Empty.Header>
+				<Empty.Media variant="icon"><Flag /></Empty.Media>
+				<Empty.Title>{m.lounge_no_session_title()}</Empty.Title>
+				<Empty.Description>{m.lounge_no_session_description()}</Empty.Description>
+			</Empty.Header>
+			<Empty.Content>
+				<Button href={`/connect/${data.rig.id}`} variant="cta">{m.rig_connect_to_rig()}</Button>
+			</Empty.Content>
+		</Empty.Root>
+	{:else}
+		{#if data.latestLap}
+			{@const lap = data.latestLap}
+			<Alert.Root>
+				<Timer />
+				<Alert.Title class="flex items-baseline gap-2">
+					{m.lounge_new_lap()}
+					<span class="font-mono text-base font-bold tabular-nums">
+						{formatLapClock(lap.time_milliseconds)}
+					</span>
+				</Alert.Title>
+				<Alert.Description>
+					{lap.driver?.username ?? m.lounge_anonymous_driver()} · {lap.race_track.name} ·
+					{formatTimeSinceCreation(lap.created_at)}
+				</Alert.Description>
+			</Alert.Root>
+		{/if}
 
-	{#if activeTab === 'live-session'}
-		<section id="live-session-panel" aria-labelledby="live-session-tab" class="flex flex-col gap-4">
-			<Collapsible.Root bind:open={sessionStatsOpen}>
-				<div class="overflow-hidden rounded-2xl border border-[#454451] bg-[#13131b]">
-					<Collapsible.Trigger
-						class="group flex w-full items-center justify-between px-4 pt-4 pb-3 text-left"
-					>
-						<span class="text-sm font-semibold tracking-wide text-[#a6a4b8] uppercase">
-							Session info
-						</span>
-						<ChevronDown
-							size={18}
-							class="text-[#a6a4b8] transition-transform group-data-[state=open]:rotate-180"
-						/>
-					</Collapsible.Trigger>
-					<Collapsible.Content class="px-4 pb-4">
-						<div class="mb-4">
-							<p class="mb-0.5 text-sm font-bold tracking-wider text-[#d5a2ff] uppercase">
-								{readText(sessionStats, 'sessionType') ?? 'Live session'}
-							</p>
-							<h2 class="text-3xl leading-none font-bold tracking-tight">
-								{readText(sessionStats, 'trackName') ?? 'Waiting for track'}
-							</h2>
-						</div>
-						<div class="grid grid-cols-2 gap-2.5">
-							<div
-								class="flex min-w-0 flex-col gap-0.5 rounded-xl border border-[#454451] bg-[#0e0e14] p-2.5"
+		<Collapsible.Root bind:open={sessionOpen}>
+			<Card.Root class="gap-3 py-4">
+				<Card.Header class="px-4">
+					<Card.Description>{m.lounge_sim_session()}</Card.Description>
+					{#if sim}
+						<Card.Title class="text-xl">{humanize(sim.TrackId)}</Card.Title>
+						<Card.Action>
+							<Collapsible.Trigger>
+								{#snippet child({ props })}
+									<Button
+										{...props}
+										variant="ghost"
+										size="icon-sm"
+										aria-label={m.lounge_sim_session()}
+									>
+										<ChevronDown class={cn('transition-transform', sessionOpen && 'rotate-180')} />
+									</Button>
+								{/snippet}
+							</Collapsible.Trigger>
+						</Card.Action>
+					{/if}
+				</Card.Header>
+				<Card.Content class="flex flex-wrap gap-1.5 px-4">
+					{#if sim}
+						<Badge variant="secondary">{humanize(sim.CarId)}</Badge>
+						{#if sim.CarClass}<Badge variant="outline">{sim.CarClass}</Badge>{/if}
+						<Collapsible.Content class="contents">
+							<Badge variant="outline">{humanize(sim.SessionTypeName)}</Badge>
+							<Badge variant="outline">TC {sim.TCLevel}</Badge>
+							<Badge variant="outline">ABS {sim.ABSLevel}</Badge>
+							<Badge variant="outline">BB {sim.BrakeBias}</Badge>
+							<Badge variant="outline">{m.lounge_air_temp({ temp: sim.AirTemperature })}</Badge>
+							<Badge variant="outline">{m.lounge_track_temp({ temp: sim.TrackTemperature })}</Badge>
+							<Badge variant="outline">{humanize(sim.rainIntesity.replace(/^ACC_/, ''))}</Badge>
+						</Collapsible.Content>
+					{:else}
+						<p class="text-muted-foreground text-sm">{m.lounge_sim_session_empty()}</p>
+					{/if}
+				</Card.Content>
+			</Card.Root>
+		</Collapsible.Root>
+
+		<Card.Root class="gap-4 py-4" aria-label={m.lounge_live_lap()}>
+			<Card.Header class="px-4">
+				<Card.Description>
+					{#if live}
+						{live.lapTotalCount
+							? m.lounge_lap_number_of({ lap: live.lapNumber, total: live.lapTotalCount })
+							: m.lounge_lap_number({ lap: live.lapNumber })}
+					{:else}
+						{m.lounge_live_lap()}
+					{/if}
+				</Card.Description>
+				{#if live}
+					<Card.Title class="font-mono text-4xl font-bold tabular-nums">
+						{formatLapClock(live.laptime_ms)}
+					</Card.Title>
+					<Card.Action class="flex flex-col items-end gap-1">
+						{#if deltaMs !== null}
+							<Badge
+								variant={deltaMs < 0 ? 'outline_teal' : deltaMs > 0 ? 'destructive' : 'secondary'}
+								class="font-mono text-sm tabular-nums"
 							>
-								<span class="text-sm text-[#a6a4b8]">Car</span>
-								<strong class="truncate text-base font-semibold">
-									{readText(sessionStats, 'carName') ?? 'Waiting for car'}
-								</strong>
-								{#if readText(sessionStats, 'carClass')}
-									<span class="text-[#a6a4b8]">
-										{readText(sessionStats, 'carClass')}
-									</span>
-								{/if}
-							</div>
-							<div
-								class="flex min-w-0 flex-col gap-0.5 rounded-xl border border-[#454451] bg-[#0e0e14] p-2.5"
-							>
-								<span class="text-sm text-[#a6a4b8]">Driver</span>
-								<strong class="truncate text-base font-semibold">
-									{data.status.driver_name ?? 'No driver connected'}
-								</strong>
-								<span class="text-[#a6a4b8]">
-									{data.isDriver ? 'You' : data.status.driver_id ? 'Rig driver' : 'Not connected'}
-								</span>
-							</div>
-						</div>
-						<div class="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-[#a6a4b8]">
-							<Sun size={16} />
-							{#if readText(sessionStats, 'weather')}
-								<span>{readText(sessionStats, 'weather')}</span>
-							{/if}
-							{#if readNumber(sessionStats, 'airTemperature') !== null}
-								<span>· Air {readNumber(sessionStats, 'airTemperature')}°C</span>
-							{/if}
-							{#if readNumber(sessionStats, 'trackTemperature') !== null}
-								<span>· Track {readNumber(sessionStats, 'trackTemperature')}°C</span>
-							{/if}
-							{#if !readText(sessionStats, 'weather') && readNumber(sessionStats, 'trackTemperature') === null && readNumber(sessionStats, 'airTemperature') === null}
-								<span>Conditions unavailable</span>
-							{/if}
-						</div>
-					</Collapsible.Content>
-				</div>
-			</Collapsible.Root>
-
-			<section
-				aria-label="Live lap"
-				class="flex flex-col gap-4 rounded-3xl bg-gradient-to-br from-[#0868d3] via-[#23369e] to-[#3a0066] p-[18px]"
-			>
-				<div class="flex items-end justify-between gap-2">
-					<div class="min-w-0 flex-1">
-						<p
-							class="mb-1.5 flex items-center gap-2 text-base font-bold tracking-wide text-white/75 uppercase"
-						>
-							Lap {liveLapCard.lapNumber ?? '—'}
-							{#if liveLapCard.isPreview}
-								<span
-									class="rounded-full bg-white/15 px-2 py-0.5 text-[10px] tracking-normal text-white/80 normal-case"
-								>
-									Preview
-								</span>
-							{/if}
-						</p>
-						<strong
-							class="font-mono text-3xl leading-none font-bold tracking-tight whitespace-nowrap text-white tabular-nums sm:text-4xl"
-						>
-							{formatBroadcastTime(liveLapCard.lapTimeSeconds)}
-						</strong>
-					</div>
-					<div class="flex shrink-0 flex-col items-end gap-1">
-						<strong
-							class={cn(
-								'rounded-lg px-2 py-0.5 font-mono text-xl font-bold tabular-nums',
-								liveLapCard.deltaMilliseconds !== null && liveLapCard.deltaMilliseconds < 0
-									? 'bg-[#42df80] text-[#12683a]'
-									: liveLapCard.deltaMilliseconds !== null && liveLapCard.deltaMilliseconds > 0
-										? 'bg-[#ff6767] text-[#651d25]'
-										: 'bg-white/20 text-white'
-							)}
-						>
-							{liveLapCard.deltaMilliseconds === null
-								? '—'
-								: `${liveLapCard.deltaMilliseconds > 0 ? '+' : ''}${(liveLapCard.deltaMilliseconds / 1000).toFixed(3)}`}
-						</strong>
-						<span class="text-xs font-semibold whitespace-nowrap text-white/90">
-							{liveLapCard.isPreview
-								? 'sample delta'
-								: bestLap === null
-									? 'No rig best yet'
-									: 'vs rig best'}
-						</span>
-					</div>
-				</div>
-
-				<div class="flex flex-col gap-1.5">
-					<div class="flex justify-end text-xs text-white/75">
-						<span>
-							{liveLapCard.progress === null
-								? 'Waiting for progress'
-								: `${Math.round(liveLapCard.progress * 100)}%`}
-						</span>
-					</div>
-					<div
-						role="progressbar"
-						aria-label="Lap progress"
-						aria-valuemin="0"
-						aria-valuemax="100"
-						aria-valuenow={liveLapCard.progress === null
-							? 0
-							: Math.round(Math.min(1, Math.max(0, liveLapCard.progress)) * 100)}
-						class="h-2 overflow-hidden rounded-full bg-white/25"
-					>
-						<div
-							class="h-full rounded-full bg-white transition-[width]"
-							style={`width: ${liveLapCard.progress === null ? 0 : Math.min(1, Math.max(0, liveLapCard.progress)) * 100}%`}
-						></div>
-					</div>
-				</div>
-
-				<div class="grid grid-cols-3 gap-2">
-					{#each [1, 2, 3] as sector}
-						{@const isCurrentSector = liveLapCard.currentSector === sector}
-						{@const sectorTime = liveLapCard.sectorTimes[String(sector)]}
-						<div
-							class="flex min-w-0 flex-col gap-1 rounded-2xl border-2 bg-[#120d20]/90 p-2.5"
-							class:border-[#24d9cc]={isCurrentSector && sector !== 3}
-							class:border-[#252231]={!isCurrentSector}
-							class:border-white={isCurrentSector && sector === 3}
-						>
-							<span class="text-xs font-semibold text-white/65">
-								S{sector}{isCurrentSector ? ' · now' : ''}
-							</span>
-							<strong class="font-mono text-lg font-bold tabular-nums">
-								{formatBroadcastTime(sectorTime)}
-							</strong>
+								{formatDelta(deltaMs)}
+							</Badge>
+						{/if}
+						{#if !live.valid}
+							<Badge variant="destructive">{m.lounge_lap_invalid()}</Badge>
+						{/if}
+					</Card.Action>
+				{/if}
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-4 px-4">
+				{#if live}
+					<Progress
+						value={Math.round(Math.min(1, Math.max(0, live.progress)) * 100)}
+						aria-label={m.lounge_lap_progress()}
+					/>
+					<div class="grid grid-cols-3 gap-2">
+						{#each sectors as s (s.sector)}
 							<div
 								class={cn(
-									'h-1 rounded-full',
-									sector === 1 ? 'bg-[#c879ff]' : sector === 2 ? 'bg-[#ffd326]' : 'bg-white/20'
+									'flex min-w-0 flex-col gap-1 rounded-lg border p-2',
+									s.current && 'border-primary'
 								)}
-							></div>
-						</div>
-					{/each}
-				</div>
-			</section>
-
-			<PreviousLaps laps={data.sessionLaps} {bestLap} />
-		</section>
-	{:else}
-		<section
-			id="unclaimed-laps-panel"
-			aria-labelledby="unclaimed-laps-tab"
-			class="flex flex-col gap-4"
-		>
-			<Marker.Root class="py-2">
-				<Marker.Content class="text-foreground font-medium">Unclaimed laps</Marker.Content>
-			</Marker.Root>
-			<p class="text-muted-foreground text-sm">Select laps to claim for your driver profile.</p>
-			{#if import.meta.env.DEV}
-				<p class="text-muted-foreground text-xs">
-					Preview rows only — lap claiming is not connected yet.
-				</p>
-			{/if}
-
-			{#if unclaimedLaps.length > 0}
-				<ul class="flex flex-col divide-y">
-					{#each unclaimedLaps as lap (lap.id)}
-						<li class="flex items-center gap-4 py-3">
-							<input
-								type="checkbox"
-								class="border-input accent-primary size-4 rounded"
-								checked={selectedLapIds.includes(lap.id)}
-								onchange={(event) => toggleLap(lap.id, event.currentTarget.checked)}
-								aria-label={`Select lap ${lap.lapNumber}`}
-							/>
-							<div class="flex min-w-0 flex-1 flex-col gap-1">
-								<span class="truncate font-medium">Lap {lap.lapNumber}</span>
-								<span class="text-muted-foreground truncate text-sm">
-									{lap.track} · {lap.car}
-								</span>
+							>
+								<span class="text-muted-foreground text-xs">S{s.sector}</span>
+								<strong class="font-mono text-base font-semibold tabular-nums">
+									{s.time === null ? '–' : formatLapClock(s.time)}
+								</strong>
+								<div
+									class={cn(
+										'h-1 rounded-full',
+										s.fastest ? 'bg-purple-500' : s.time === null ? 'bg-muted' : 'bg-primary/40'
+									)}
+								></div>
 							</div>
-							<strong class="font-mono tabular-nums">
-								{formatLaptime(lap.timeMilliseconds)}
-							</strong>
-						</li>
-					{/each}
-				</ul>
-			{:else}
-				<p class="text-muted-foreground py-8 text-center text-sm">
-					There are no unclaimed laps to show.
-				</p>
-			{/if}
+						{/each}
+					</div>
+				{:else}
+					<p class="text-muted-foreground text-sm">{m.lounge_live_lap_empty()}</p>
+				{/if}
+			</Card.Content>
+		</Card.Root>
 
-			<Separator />
-			<div
-				class="flex flex-col items-start gap-2 pt-2 sm:flex-row sm:items-center sm:justify-between"
-			>
-				<p class="text-muted-foreground text-sm">{selectedLapIds.length} selected</p>
-				<Button disabled>Claim selected laps</Button>
-			</div>
-			<p class="text-muted-foreground text-xs">
-				Claiming will be enabled when laps can be marked as unclaimed in the database.
-			</p>
-		</section>
+		<Card.Root class="gap-2 py-4">
+			<Card.Header class="px-4">
+				<Card.Title>{m.lounge_session_laps()}</Card.Title>
+			</Card.Header>
+			<Card.Content class="px-4">
+				{#if data.sessionLaps.length > 0}
+					<LapList laps={data.sessionLaps} numbered />
+				{:else}
+					<p class="text-muted-foreground py-2 text-sm">{m.lounge_session_laps_empty()}</p>
+				{/if}
+			</Card.Content>
+		</Card.Root>
 	{/if}
+
+	<Card.Root class="gap-2 py-4">
+		<Card.Header class="px-4">
+			<Card.Title>{m.lounge_unclaimed_laps()}</Card.Title>
+			<Card.Description>{m.lounge_unclaimed_laps_description()}</Card.Description>
+		</Card.Header>
+		<Card.Content class="px-4">
+			{#if data.unclaimedLaps.length > 0}
+				<LapList laps={data.unclaimedLaps} />
+			{:else}
+				<p class="text-muted-foreground py-2 text-sm">{m.lounge_unclaimed_laps_empty()}</p>
+			{/if}
+		</Card.Content>
+	</Card.Root>
 </main>
