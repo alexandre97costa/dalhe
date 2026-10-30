@@ -438,6 +438,17 @@ const scenarios = {
 	'live-sector-1': liveSectorScenario(1),
 	'live-sector-2': liveSectorScenario(2),
 	'live-sector-3': liveSectorScenario(3),
+	'live-invalid': {
+		about:
+			'an invalid live lap in sector 3: ok, stored with valid false (red time, sector colours kept)',
+		async run(rig) {
+			return withActiveSession(rig, async () => {
+				const r = await call(rig, '/send/live', { ...LIVE_IN_SECTOR[3], valid: 'false' });
+				const stored = await storedStats(rig, 'lap_stats');
+				return r.status === 200 && r.body?.status === 'ok' && stored?.valid === false;
+			});
+		}
+	},
 	freeze: {
 		about: `a new lap: the newest of the active session, under ${FREEZE_WINDOW_S}s old (load the lounge now to see the freeze)`,
 		async run(rig) {
