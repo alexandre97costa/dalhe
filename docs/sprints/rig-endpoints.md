@@ -161,7 +161,7 @@ Current lap, for the lounge room's live card. Latest value only, no history.
 | `currentSector` | 1–3 |
 | `currentSplit` | |
 | `s1_ms`, `s2_ms` | optional, once completed |
-| `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | optional |
+| `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | optional; accepted and stored, but no longer used by the lounge (bests come from the database, Sprint 1.5 Decision 2) |
 
 ### Sim session stats: `GET /rig/{uuid}/send/session?k={key}&...`
 
@@ -260,8 +260,7 @@ The UUID, QR, links, lap history and `rig_drivers` are untouched.
 
 Found while writing this. Each is small; each needs an owner.
 
-1. **Sector conversion bug (A3 blocker).** `convertTimeStringToMilliseconds` multiplies a float by 1000 without rounding. About 8% of sector values come out non-integer (e.g. `10861.999…`), fail the `.int()` check and the lap is rejected. Fix: `Math.round`.
-2. **Sector sum tolerance.** The check is strict equality. If SimHub ever rounds a sector differently from the lap time, valid laps get `sectors_mismatch`. Decide: strict, or ±1–2 ms tolerance. Worth checking against a few real laps before A3 closes.
+2. **Sector sum tolerance.** Decided in Sprint 1.5 (X2): strict, because no stored lap had sectors to measure against. Revisit with the first real laps: if valid laps get `sectors_mismatch` by 1–2 ms (check the server logs for "Lap rejected"), add a tolerance constant next to the check in `submitLap`.
 4. **Duplicate key is global.** `lap_time_dedupe_uniq` ignores rig and driver. Two people setting the exact same time and sectors on the same car and track (to the millisecond) would collide. Practically impossible; noted so nobody "discovers" it later.
-5. **`zSessionStats` is wrong in places.** `rainIntensities` lists `ACC_NO_RAIN` three times, the param is spelled `rainIntesity`, and `SessionTypeName` mixes strings and numbers. `LapStats` has no zod schema yet. Both belong to A4.
+5. **`zSessionStats` is wrong in places.** The param is spelled `rainIntesity`, and `SessionTypeName` mixes strings and numbers.
 6. **Poll cost.** Decide the poll interval before it ships; the overlay runs all day on some rigs.
