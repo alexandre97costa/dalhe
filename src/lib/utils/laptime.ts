@@ -21,7 +21,8 @@ export function convertTimeStringToMilliseconds(timeString: string): number | nu
 	const minutes = parseInt(parts[1]);
 	const seconds = parseFloat(parts[2]); /* 10.8620000 -> 10.862 */
 
-	return (hours * 3600 + minutes * 60 + seconds) * 1000;
+	// Rounded: float seconds (10.862) times 1000 can land just off an integer
+	return Math.round((hours * 3600 + minutes * 60 + seconds) * 1000);
 }
 
 export function formatTimeSinceCreation(createdAt: string | Date): string {

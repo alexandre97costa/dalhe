@@ -6,6 +6,7 @@ import {
 	type SessionStats,
 	type LapStats,
 	type NewLapConverted,
+	zNewLap,
 	zNewLapConverted
 } from '$lib/types/rig';
 import {
@@ -96,9 +97,10 @@ export async function resolveCar(carId: string): Promise<{ id: number } | null> 
 		.from('car')
 		.select('id')
 		.eq('simhub_carid', carId)
-		.single();
+		.maybeSingle();
 
-	if (error) return null;
+	// A database error is not an unknown car: let it become a 500 so the overlay retries
+	if (error) throw error;
 	return data;
 }
 
@@ -111,9 +113,9 @@ export async function resolveTrack(trackId: string): Promise<{ id: number } | nu
 		.from('race_track')
 		.select('id')
 		.eq('simhub_trackid', trackId)
-		.single();
+		.maybeSingle();
 
-	if (error) return null;
+	if (error) throw error;
 	return data;
 }
 
@@ -121,7 +123,54 @@ export function validateRouteParams<T extends z.ZodType>(params: URLSearchParams
 	return schema.safeParse(Object.fromEntries(params));
 }
 
-export async function insertNewLap(l: NewLapConverted): Promise<number | null> {
+// Every handled lap gets a 200 with one of these (Sprint 1, Decision 5)
+export type LapRejectReason =
+	| 'invalid_params'
+	| 'sectors_mismatch'
+	| 'unknown_car'
+	| 'unknown_track';
+export type LapOutcome =
+	| { status: 'created'; lapId: number }
+	| { status: 'duplicate' }
+	| { status: 'rejected'; reason: LapRejectReason };
+
+// Parses, validates and stores a lap from the overlay's query params.
+// Throws only on server errors (the endpoint answers 500 and the overlay retries).
+export async function submitLap(rigId: string, params: URLSearchParams): Promise<LapOutcome> {
+	const reject = (reason: LapRejectReason): LapOutcome => {
+		// Logged so a lap on a car or track missing from the catalog can be recovered by hand. Never the key.
+		const logged = Object.fromEntries([...params].filter(([name]) => name !== 'k'));
+		console.warn('Lap rejected:', reason, { rigId, ...logged });
+		return { status: 'rejected', reason };
+	};
+
+	const parsed = validateRouteParams(params, zNewLap);
+	if (!parsed.success) return reject('invalid_params');
+	const newLap = parsed.data;
+
+	const car = await resolveCar(newLap.carId);
+	if (!car) return reject('unknown_car');
+	const track = await resolveTrack(newLap.trackId);
+	if (!track) return reject('unknown_track');
+
+	const converted = zNewLapConverted.safeParse({
+		rigId,
+		laptime_ms: newLap.laptime_ms,
+		s1_ms: convertTimeStringToMilliseconds(newLap.s1_time),
+		s2_ms: convertTimeStringToMilliseconds(newLap.s2_time),
+		s3_ms: convertTimeStringToMilliseconds(newLap.s3_time),
+		carId: car.id,
+		trackId: track.id
+	});
+	if (!converted.success) return reject('invalid_params');
+
+	const lap = converted.data;
+	if (lap.laptime_ms !== lap.s1_ms + lap.s2_ms + lap.s3_ms) return reject('sectors_mismatch');
+
+	return insertNewLap(lap);
+}
+
+export async function insertNewLap(l: NewLapConverted): Promise<LapOutcome> {
 	const { data, error } = await supabaseAdmin.rpc('insert_lap', {
 		p_timeout_minutes: parseInt(SESSION_TIMEOUT_MINS),
 		p_for_testing: GET_TEST_RECORDS === 'true',
@@ -134,9 +183,11 @@ export async function insertNewLap(l: NewLapConverted): Promise<number | null> {
 		p_track_id: l.trackId
 	});
 
-	console.log('rpc insert new lap id -> ', data);
-	console.log('rpc insert new lap error -> ', error);
+	if (error) throw error;
 
-	if (error) return null;
-	return data;
+	const row = data[0];
+	if (row?.status === 'created' && row.lap_id !== null)
+		return { status: 'created', lapId: row.lap_id };
+	if (row?.status === 'duplicate') return { status: 'duplicate' };
+	throw new Error(`insert_lap returned an unexpected row: ${JSON.stringify(row)}`);
 }

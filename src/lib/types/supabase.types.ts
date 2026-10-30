@@ -777,7 +777,10 @@ export type Database = {
 					p_timeout_minutes: number;
 					p_track_id: number;
 				};
-				Returns: number;
+				Returns: {
+					lap_id: number;
+					status: string;
+				}[];
 			};
 			rig_status: {
 				Args: { p_expiry_minutes: number; p_rig_id: string };

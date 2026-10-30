@@ -40,6 +40,24 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 | `200` + status | Stats (`/send/live`, `/send/session`): `ok`, `ignored` (no active session), `rejected` (invalid params).                                             |
 | `5xx`          | Server error; the overlay may retry.                                                                                                                 |
 
+### Laps: `/send/new`
+
+`GET /rig/[uuid]/send/new?laptime_ms=87898&s1_time=00:00:29.1650000&s2_time=00:00:31.3180000&s3_time=00:00:27.4150000&carId=porsche_991ii_gt3_r&trackId=brands_hatch&k=...`
+
+`carId` and `trackId` are SimHub's ids (`car.simhub_carid`, `race_track.simhub_trackid`), not database ids.
+
+| Body                                                   | Meaning                                                                                                                  |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `{"status": "created", "lapId": 131}`                  | Stored in the rig's active session (or a new anonymous one) under its driver. Refreshes the session's activity.          |
+| `{"status": "duplicate"}`                              | The same lap (track, car, time, sectors) is already stored. Nothing is written: no row, no session, no activity refresh. |
+| `{"status": "rejected", "reason": "invalid_params"}`   | A param is missing or malformed.                                                                                         |
+| `{"status": "rejected", "reason": "sectors_mismatch"}` | The sectors don't add up to `laptime_ms`.                                                                                |
+| `{"status": "rejected", "reason": "unknown_car"}`      | `carId` isn't in the catalog.                                                                                            |
+| `{"status": "rejected", "reason": "unknown_track"}`    | `trackId` isn't in the catalog.                                                                                          |
+| `500 {"error": "server_error"}`                        | Not handled; retry.                                                                                                      |
+
+Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it.
+
 ## Managing keys
 
 - **New rig:** insert the `rig` row, then a `rig_key` row with only `rig_id` (`insert into public.rig_key (rig_id) values ('<uuid>')`). The key is generated (32 hex characters). A rig without a key row answers 404 to everything.

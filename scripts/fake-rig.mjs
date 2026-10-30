@@ -40,7 +40,7 @@ async function call(rig, path = '', params = {}, { rigId = rig.id, key = rig.key
 	// Print the call without the key
 	const shown = new URLSearchParams(params).toString();
 	const keyShown = key === null ? '' : shown ? '&k=…' : 'k=…';
-	console.log(`  GET /rig/${rigId}${path}?${shown}${keyShown}`);
+	console.log(`  GET /rig/${rigId}${path}?${decodeURIComponent(shown)}${keyShown}`);
 	console.log(`  → ${res.status} ${text}`);
 	return { status: res.status, text, body: safeJson(text) };
 }
@@ -51,6 +51,44 @@ function safeJson(text) {
 	} catch {
 		return null;
 	}
+}
+
+// A lap as the overlay sends it: SimHub car/track ids and sector times as HH:MM:SS.fffffff.
+// Random by default, so each run creates a new lap instead of hitting a duplicate.
+const SEED_CAR = 'porsche_991ii_gt3_r';
+const SEED_TRACK = 'brands_hatch';
+
+function simhubTime(ms) {
+	const s = (ms / 1000).toFixed(7).padStart(10, '0');
+	return `00:00:${s}`;
+}
+
+function lapParams({
+	s1,
+	s2,
+	s3,
+	laptime = s1 + s2 + s3,
+	carId = SEED_CAR,
+	trackId = SEED_TRACK
+} = {}) {
+	return {
+		laptime_ms: String(laptime),
+		s1_time: simhubTime(s1),
+		s2_time: simhubTime(s2),
+		s3_time: simhubTime(s3),
+		carId,
+		trackId
+	};
+}
+
+function randomLap(overrides = {}) {
+	const jitter = () => Math.floor(Math.random() * 2000);
+	return lapParams({
+		s1: 29000 + jitter(),
+		s2: 31000 + jitter(),
+		s3: 26000 + jitter(),
+		...overrides
+	});
 }
 
 function sameKeys(body, keys) {
@@ -84,6 +122,85 @@ const scenarios = {
 		about: 'poll an unknown rig with a valid key: 404',
 		async run(rig) {
 			const r = await call(rig, '', {}, { rigId: UNKNOWN_RIG_ID });
+			return r.status === 404 && r.text === NOT_FOUND;
+		}
+	},
+	'lap-created': {
+		about: 'a new lap: 200 created, with its id',
+		async run(rig) {
+			const r = await call(rig, '/send/new', randomLap());
+			return r.status === 200 && r.body?.status === 'created' && Number.isInteger(r.body?.lapId);
+		}
+	},
+	'lap-duplicate': {
+		about: 'the same lap twice: created, then duplicate without touching the session',
+		async run(rig) {
+			const lap = randomLap();
+			const first = await call(rig, '/send/new', lap);
+			const activity = async () =>
+				(
+					await admin()
+						.from('rig_session')
+						.select('last_activity_at')
+						.eq('rig_id', rig.id)
+						.is('ended_at', null)
+						.maybeSingle()
+				).data?.last_activity_at;
+			const before = await activity();
+			const again = await call(rig, '/send/new', lap);
+			const after = await activity();
+			return (
+				first.body?.status === 'created' &&
+				again.status === 200 &&
+				sameKeys(again.body, ['status']) &&
+				again.body.status === 'duplicate' &&
+				before === after
+			);
+		}
+	},
+	'lap-sectors': {
+		about: "sectors that don't add up to the lap time: rejected",
+		async run(rig) {
+			const lap = randomLap();
+			const r = await call(rig, '/send/new', {
+				...lap,
+				laptime_ms: String(Number(lap.laptime_ms) + 1)
+			});
+			return (
+				r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'sectors_mismatch'
+			);
+		}
+	},
+	'lap-unknown-car': {
+		about: 'a car missing from the catalog: rejected',
+		async run(rig) {
+			const r = await call(rig, '/send/new', randomLap({ carId: 'not_a_real_car' }));
+			return r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'unknown_car';
+		}
+	},
+	'lap-unknown-track': {
+		about: 'a track missing from the catalog: rejected',
+		async run(rig) {
+			const r = await call(rig, '/send/new', randomLap({ trackId: 'not_a_real_track' }));
+			return (
+				r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'unknown_track'
+			);
+		}
+	},
+	'lap-invalid': {
+		about: 'a lap with a missing sector: rejected',
+		async run(rig) {
+			const { s3_time, ...lap } = randomLap();
+			const r = await call(rig, '/send/new', lap);
+			return (
+				r.status === 200 && r.body?.status === 'rejected' && r.body?.reason === 'invalid_params'
+			);
+		}
+	},
+	'lap-wrong-key': {
+		about: 'a lap with a wrong key: 404, nothing written',
+		async run(rig) {
+			const r = await call(rig, '/send/new', randomLap(), { key: 'wrong-key' });
 			return r.status === 404 && r.text === NOT_FOUND;
 		}
 	},
