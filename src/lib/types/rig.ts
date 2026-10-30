@@ -3,7 +3,7 @@ import * as z from 'zod';
 // The overlay sends everything as query params (strings): numbers are coerced, booleans are "true"/"false".
 const int = z.coerce.number<number>().int();
 const num = z.coerce.number<number>();
-const rainIntensities = z.enum([
+export const zRainIntensity = z.enum([
 	'ACC_NO_RAIN',
 	'ACC_DRIZZLE',
 	'ACC_LIGHT_RAIN',
@@ -11,6 +11,7 @@ const rainIntensities = z.enum([
 	'ACC_HEAVY_RAIN',
 	'ACC_THUNDERSTORM'
 ]);
+export type RainIntensity = z.infer<typeof zRainIntensity>;
 
 // Sim session stats, /send/session. Stored in rig_stats.session_stats.
 // os campos têm o nome que está no Simhub, o comentário ao lado é um exemplo válido
@@ -33,9 +34,9 @@ export const zSessionStats = z.object({
 	BrakeBias: int, // -17
 	AirTemperature: int, // 30
 	TrackTemperature: int, // 37
-	rainIntesity: rainIntensities, // ACC_NO_RAIN
-	rainIntensityIn10min: rainIntensities,
-	rainIntensityIn30min: rainIntensities
+	rainIntensity: zRainIntensity, // ACC_NO_RAIN (renamed from the typo rainIntesity in Sprint 1.5)
+	rainIntensityIn10min: zRainIntensity,
+	rainIntensityIn30min: zRainIntensity
 });
 export type SessionStats = z.infer<typeof zSessionStats>;
 

@@ -37,6 +37,22 @@
 	--sidebar-border: oklch(0.92 0.004 286.32);
 	--sidebar-ring: oklch(0.705 0.015 286.067);
 	--color-new-button: oklch(0.94, 0.04, 310.27);
+	/* Lounge pace tokens (Sprint 1.5, F5). Dark values are the reference (.dark below);
+	   these are a light mapping: darker hues for text on white, pale undertones.
+	   Final values come with the colour pass. */
+	--pace-record: oklch(0.55 0.25 303);
+	--pace-record-undertone: oklch(0.93 0.05 300);
+	--pace-session-best: oklch(0.55 0.2 262);
+	--pace-session-best-undertone: oklch(0.93 0.04 285);
+	--pace-on-pace: oklch(0.6 0.17 150);
+	--pace-on-pace-undertone: oklch(0.94 0.04 185);
+	--pace-off-pace: oklch(0.7 0.16 80);
+	--pace-off-pace-undertone: oklch(0.95 0.05 60);
+	--pace-neutral: oklch(0.6 0.01 286);
+	--pace-neutral-undertone: oklch(0.95 0.003 286);
+	--delta-faster: oklch(0.62 0.2 130);
+	--delta-slower: oklch(0.6 0.22 10);
+	--lap-invalid: oklch(0.5 0.2 27);
 }
 .dark {
 	--background: oklch(16.099% 0.0084 285.395);
@@ -72,6 +88,21 @@
 	--sidebar-border: oklch(1 0 0 / 10%);
 	--sidebar-ring: oklch(0.552 0.016 285.938);
 	--color-new-button: oklch(0.32, 0.06, 306.48);
+	/* Lounge pace tokens (Sprint 1.5, F5): purple and blue share a violet undertone
+	   ("best in something"), green a teal one, yellow an orange one. */
+	--pace-record: oklch(0.65 0.25 303);
+	--pace-record-undertone: oklch(0.32 0.1 298);
+	--pace-session-best: oklch(0.66 0.18 258);
+	--pace-session-best-undertone: oklch(0.3 0.09 282);
+	--pace-on-pace: oklch(0.76 0.18 150);
+	--pace-on-pace-undertone: oklch(0.31 0.06 185);
+	--pace-off-pace: oklch(0.84 0.16 90);
+	--pace-off-pace-undertone: oklch(0.33 0.07 55);
+	--pace-neutral: oklch(0.85 0.005 286);
+	--pace-neutral-undertone: oklch(0.3 0.006 286);
+	--delta-faster: oklch(0.87 0.2 128);
+	--delta-slower: oklch(0.68 0.21 10);
+	--lap-invalid: oklch(0.58 0.2 27);
 }
 
 @theme inline {
@@ -111,6 +142,19 @@
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
 	--font-mono: 'Space Mono', monospace;
+	--color-pace-record: var(--pace-record);
+	--color-pace-record-undertone: var(--pace-record-undertone);
+	--color-pace-session-best: var(--pace-session-best);
+	--color-pace-session-best-undertone: var(--pace-session-best-undertone);
+	--color-pace-on-pace: var(--pace-on-pace);
+	--color-pace-on-pace-undertone: var(--pace-on-pace-undertone);
+	--color-pace-off-pace: var(--pace-off-pace);
+	--color-pace-off-pace-undertone: var(--pace-off-pace-undertone);
+	--color-pace-neutral: var(--pace-neutral);
+	--color-pace-neutral-undertone: var(--pace-neutral-undertone);
+	--color-delta-faster: var(--delta-faster);
+	--color-delta-slower: var(--delta-slower);
+	--color-lap-invalid: var(--lap-invalid);
 }
 
 @layer base {
