@@ -117,7 +117,7 @@ const SESSION_STATS = {
 	BrakeBias: '-15',
 	AirTemperature: '21',
 	TrackTemperature: '27',
-	rainIntesity: 'ACC_NO_RAIN',
+	rainIntensity: 'ACC_NO_RAIN',
 	rainIntensityIn10min: 'ACC_DRIZZLE',
 	rainIntensityIn30min: 'ACC_LIGHT_RAIN'
 };
