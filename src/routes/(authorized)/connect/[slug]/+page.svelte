@@ -85,6 +85,15 @@
 					<Button type="submit" size="lg" variant="cta" class="w-full sm:w-auto">
 						{m.rig_connect_to_rig()}
 					</Button>
+					<!-- Spectating is just looking: a link, no form post, nothing written. -->
+					<Button
+						href={`/connect/${status.rig_id}/lounge`}
+						size="lg"
+						variant="outline"
+						class="w-full sm:w-auto"
+					>
+						{m.rig_spectate()}
+					</Button>
 				{/if}
 			</form>
 		</div>

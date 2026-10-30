@@ -169,5 +169,6 @@
 	"lounge_session_best": "Best",
 	"lounge_unclaimed_laps": "Unclaimed laps",
 	"lounge_unclaimed_laps_description": "Driven on this rig with nobody connected.",
-	"lounge_unclaimed_laps_empty": "No unclaimed laps."
+	"lounge_unclaimed_laps_empty": "No unclaimed laps.",
+	"rig_spectate": "Just watch"
 }

@@ -169,5 +169,6 @@
 	"lounge_session_best": "Melhor",
 	"lounge_unclaimed_laps": "Voltas por reclamar",
 	"lounge_unclaimed_laps_description": "Feitas neste cockpit sem ninguém ligado.",
-	"lounge_unclaimed_laps_empty": "Não há voltas por reclamar."
+	"lounge_unclaimed_laps_empty": "Não há voltas por reclamar.",
+	"rig_spectate": "Só assistir"
 }
