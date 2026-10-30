@@ -12,7 +12,7 @@ SvelteKit 2 with Svelte 5 runes, Supabase (`@supabase/ssr`), shadcn-svelte (bits
 | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `pnpm exec supabase start` / `status` | Local Supabase stack in Docker / its URLs and keys                                               |
 | `pnpm dev`                            | Dev server on http://localhost:5173                                                              |
-| `pnpm check`                          | Type check. Known baseline: 13 errors, 3 warnings (listed in `docs/backlog.md`); don't add to it |
+| `pnpm check`                          | Type check. Baseline: 0 errors, 0 warnings (the old backlog list is all fixed); don't add to it. |
 | `pnpm lint` / `pnpm format`           | Prettier check / fix                                                                             |
 | `pnpm build`                          | Production build                                                                                 |
 | `pnpm db:reset`                       | Recreate the local database from migrations + `supabase/seed.sql`, then regenerate types         |
