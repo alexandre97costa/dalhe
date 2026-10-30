@@ -1,3 +1,5 @@
+> Superseded by [`lounge-brief.md`](lounge-brief.md) (Sprint 1.5).
+
 # Sprint 1: lounge page brief
 
 A prompt for building the lounge room UI, written for Copilot before Sprint 0. Moved here from `md/roadmap.md`; the data contract below was updated for Sprint 1 (B4).
