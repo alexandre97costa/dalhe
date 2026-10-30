@@ -117,3 +117,18 @@ export async function connectToRig(
 
 	return data as ConnectResult;
 }
+
+// Closes the logged-in user's session on the rig. Returns the closed session id, or null when
+// there was nothing of theirs to close (not the driver, stale tab, no session): a quiet no-op.
+export async function disconnectFromRig(
+	supabaseClient: TypedSupabaseClient,
+	rigId: string
+): Promise<string | null> {
+	const { data, error } = await supabaseClient.rpc('disconnect_from_rig', {
+		p_rig_id: rigId,
+		p_timeout_minutes: parseInt(SESSION_TIMEOUT_MINS)
+	});
+	if (error) throw error;
+
+	return data ?? null;
+}

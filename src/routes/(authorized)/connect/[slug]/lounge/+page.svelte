@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
+	import { enhance } from '$app/forms';
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils';
@@ -12,7 +13,7 @@
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-	import { ArrowLeft, ChevronDown, Flag, RefreshCw, Timer, User } from '@lucide/svelte';
+	import { ArrowLeft, ChevronDown, Flag, LogOut, RefreshCw, Timer, User } from '@lucide/svelte';
 	import LapList from './LapList.svelte';
 
 	let { data }: PageProps = $props();
@@ -253,6 +254,15 @@
 				{/if}
 			</Card.Content>
 		</Card.Root>
+
+		{#if data.isDriver}
+			<form method="POST" action="?/disconnect" use:enhance>
+				<Button type="submit" variant="outline" size="lg" class="w-full">
+					<LogOut data-icon="inline-start" />
+					{m.rig_disconnect_from_rig()}
+				</Button>
+			</form>
+		{/if}
 	{/if}
 
 	<Card.Root class="gap-2 py-4">

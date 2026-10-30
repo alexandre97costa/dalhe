@@ -1,6 +1,12 @@
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { getRigStatus, getRigStats, getSessionLaps, getUnclaimedLaps } from '$lib/queries/rig';
+import type { Actions, PageServerLoad } from './$types';
+import {
+	disconnectFromRig,
+	getRigStatus,
+	getRigStats,
+	getSessionLaps,
+	getUnclaimedLaps
+} from '$lib/queries/rig';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const { supabase, safeGetSession } = locals;
@@ -35,4 +41,17 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		sessionLaps,
 		unclaimedLaps
 	};
+};
+
+export const actions: Actions = {
+	disconnect: async ({ locals: { supabase }, params }) => {
+		const status = await getRigStatus(supabase, params.slug);
+		if (!status) {
+			throw error(404, 'Rig not found');
+		}
+
+		// Null when the caller wasn't driving (stale tab, someone took over): nothing to report.
+		const closedSessionId = await disconnectFromRig(supabase, status.rig_id);
+		return { disconnected: closedSessionId !== null };
+	}
 };
