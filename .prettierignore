@@ -13,4 +13,5 @@ src/lib/types/supabase.types.ts
 
 # Vendored agent skills and Supabase CLI state
 .claude/skills/
+.claude/worktrees/
 supabase/.temp/
