@@ -360,3 +360,21 @@ F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8, with X1–X5 alongside. The
 - Re-fetch the bests only on a new lap or a track/car change, not on every live stats update (Decision 6).
 - The freeze becomes "a lap arrived" instead of "a lap is less than 20 s old at load". The seen-laps rule still applies.
 - `statsAgeMs` becomes a ticking client value.
+
+## Outcome (2026-10-30)
+
+All stories done, nothing below the cut line slipped. Run as five Claude Code streams in their own worktrees (F and X first, then L, S and C in parallel), merged into `sprint/1.5`, one pull request into `preview`.
+
+- **F1:** the lounge is a thin shell over `SessionCard`, `LiveLapCard` and `SessionLaps`; the new-lap banner is gone. The load contract is `LoungePageData` (`$lib/types/lounge.ts`), documented in `lounge-brief.md`.
+- **F2:** the unique constraints on `simhub_carid` / `simhub_trackid` already existed; only the mapping in the load was new (`getSimMapping`). Unmapped ids fall back to humanized labels.
+- **F3:** `get_lounge_bests` (authenticated only), with a pgTAP test. No index: the plan already uses the track index. Records skip unclaimed and dismissed laps, like the leaderboards; session bests count every lap of the session.
+- **F4–F6:** bests keyed `trackId:categoryId`, `ageMs` / `statsAgeMs` from the server, `classifyPace` and `classifyLap` with unit tests, constants in `$lib/config/lounge.ts`, pace tokens in `app.css`, `LabeledSeparator`. Without a session best, a time is neutral unless it beats the record.
+- **F7:** `rainIntensity` rename (the old name is now rejected: overlay change), shared SimHub humanizers.
+- **F8:** seed with every pace colour (Brands → Spa → Brands, two cars at Brands, a lap without sectors); fake rig scenarios for sectors 1–3, freeze, stale stats, unmapped car, the old rain name, and an invalid live lap.
+- **L1–L5:** split in the sector being driven, sector colours from the database bests (SimHub's `bestSx_ms` unused), invalid lap in red, freeze frame with the filling "Show live lap" button (countdown with reduced motion), delta lime / pink-red.
+- **S1–S4:** compact and table views, recent / fastest sort, track · car separators from `groupLaps` (unit tested), accessible dots, crowns and toggles. View and sort persist in `localStorage`.
+- **C1–C3:** one collapsed line, expanded sections (Session, Car, Setup TC / ABS / BB, Conditions with rain icons), "Updated n min ago" after 120 s.
+- **X1:** the rounding fix was already in; regression test added. **X2:** stays strict: no hosted lap has sectors to measure. **X3:** `rig-qr` bucket (public read, no client writes), seed rigs get a QR locally. **X4:** `pnpm simhub:check` plus SQL for the hosted dashboard: 19 cars and 8 tracks have no SimHub id. **X5:** both rig endpoint docs updated.
+- **Tooling:** vitest (`pnpm test`); `pnpm check` baseline is now 0 errors (the 13 from Sprint 0 were fixed in Sprint 1).
+
+**Left for Alex:** the overlay's `rainIntensity` change, filling the missing SimHub ids in hosted, the manual decisions above, and whether an unclaimed lap faster than the record should show "Track Record".
