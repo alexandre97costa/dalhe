@@ -31,7 +31,7 @@ Creating a rig is a data change, so the SQL editor is allowed. Note it in the ne
   returning api_key;
   ```
 - [ ] Copy the UUID and the key somewhere safe (password manager). The key is never shown again by the app.
-- [ ] Catalog check: every car and track you'll drive needs its SimHub id filled in (`car.simhub_carid`, `race_track.simhub_trackid`). A lap on a car or track that isn't mapped is `rejected` (the server logs it, so it can be recovered by hand, but it won't appear on its own).
+- [ ] Catalog check: every car and track you'll drive needs its SimHub id filled in (`car.simhub_carid`, `race_track.simhub_trackid`). A lap on a car or track that isn't mapped is `rejected` (the server logs it, so it can be recovered by hand, but it won't appear on its own). `pnpm simhub:check` lists the unmapped ones locally; the SQL for the hosted SQL editor is at the top of `scripts/simhub-ids.mjs`.
 
 ### 2. QR code
 

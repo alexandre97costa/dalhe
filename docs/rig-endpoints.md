@@ -60,6 +60,8 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 
 Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it.
 
+Every car and track in use needs its SimHub id. `pnpm simhub:check` lists catalog cars and tracks without one (and how many laps each has) on the local stack, read-only. For hosted, run the SQL at the top of `scripts/simhub-ids.mjs` in the dashboard's SQL editor.
+
 ### Stats: `/send/live` and `/send/session`
 
 The overlay sends the current lap (`/send/live`, often) and the sim session (`/send/session`, less often) as query params. The app keeps only the latest values per rig, in `rig_stats.lap_stats` and `rig_stats.session_stats`, for the lounge. The params are validated by `zLapStats` and `zSessionStats` in `src/lib/types/rig.ts`; the key is never stored.
