@@ -5,6 +5,8 @@ import { GET_TEST_RECORDS, SESSION_TIMEOUT_MINS } from '$env/static/private';
 import type { RigStatus } from '$lib/server/rigs';
 import type { SessionStats, LapStats } from '$lib/types/rig';
 import * as z from 'zod';
+import { bestsKey, type BestsByKey } from '$lib/pace';
+import { humanizeSimhubId } from '$lib/utils/simhub';
 
 // Who is driving, with lazy expiry: an expired session reports as inactive.
 // Null for an unknown rig or a malformed id.
@@ -65,18 +67,168 @@ const loungeLapSelect = `
 	race_track ( name )
 ` as const;
 
-// The laps of one rig session, newest first.
-export async function getSessionLaps(supabaseClient: TypedSupabaseClient, sessionId: string) {
-	const { data, error } = await supabaseClient
+const sessionLapSelect = `
+	id,
+	time_milliseconds,
+	sector1_ms,
+	sector2_ms,
+	sector3_ms,
+	created_at,
+	track_id,
+	car_id,
+	driver:profiles!lap_time_driver_id_fkey1 ( username ),
+	car ( model, category_id, car_make ( name ), car_category ( name ) ),
+	race_track ( name )
+` as const;
+
+// One lap of the active session, flat, with everything the lounge needs to colour and group it.
+export type SessionLap = {
+	id: number;
+	// Chronological number within the session: the oldest lap is 1 (counts laps past the cap too).
+	lapNumber: number;
+	timeMs: number;
+	// Sector times in ms; null on legacy laps without sectors.
+	s1Ms: number | null;
+	s2Ms: number | null;
+	s3Ms: number | null;
+	createdAt: string;
+	// Driver's username; null for an anonymous session.
+	driverName: string | null;
+	trackId: number;
+	trackName: string;
+	carId: number;
+	carMake: string;
+	carModel: string;
+	// The car's category; null when the catalog car has none (no bests then).
+	categoryId: number | null;
+	categoryName: string | null;
+};
+
+// The laps of one rig session, newest first (at most 100), and how many there are in total.
+export async function getSessionLaps(
+	supabaseClient: TypedSupabaseClient,
+	sessionId: string
+): Promise<{ laps: SessionLap[]; total: number }> {
+	const { data, error, count } = await supabaseClient
 		.from('lap_time')
-		.select(loungeLapSelect)
+		.select(sessionLapSelect, { count: 'exact' })
 		.eq('session_id', sessionId)
 		.eq('for_testing', GET_TEST_RECORDS === 'true')
 		.order('created_at', { ascending: false })
+		.order('id', { ascending: false })
 		.limit(100);
 	if (error) throw error;
 
-	return data;
+	const total = count ?? data.length;
+	const laps = data.map((lap, index) => ({
+		id: lap.id,
+		lapNumber: total - index,
+		timeMs: lap.time_milliseconds,
+		s1Ms: lap.sector1_ms,
+		s2Ms: lap.sector2_ms,
+		s3Ms: lap.sector3_ms,
+		createdAt: lap.created_at,
+		driverName: lap.driver?.username ?? null,
+		trackId: lap.track_id,
+		trackName: lap.race_track.name,
+		carId: lap.car_id,
+		carMake: lap.car.car_make.name,
+		carModel: lap.car.model,
+		categoryId: lap.car.category_id,
+		categoryName: lap.car.car_category?.name ?? null
+	}));
+	return { laps, total };
+}
+
+// The sim session's SimHub ids mapped to the catalog (Sprint 1.5, Decision 4).
+export type SimMapping = {
+	// Catalog rows; null when the SimHub id isn't in the catalog.
+	track: { id: number; name: string } | null;
+	car: { id: number; make: string; model: string } | null;
+	category: { id: number; name: string } | null;
+	// What to show: the catalog name, or the humanized SimHub id when unmapped.
+	// car is "Make Model" ("McLaren 720S Evo"); category is null when the car is unmapped.
+	labels: { track: string; car: string; category: string | null };
+};
+
+// Maps SimHub's TrackId / CarId through race_track.simhub_trackid / car.simhub_carid (both unique).
+export async function getSimMapping(
+	supabaseClient: TypedSupabaseClient,
+	simhubTrackId: string,
+	simhubCarId: string
+): Promise<SimMapping> {
+	const [trackResult, carResult] = await Promise.all([
+		supabaseClient
+			.from('race_track')
+			.select('id, name')
+			.eq('simhub_trackid', simhubTrackId)
+			.maybeSingle(),
+		supabaseClient
+			.from('car')
+			.select('id, model, car_make ( name ), car_category ( id, name )')
+			.eq('simhub_carid', simhubCarId)
+			.maybeSingle()
+	]);
+	if (trackResult.error) throw trackResult.error;
+	if (carResult.error) throw carResult.error;
+
+	const track = trackResult.data;
+	const carRow = carResult.data;
+	const car = carRow ? { id: carRow.id, make: carRow.car_make.name, model: carRow.model } : null;
+	const category = carRow?.car_category
+		? { id: carRow.car_category.id, name: carRow.car_category.name }
+		: null;
+
+	return {
+		track,
+		car,
+		category,
+		labels: {
+			track: track?.name ?? humanizeSimhubId(simhubTrackId) ?? simhubTrackId,
+			car: car ? `${car.make} ${car.model}` : (humanizeSimhubId(simhubCarId) ?? simhubCarId),
+			category: category?.name ?? null
+		}
+	};
+}
+
+// Bests per track + category for the session's laps plus the live combination (get_lounge_bests).
+// sessionId null: only the live combination, without session bests.
+export async function getLoungeBests(
+	supabaseClient: TypedSupabaseClient,
+	sessionId: string | null,
+	live: { trackId: number; categoryId: number } | null
+): Promise<BestsByKey> {
+	if (!sessionId && !live) return {};
+
+	const { data, error } = await supabaseClient.rpc('get_lounge_bests', {
+		// The generated types say string/number, but the rpc takes null for "none".
+		p_session_id: sessionId as string,
+		p_track_id: (live?.trackId ?? null) as number,
+		p_category_id: (live?.categoryId ?? null) as number,
+		p_testing: GET_TEST_RECORDS === 'true'
+	});
+	if (error) throw error;
+
+	const bests: BestsByKey = {};
+	for (const row of data ?? []) {
+		bests[bestsKey(row.track_id, row.category_id)] = {
+			trackId: row.track_id,
+			categoryId: row.category_id,
+			record: {
+				lap: row.record_lap_ms,
+				s1: row.record_s1_ms,
+				s2: row.record_s2_ms,
+				s3: row.record_s3_ms
+			},
+			session: {
+				lap: row.session_lap_ms,
+				s1: row.session_s1_ms,
+				s2: row.session_s2_ms,
+				s3: row.session_s3_ms
+			}
+		};
+	}
+	return bests;
 }
 
 // Laps driven on the rig with nobody connected, not yet claimed or dismissed, newest first.
@@ -95,7 +247,7 @@ export async function getUnclaimedLaps(supabaseClient: TypedSupabaseClient, rigI
 	return data;
 }
 
-export type LoungeLap = Awaited<ReturnType<typeof getSessionLaps>>[number];
+export type LoungeLap = Awaited<ReturnType<typeof getUnclaimedLaps>>[number];
 
 export type ConnectResult = 'connected' | 'driver_changed';
 

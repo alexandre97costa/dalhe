@@ -167,6 +167,8 @@ export async function submitLap(rigId: string, params: URLSearchParams): Promise
 	if (!converted.success) return reject('invalid_params');
 
 	const lap = converted.data;
+	// Strict on purpose (Sprint 1.5, X2): no stored lap had sectors to measure a drift against.
+	// If real laps get `sectors_mismatch` by a millisecond or two, add a tolerance here and in the docs.
 	if (lap.laptime_ms !== lap.s1_ms + lap.s2_ms + lap.s3_ms) return reject('sectors_mismatch');
 
 	return insertNewLap(lap);

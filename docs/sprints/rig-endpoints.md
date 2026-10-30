@@ -31,7 +31,7 @@ Creating a rig is a data change, so the SQL editor is allowed. Note it in the ne
   returning api_key;
   ```
 - [ ] Copy the UUID and the key somewhere safe (password manager). The key is never shown again by the app.
-- [ ] Catalog check: every car and track you'll drive needs its SimHub id filled in (`car.simhub_carid`, `race_track.simhub_trackid`). A lap on a car or track that isn't mapped is `rejected` (the server logs it, so it can be recovered by hand, but it won't appear on its own).
+- [ ] Catalog check: every car and track you'll drive needs its SimHub id filled in (`car.simhub_carid`, `race_track.simhub_trackid`). A lap on a car or track that isn't mapped is `rejected` (the server logs it, so it can be recovered by hand, but it won't appear on its own). `pnpm simhub:check` lists the unmapped ones locally; the SQL for the hosted SQL editor is at the top of `scripts/simhub-ids.mjs`.
 
 ### 2. QR code
 
@@ -47,9 +47,7 @@ The QR encodes the connect URL with the UUID only. Never the key.
   https://<project-ref>.supabase.co/storage/v1/object/public/rig-qr/<rig uuid>.png
   ```
 
-The bucket is public on purpose: the UUID is public anyway, and the overlay can't send auth headers.
-
-> **Gap:** the `rig-qr` bucket doesn't exist yet (not in `config.toml`, not in a migration). See Open issues.
+The bucket is public on purpose: the UUID is public anyway, and the overlay can't send auth headers. It's created by the `rig_qr_bucket` migration (PNG only, 1 MiB max) and has no client write policies: upload through Studio. Locally, the seed rigs' QR images (`supabase/storage/rig-qr/`) are uploaded on `supabase start` / `db reset` (`[storage.buckets.rig-qr]` in `config.toml`).
 
 ### 3. Overlay config (on the rig PC)
 
@@ -125,7 +123,7 @@ No ids in the response (Decision 3).
 
 Rules:
 
-- The three sectors must add up to `laptime_ms`.
+- The three sectors must add up to `laptime_ms` exactly: each sector is rounded to whole ms, no tolerance (Sprint 1.5, X2). No stored lap had sectors to measure a drift against; revisit if real laps get `sectors_mismatch` by 1–2 ms.
 - The car and track must exist in the catalog (by SimHub id).
 - The lap goes to whoever drives the active session. No active session: an anonymous one is created and the lap lands there, unclaimed.
 - **Duplicate** = same track, car, lap time and all three sectors. Not scoped to the rig or the driver.
@@ -163,7 +161,7 @@ Current lap, for the lounge room's live card. Latest value only, no history.
 | `currentSector` | 1–3 |
 | `currentSplit` | |
 | `s1_ms`, `s2_ms` | optional, once completed |
-| `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | optional |
+| `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | optional; accepted and stored, but no longer used by the lounge (bests come from the database, Sprint 1.5 Decision 2) |
 
 ### Sim session stats: `GET /rig/{uuid}/send/session?k={key}&...`
 
@@ -173,12 +171,14 @@ The game's practice/race session (the **sim session**), for the lounge room's se
 |---|---|
 | `CurrentGame` | `AssettoCorsaCompetizione` |
 | `TrackId` | `brands_hatch` |
-| `SessionTypeName` | `PRACTICE`, `HOTLAP`, `RACE`, … |
+| `SessionTypeName` | `PRACTICE`, `HOTLAP`, `RACE`, `7` (hotstint), `8` (superpole): strings and numbers, as SimHub sends them; humanized by the app (unknown → Session) |
 | `CarId` | `audi_r8_lms_evo` |
 | `CarClass` | `GT3` |
 | `TCLevel`, `ABSLevel`, `BrakeBias` | `6`, `5`, `-17` |
 | `AirTemperature`, `TrackTemperature` | `30`, `37` |
 | `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` | `ACC_NO_RAIN` |
+
+The old spelling `rainIntesity` (before Sprint 1.5) is now `rejected` with `invalid_params`: the overlay config must send `rainIntensity` from the same release.
 
 ### Stats responses (both endpoints, all `200`)
 
@@ -262,9 +262,6 @@ The UUID, QR, links, lap history and `rig_drivers` are untouched.
 
 Found while writing this. Each is small; each needs an owner.
 
-1. **Sector conversion bug (A3 blocker).** `convertTimeStringToMilliseconds` multiplies a float by 1000 without rounding. About 8% of sector values come out non-integer (e.g. `10861.999…`), fail the `.int()` check and the lap is rejected. Fix: `Math.round`.
-2. **Sector sum tolerance.** The check is strict equality. If SimHub ever rounds a sector differently from the lap time, valid laps get `sectors_mismatch`. Decide: strict, or ±1–2 ms tolerance. Worth checking against a few real laps before A3 closes.
-3. **QR bucket missing.** No `rig-qr` bucket in `config.toml` or migrations. Needs a small story: bucket declared (public read, no client writes), seed rigs get a QR locally.
+2. **Sector sum tolerance.** Decided in Sprint 1.5 (X2): strict, because no stored lap had sectors to measure against. Revisit with the first real laps: if valid laps get `sectors_mismatch` by 1–2 ms (check the server logs for "Lap rejected"), add a tolerance constant next to the check in `submitLap`.
 4. **Duplicate key is global.** `lap_time_dedupe_uniq` ignores rig and driver. Two people setting the exact same time and sectors on the same car and track (to the millisecond) would collide. Practically impossible; noted so nobody "discovers" it later.
-5. **`zSessionStats` is wrong in places.** `rainIntensities` lists `ACC_NO_RAIN` three times, the param is spelled `rainIntesity`, and `SessionTypeName` mixes strings and numbers. `LapStats` has no zod schema yet. Both belong to A4.
 6. **Poll cost.** Decide the poll interval before it ships; the overlay runs all day on some rigs.

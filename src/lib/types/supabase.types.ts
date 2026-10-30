@@ -761,6 +761,26 @@ export type Database = {
 					track_record: number;
 				}[];
 			};
+			get_lounge_bests: {
+				Args: {
+					p_category_id: number;
+					p_session_id: string;
+					p_testing: boolean;
+					p_track_id: number;
+				};
+				Returns: {
+					category_id: number;
+					record_lap_ms: number;
+					record_s1_ms: number;
+					record_s2_ms: number;
+					record_s3_ms: number;
+					session_lap_ms: number;
+					session_s1_ms: number;
+					session_s2_ms: number;
+					session_s3_ms: number;
+					track_id: number;
+				}[];
+			};
 			get_or_create_active_session: {
 				Args: { p_rig_id: string; p_timeout_minutes: number };
 				Returns: string;

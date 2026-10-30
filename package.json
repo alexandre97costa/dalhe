@@ -10,10 +10,12 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"format": "prettier --write .",
 		"lint": "prettier --check .",
+		"test": "vitest run",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"db:types": "node scripts/db-types.mjs",
 		"db:reset": "supabase db reset && pnpm db:types",
-		"rig": "node --env-file=.env scripts/fake-rig.mjs"
+		"rig": "node --env-file=.env scripts/fake-rig.mjs",
+		"simhub:check": "node --env-file=.env scripts/simhub-ids.mjs"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.12.0",
@@ -46,7 +48,8 @@
 		"typescript": "^5.9.3",
 		"vaul-svelte": "1.0.0-next.7",
 		"vite": "^6.4.1",
-		"vite-plugin-devtools-json": "^1.0.0"
+		"vite-plugin-devtools-json": "^1.0.0",
+		"vitest": "^3.2.7"
 	},
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.26.0",

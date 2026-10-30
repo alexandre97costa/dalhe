@@ -10,11 +10,6 @@ Items deferred from sprints. Each one notes where it came from.
 
 - **Tournaments page** (from Sprint 0, S3). `/tournaments` renders only the nav; the seed has a tournament with participants and tracks ready for it. On the roadmap, after Sprints 0 and 1, as its own sprint or alongside realtime.
 
-- **`pnpm check` baseline: 13 errors, 3 warnings** (from Sprint 0, C4). All are real issues, not typing noise; each needs a behaviour decision, so they weren't fixed in C4. New work should not raise the count.
-  - **Profile page** (`(authorized)/profile`, 4 errors + 3 warnings). Load and the `update` action use a `website` column that `profiles` doesn't have, so the select returns an error and saving fails. The form inputs are commented out; the page is left over from the Supabase tutorial. Decide what the profile page shows, then fix the query and the `state_referenced_locally` warnings.
-  - **Connect pages** (`connect/[slug]` and `lounge`, 8 errors). They read `data.rig.profiles.username`/`.id`, but `connect_to_rig` returns `driver_id` and `driver_name`, so the "rig already in use" banner and the lounge driver name never show. Fix with the Sprint 1 rig work.
-  - **Landing page** (`(landingpage)/+page.svelte`, 1 error). The `{#if session}` branch is dead: the page load redirects logged-in users to `/home`, so `session` is always `null`. Remove the branch or the redirect.
-
 ## Auth
 
 - **Match the hosted magic-link template** (from Sprint 0, S3; review at Sprint 0 end). Local templates in `supabase/templates/` link to `{{ .SiteURL }}/login/confirm?token_hash={{ .TokenHash }}&type=email`. Check the hosted Auth → Email Templates use the same link, and copy any wording over so local and prod emails match.
