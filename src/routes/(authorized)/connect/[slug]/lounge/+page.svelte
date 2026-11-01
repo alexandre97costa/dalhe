@@ -60,7 +60,7 @@
 				{/if}
 			</p>
 		</div>
-		<Button variant="outline" size="sm" onclick={refresh} disabled={refreshing}>
+		<Button variant="default" size="default" onclick={refresh} disabled={refreshing}>
 			<RefreshCw data-icon="inline-start" class={cn(refreshing && 'animate-spin')} />
 			{m.lounge_refresh()}
 		</Button>

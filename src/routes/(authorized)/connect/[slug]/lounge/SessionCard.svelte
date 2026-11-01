@@ -12,8 +12,10 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-	import LabeledSeparator from '$lib/components/lounge/LabeledSeparator.svelte';
+	import * as Marker from '$lib/components/ui/marker/index.js';
+	import TachometerStat from './TachometerStat.svelte';
 	import {
 		ChevronDown,
 		Clock,
@@ -53,6 +55,15 @@
 		CloudRainWind,
 		CloudLightning
 	];
+	// Icon color per rainLevel (0 = sun … 5 = thunderstorm )
+	const RAIN_COLORS: string[] = [
+		'text-amber-200',
+		'text-sky-300',
+		'text-sky-500',
+		'text-blue-500',
+		'text-blue-500',
+		'text-violet-200'
+	];
 
 	function storage(): Storage | null {
 		try {
@@ -81,7 +92,7 @@
 	let sessionType = $derived(simSession ? sessionTypeLabel(simSession.SessionTypeName) : '');
 	let line = $derived(
 		simMapping
-			? `${m.lounge_session_line({ sessionType, track: simMapping.labels.track })} · ${simMapping.labels.car}`
+			? `${m.lounge_session_line({ sessionType, track: simMapping.labels.track })}`
 			: ''
 	);
 	let staleMin = $derived(staleMinutes(statsAgeMs));
@@ -120,8 +131,9 @@
 					const level = rainLevel(value);
 					return {
 						when,
-						label: rainLabel(value) ?? '–',
-						Icon: level === null ? null : RAIN_ICONS[level]
+						label: rainLabel(value) ?? '-',
+						Icon: level === null ? null : RAIN_ICONS[level],
+						color: level === null ? null : RAIN_COLORS[level]
 					};
 				})
 			: []
@@ -132,14 +144,8 @@
 	<Card.Root class="gap-3 py-4">
 		{#if simSession && simMapping}
 			<Card.Header class="flex items-center gap-2 px-4">
-				<div class="flex min-w-0 flex-1 flex-col gap-1">
-					<Card.Title class="truncate leading-normal" title={line}>{line}</Card.Title>
-					{#if staleMin !== null}
-						<p class="text-muted-foreground flex items-center gap-1.5 text-xs">
-							<Clock class="size-3 shrink-0" aria-hidden="true" />
-							{m.lounge_stats_updated_ago({ minutes: staleMin })}
-						</p>
-					{/if}
+				<div class="flex min-w-0 flex-1 flex-col gap-2 py-1">
+					<Card.Title class={cn("leading-normal", !open ? "truncate" : "")} title={line}>{line}</Card.Title>
 				</div>
 				<Collapsible.Trigger>
 					{#snippet child({ props })}
@@ -157,64 +163,100 @@
 			</Card.Header>
 			<Collapsible.Content>
 				<Card.Content class="flex flex-col gap-4 px-4">
-					<section class="flex flex-col gap-1.5">
-						<LabeledSeparator label={m.lounge_section_session()} />
-						<div class="flex flex-col">
-							<span class="text-muted-foreground text-sm">{sessionType}</span>
-							<span class="font-semibold">{simMapping.labels.track}</span>
-						</div>
-					</section>
+					<!-- <section class="contents">
+						<Marker.Root variant="separator">
+							<Marker.Content>{m.lounge_section_session()}</Marker.Content>
+						</Marker.Root>
 
-					<section class="flex flex-col gap-1.5">
-						<LabeledSeparator label={m.lounge_section_car()} />
-						<p class="flex min-w-0 flex-wrap items-center gap-2 font-semibold">
-							<span class="min-w-0 break-words">{simMapping.labels.car}</span>
+						<div class="grid grid-cols-2 gap-4">
+							<div class="flex min-w-0 flex-col gap-2">
+								<dt class="text-muted-foreground truncate text-xs">
+									{m.lounge_section_session_track()}
+								</dt>
+								<dd class="font-semibold tabular-nums">{simMapping.labels.track}</dd>
+							</div>
+							<div class="flex min-w-0 flex-col gap-2">
+								<dt class="text-muted-foreground truncate text-xs">
+									{m.lounge_section_session_type()}
+								</dt>
+								<dd class="font-semibold tabular-nums">{sessionType}</dd>
+							</div>
+						</div>
+					</section> -->
+
+					<section class="contents">
+						<Marker.Root variant="separator">
+							<Marker.Content>{m.lounge_section_car()}</Marker.Content>
+						</Marker.Root>
+						<p
+							class="flex min-w-0 flex-wrap items-center justify-center gap-2 text-2xl font-bold tracking-tight"
+						>
+							<span class="min-w-0 wrap-break-word">{simMapping.labels.car}</span>
 							{#if simMapping.labels.category}
-								<Badge variant="outline">{simMapping.labels.category}</Badge>
+								<Badge variant="ghost">{simMapping.labels.category}</Badge>
 							{/if}
 						</p>
-					</section>
+						<!-- </section>
 
-					<section class="flex flex-col gap-1.5">
-						<LabeledSeparator label={m.lounge_section_setup()} />
-						<dl class="grid grid-cols-3 gap-2">
+					<section class="contents">
+						<Marker.Root variant="separator">
+							<Marker.Content>{m.lounge_section_setup()}</Marker.Content>
+						</Marker.Root> -->
+						<dl class="grid grid-cols-3 gap-4">
 							{#each setup as item (item.label)}
-								<div class="flex min-w-0 flex-col">
-									<dt class="text-muted-foreground truncate text-xs">
-										<abbr title={item.title} class="no-underline">{item.label}</abbr>
-									</dt>
-									<dd class="font-semibold tabular-nums">{item.value}</dd>
-								</div>
+								<TachometerStat value={item.value} label={item.label} isBB={item.label == 'BB'} />
 							{/each}
 						</dl>
 					</section>
 
-					<section class="flex flex-col gap-1.5">
-						<LabeledSeparator label={m.lounge_section_conditions()} />
-						<div class="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-							<span class="flex items-center gap-1.5">
-								<Thermometer class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-								{m.lounge_air_temp({ temp: simSession.AirTemperature })}
-							</span>
-							<span class="flex items-center gap-1.5">
-								<Thermometer class="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-								{m.lounge_track_temp({ temp: simSession.TrackTemperature })}
-							</span>
-						</div>
-						<dl class="grid grid-cols-3 gap-2 pt-1">
+					<section class="contents">
+						<Marker.Root variant="separator">
+							<Marker.Content>{m.lounge_section_conditions()}</Marker.Content>
+						</Marker.Root>
+						<dl class="grid grid-cols-3 gap-4">
 							{#each rain as item (item.when)}
-								<div class="flex min-w-0 flex-col gap-1">
+								<div class="flex min-w-0 flex-col items-center gap-2">
 									<dt class="text-muted-foreground truncate text-xs">{item.when}</dt>
-									<dd class="flex min-w-0 flex-col items-start gap-1 text-sm">
+									<dd class="flex min-w-0 flex-col items-center gap-2 text-sm">
 										{#if item.Icon}
-											<item.Icon class="size-5 shrink-0" aria-hidden="true" />
+											<item.Icon class={cn('mt-2 size-8', item.color)} aria-hidden="true" />
 										{/if}
-										<span class="max-w-full break-words">{item.label}</span>
+										<span class="max-w-full wrap-break-word">{item.label}</span>
 									</dd>
 								</div>
 							{/each}
 						</dl>
+						</section>
+
+					<section class="contents">
+						<Marker.Root variant="separator">
+							<Marker.Content>{m.lounge_section_temperature()}</Marker.Content>
+						</Marker.Root>
+						<div class="grid grid-cols-3 gap-4">
+							<div class="flex min-w-0 flex-col items-center gap-2">
+								<dt class="text-muted-foreground truncate text-xs">{m.lounge_air_temp()}</dt>
+								<dd class="flex min-w-0 items-center gap-2 text-lg">
+									<Thermometer class="text-muted-foreground size-6 shrink-0" aria-hidden="true" />
+									<span class="max-w-full wrap-break-word">{simSession.AirTemperature + 'ºC'}</span>
+								</dd>
+							</div>
+							<span></span>
+							<div class="flex min-w-0 flex-col items-center gap-2">
+								<dt class="text-muted-foreground truncate text-xs">{m.lounge_track_temp()}</dt>
+								<dd class="flex min-w-0 items-center gap-2 text-lg">
+									<Thermometer class="text-muted-foreground size-6 shrink-0" aria-hidden="true" />
+									<span class="max-w-full wrap-break-word">{simSession.AirTemperature + 'ºC'}</span>
+								</dd>
+							</div>
+						</div>
 					</section>
+
+					{#if staleMin !== null}
+						<p class="text-muted-foreground flex items-center justify-center gap-2 mt-3 text-xs">
+							<Clock class="size-3 shrink-0" aria-hidden="true" />
+							{m.lounge_stats_updated_ago({ minutes: staleMin })}
+						</p>
+					{/if}
 				</Card.Content>
 			</Collapsible.Content>
 		{:else}
