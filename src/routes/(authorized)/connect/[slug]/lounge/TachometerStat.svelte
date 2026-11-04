@@ -11,9 +11,9 @@
 	const preBB = Math.sign(value) == -1 ? maxBB - Math.abs(value) : maxBB;
 	const postBB = Math.sign(value) == 1 ? maxBB - Math.abs(value) : maxBB;
     const currentColor = (
-        label == 'TC' ? 'var(--chart-5)' : '' +
-        label == 'ABS' ? 'var(--chart-3)' : '' +
-        label == 'BB' ? 'var(--chart-1)' : ''
+        label == 'TC' ?  'var(--chart-1)' : '' +
+        label == 'ABS' ? 'var(--chart-2)' : '' +
+        label == 'BB' ?  'var(--chart-3)' : ''
     )
 
 	const chartConfig = {
@@ -25,7 +25,7 @@
 
 </script>
 
-<Card.Root class="flex flex-col border-0 p-0 pt-7 pb-3">
+<Card.Root class="flex flex-col border-0 p-0 pt-9 pb-5 shadow-none">
 	<Card.Content class="flex-1">
 		<Chart.Container config={chartConfig} class="mx-auto aspect-square max-h-[250px]">
 			<PieChart
@@ -41,11 +41,13 @@
 				key="key"
 				value="value"
 				c="color"
-				innerRadius={30}
+				innerRadius={24}
+				outerRadius={32}
 				padding={5}
 				range={[-135, 135]}
 				props={{ pie: { sort: null } }}
 				cornerRadius={4}
+				
 			>
 				{#snippet aboveMarks()}
 					<Text
@@ -60,16 +62,16 @@
 						textAnchor="middle"
 						verticalAnchor="middle"
 						class="text-muted-foreground/70 text-xs"
-						dy={29}
-						dx={-18}
+						dy={32}
+						dx={-22}
 					/>
 					<Text
                         value={isBB ? '+' + maxBB: maxValue}
 						textAnchor="middle"
 						verticalAnchor="middle"
 						class="text-muted-foreground/70 text-xs"
-						dy={29}
-						dx={18}
+						dy={32}
+						dx={22}
 					/>
 					<Text
 						{value}

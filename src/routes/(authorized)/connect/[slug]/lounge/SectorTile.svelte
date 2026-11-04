@@ -3,7 +3,7 @@
 	// sector's pace colour. The sector in progress is outlined and stays neutral.
 	import { cn } from '$lib/utils';
 	import { formatLapClock } from '$lib/utils/laptime';
-	import { paceBg } from '$lib/pace/classes';
+	import { paceBg, paceText } from '$lib/pace/classes';
 	import { sectorAriaLabel } from '$lib/pace/labels';
 	import type { SectorTile } from './liveLap';
 
@@ -13,16 +13,25 @@
 <div
 	role="group"
 	aria-label={sectorAriaLabel(tile.kind, tile.pace, tile.time !== null)}
-	class={cn(
-		'flex min-w-0 flex-col gap-1 rounded-lg border p-2',
-		tile.state === 'current' && 'border-primary'
-	)}
+	class={cn('flex min-w-0 flex-col gap-1 rounded-lg ')}
 >
-	<span class="text-muted-foreground text-xs uppercase">{tile.kind}</span>
-	<strong class="truncate font-mono text-base font-semibold tabular-nums">
-		{tile.time === null ? '–' : formatLapClock(tile.time)}
+	<span
+		class={cn(
+			'text-muted-foreground text-xs tracking-widest uppercase',
+			tile.state === 'current' && 'font-semibold'
+		)}
+	>
+		{tile.state === 'current' ? tile.kind.replace('s', 'Sector ') : tile.kind}
+	</span>
+	<strong
+		class={cn(
+			'text-md truncate font-mono font-semibold tabular-nums',
+			tile.state !== 'future' ? 'text-primary' : 'text-muted-foreground'
+		)}
+	>
+		{tile.time === null ? '-' : formatLapClock(tile.time, true)}
 	</strong>
 	<div
-		class={cn('h-1 rounded-full', tile.state === 'future' ? 'bg-muted' : paceBg[tile.pace])}
+		class={cn('h-2 rounded-full', tile.state === 'future' ? 'bg-muted' : paceBg[tile.pace])}
 	></div>
 </div>

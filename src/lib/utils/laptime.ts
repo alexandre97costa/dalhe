@@ -64,14 +64,14 @@ export function compareLaptimes(
 }
 
 // Lap time without the leading zero: 1:23.456. Under a minute (sectors): 34.102.
-export function formatLapClock(milliseconds: number | null | undefined): string {
+export function formatLapClock(milliseconds: number | null | undefined, isSectors: boolean): string {
 	if (milliseconds === null || milliseconds === undefined) return '–:––.–––';
 	const ms = Math.max(0, Math.round(milliseconds));
 	const minutes = Math.floor(ms / 60_000);
 	const seconds = Math.floor((ms % 60_000) / 1000);
 	const rest = (ms % 1000).toString().padStart(3, '0');
-	if (minutes === 0) return `${seconds}.${rest}`;
-	return `${minutes}:${seconds.toString().padStart(2, '0')}.${rest}`;
+	if (minutes === 0 && isSectors) return `${seconds}.${rest}`;
+	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${rest}`;
 }
 
 // A delta in milliseconds as +0.230 / -1.045.

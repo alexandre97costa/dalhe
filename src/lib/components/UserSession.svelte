@@ -21,9 +21,9 @@
 <!-- <Button variant="cta" size="sm" onclick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}> -->
 
 <DropdownMenu.Root bind:open>
-	<DropdownMenu.Trigger>
+	<DropdownMenu.Trigger >
 		{#snippet child({ props })}
-			<Button {...props} variant="outline" class="dark:bg-background cursor-pointer gap-4 ">
+			<Button {...props} variant="outline" class="dark:bg-background cursor-pointer gap-2 ">
 				<span>{user?.email.split('@')[0] ?? ''}</span>
 				<ChevronDownIcon class={'size-4 duration-200 ' + (open ? '-scale-100' : '')} />
 			</Button>
@@ -32,14 +32,16 @@
 
 	<DropdownMenu.Content class="w-56" align="start">
 		<DropdownMenu.Group>
-			<DropdownMenu.Label>{m.user_dropdown_account()}</DropdownMenu.Label>
+			<!-- <DropdownMenu.Label>{m.user_dropdown_account()}</DropdownMenu.Label>
 			<DropdownMenu.Item>{m.user_dropdown_profile()}</DropdownMenu.Item>
 			<DropdownMenu.Item>{m.user_dropdown_settings()}</DropdownMenu.Item>
-			<DropdownMenu.Separator />
+			<DropdownMenu.Separator /> -->
 			<DropdownMenu.RadioGroup bind:value={theme}>
-				<DropdownMenu.GroupHeading class="text-sm font-normal"
-					>{m.user_dropdown_theme()}</DropdownMenu.GroupHeading
-				>
+				<DropdownMenu.GroupHeading>
+					<DropdownMenu.Label class="p-0">
+						{m.user_dropdown_theme()}
+					</DropdownMenu.Label>
+				</DropdownMenu.GroupHeading>
 				<DropdownMenu.RadioItem value="light" onclick={() => setMode('light')}>
 					<Sun />
 					{m.user_dropdown_theme_light()}
@@ -55,9 +57,11 @@
 			</DropdownMenu.RadioGroup>
 			<DropdownMenu.Separator />
 			<DropdownMenu.RadioGroup bind:value={language}>
-				<DropdownMenu.GroupHeading class="text-sm font-normal"
-					>{m.user_dropdown_language()}</DropdownMenu.GroupHeading
-				>
+				<DropdownMenu.GroupHeading>
+					<DropdownMenu.Label class="p-0">
+						{m.user_dropdown_language()}
+					</DropdownMenu.Label>
+				</DropdownMenu.GroupHeading>
 				<DropdownMenu.RadioItem value="pt" onclick={() => setLocale('pt')}>
 					<img
 						src="https://flagsapi.com/PT/flat/64.png"

@@ -79,15 +79,17 @@
 	</div>
 </div>
 
-<div class="relative container mx-auto mt-14 mb-20 px-4 py-4">
-	{#if isNavigating}
+<div class="mt-14 mb-20">
+	<div class="relative container mx-auto  px-4 py-4">
+		{#if isNavigating}
 		<div
 			class="animate-appear fixed inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-sm"
 		>
 			<img src={LogoImg} alt="logo" class="animate-arrow-bounce relative h-auto w-20" />
 		</div>
-	{/if}
-	{@render children?.()}
+		{/if}
+		{@render children?.()}
+	</div>
 </div>
 
 <div class="fixed right-0 bottom-0 left-0 z-20 flex w-full justify-center">

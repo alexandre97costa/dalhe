@@ -10,6 +10,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Empty from '$lib/components/ui/empty/index.js';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { ArrowLeft, Flag, LogOut, RefreshCw, User } from '@lucide/svelte';
 	import LapList from './LapList.svelte';
 	import SessionCard from './SessionCard.svelte';
@@ -35,9 +36,22 @@
 	}
 </script>
 
-<main class="mx-auto flex w-full max-w-xl flex-col gap-4 pb-8">
-	<header class="flex items-center gap-2">
+<div class="bg-background fixed right-0 bottom-22 left-0 z-20">
+	<Button
+		class="w-full rounded-none"
+		variant="secondary"
+		size="default"
+		onclick={refresh}
+		disabled={refreshing}
+	>
+		<RefreshCw data-icon="inline-start" class={cn(refreshing && 'animate-spin')} />
+		{m.lounge_refresh()}
+	</Button>
+</div>
+<main class="relative mx-auto flex w-full max-w-xl flex-col gap-4 pb-10">
+	<header class="flex items-center gap-1">
 		<Button
+			class="size-7 text-muted-foreground"
 			href={`/connect/${data.rig.id}`}
 			variant="ghost"
 			size="icon"
@@ -45,25 +59,39 @@
 		>
 			<ArrowLeft />
 		</Button>
-		<div class="flex min-w-0 flex-1 flex-col gap-0.5">
-			<h1 class="truncate text-2xl leading-tight font-bold tracking-tight">{data.rig.name}</h1>
-			<p class="text-muted-foreground flex items-center gap-1.5 truncate text-sm">
-				<User class="size-3.5 shrink-0" />
-				{#if !status.session_active}
-					{m.lounge_no_session_title()}
-				{:else if data.isDriver}
-					{m.lounge_you_are_driving()}
-				{:else if status.driver_name}
-					{m.rig_connect_driving({ driverName: status.driver_name })}
-				{:else}
-					{m.lounge_anonymous_driver()}
-				{/if}
-			</p>
+		<div class="min-w-0 flex-1 ">
+			<h1 class="truncate text-2xl leading-tight font-semibold">{data.rig.name}</h1>
 		</div>
-		<Button variant="default" size="default" onclick={refresh} disabled={refreshing}>
-			<RefreshCw data-icon="inline-start" class={cn(refreshing && 'animate-spin')} />
-			{m.lounge_refresh()}
-		</Button>
+		<div class="flex flex-col justify-end gap-1">
+			<dt class="text-muted-foreground truncate text-xs">Now driving:</dt>
+
+			{#if !status.session_active}
+				<dd class="text-muted-foreground text-sm">
+					{m.lounge_no_session_title()}
+				</dd>
+			{:else if data.isDriver}
+				<dd class="text-foreground text-md font-medium">
+					{m.lounge_you_are_driving()}
+				</dd>
+			{:else if status.driver_name}
+				<dd class="flex items-center justify-end gap-2">
+					<span class="text-md font-medium">
+						{status.driver_name}
+					</span>
+					<!-- {m.rig_connect_driving({ driverName: status.driver_name })} -->
+					<Avatar.Root size="sm">
+						<Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
+						<Avatar.Fallback>CN</Avatar.Fallback>
+					</Avatar.Root>
+				</dd>
+			{:else}
+				<dd class="text-md flex items-center justify-end gap-2">
+					{m.lounge_anonymous_driver()}
+					<User class="size-3.5 shrink-0" />
+				</dd>
+			{/if}
+
+		</div>
 	</header>
 
 	{#if !status.session_active}
@@ -102,19 +130,19 @@
 				</Button>
 			</form>
 		{/if}
-	{/if}
 
-	<Card.Root class="gap-2 py-4">
-		<Card.Header class="px-4">
-			<Card.Title>{m.lounge_unclaimed_laps()}</Card.Title>
-			<Card.Description>{m.lounge_unclaimed_laps_description()}</Card.Description>
-		</Card.Header>
-		<Card.Content class="px-4">
-			{#if data.unclaimedLaps.length > 0}
-				<LapList laps={data.unclaimedLaps} />
-			{:else}
-				<p class="text-muted-foreground py-2 text-sm">{m.lounge_unclaimed_laps_empty()}</p>
-			{/if}
-		</Card.Content>
-	</Card.Root>
+		<Card.Root class="gap-2 py-4">
+			<Card.Header class="px-4">
+				<Card.Title>{m.lounge_unclaimed_laps()}</Card.Title>
+				<Card.Description>{m.lounge_unclaimed_laps_description()}</Card.Description>
+			</Card.Header>
+			<Card.Content class="px-4">
+				{#if data.unclaimedLaps.length > 0}
+					<LapList laps={data.unclaimedLaps} />
+				{:else}
+					<p class="text-muted-foreground py-2 text-sm">{m.lounge_unclaimed_laps_empty()}</p>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+	{/if}
 </main>

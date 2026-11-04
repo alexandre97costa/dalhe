@@ -31,18 +31,18 @@
 					<span class="text-muted-foreground w-6 shrink-0 text-sm tabular-nums">
 						{lap.lapNumber}
 					</span>
-					<span class="flex min-w-0 flex-1 items-center gap-1.5">
-						<strong class="font-mono text-lg leading-tight font-semibold tabular-nums">
+					<span class="flex min-w-0 flex-1 items-center gap-2">
+						<strong class={cn('font-mono text-lg leading-tight font-semibold tabular-nums')}>
 							{formatLapClock(lap.timeMs)}
 						</strong>
 						{#if crown}
 							<span
 								role="img"
-								class={cn('inline-flex', paceText[paces.lap])}
+								class={cn('inline-flex ', paceText[paces.lap])}
 								aria-label={paceLabel(paces.lap)}
 								title={paceLabel(paces.lap)}
 							>
-								<Crown class="size-4" aria-hidden="true" />
+								<Crown class="size-5" aria-hidden="true" />
 							</span>
 						{/if}
 					</span>
@@ -52,7 +52,7 @@
 							<span
 								role="img"
 								class={cn(
-									'size-2.5 rounded-full',
+									'h-2 w-6 rounded-full',
 									paceBg[paces[sector.kind]],
 									time === null && 'opacity-30'
 								)}

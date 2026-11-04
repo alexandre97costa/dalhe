@@ -4,7 +4,7 @@
 export const FREEZE_WINDOW_S = 20;
 
 // How long the frozen lap stays on the live lap card before the live lap returns.
-export const FREEZE_DURATION_S = 5;
+export const FREEZE_DURATION_S = 7;
 
 // "On pace": within this fraction of the session best (0.01 = 1%). Sectors and laps alike.
 export const PACE_BAND = 0.01;

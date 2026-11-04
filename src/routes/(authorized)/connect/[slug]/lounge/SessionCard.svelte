@@ -57,12 +57,12 @@
 	];
 	// Icon color per rainLevel (0 = sun … 5 = thunderstorm )
 	const RAIN_COLORS: string[] = [
-		'text-amber-200',
-		'text-sky-300',
-		'text-sky-500',
-		'text-blue-500',
-		'text-blue-500',
-		'text-violet-200'
+		'dark:text-amber-200 text-amber-500',
+		'dark:text-sky-300 text-sky-300',
+		'dark:text-sky-500 text-sky-500',
+		'dark:text-blue-500 text-blue-500',
+		'dark:text-blue-500 text-blue-500',
+		'dark:text-violet-200 text-violet-200'
 	];
 
 	function storage(): Storage | null {
@@ -85,15 +85,13 @@
 
 	function assistValue(level: number): string {
 		const value = assistLevel(level);
-		if (value === null) return '–';
+		if (value === null) return '-';
 		return value === 'off' ? m.lounge_setup_off() : String(value);
 	}
 
 	let sessionType = $derived(simSession ? sessionTypeLabel(simSession.SessionTypeName) : '');
 	let line = $derived(
-		simMapping
-			? `${m.lounge_session_line({ sessionType, track: simMapping.labels.track })}`
-			: ''
+		simMapping ? `${m.lounge_session_line({ sessionType, track: simMapping.labels.track })}` : ''
 	);
 	let staleMin = $derived(staleMinutes(statsAgeMs));
 
@@ -114,7 +112,7 @@
 					{
 						label: m.lounge_setup_bb_short(),
 						title: m.lounge_setup_bb(),
-						value: String(simSession.BrakeBias ?? '–')
+						value: String(simSession.BrakeBias ?? '-')
 					}
 				]
 			: []
@@ -141,67 +139,37 @@
 </script>
 
 <Collapsible.Root bind:open {onOpenChange}>
-	<Card.Root class="gap-3 py-4">
+	<Card.Root class="py-2 gap-2 shadow-none">
 		{#if simSession && simMapping}
-			<Card.Header class="flex items-center gap-2 px-4">
-				<div class="flex min-w-0 flex-1 flex-col gap-2 py-1">
-					<Card.Title class={cn("leading-normal", !open ? "truncate" : "")} title={line}>{line}</Card.Title>
-				</div>
-				<Collapsible.Trigger>
-					{#snippet child({ props })}
-						<Button
-							{...props}
-							variant="ghost"
-							size="icon-sm"
-							class="shrink-0"
-							aria-label={open ? m.lounge_session_collapse() : m.lounge_session_expand()}
-						>
-							<ChevronDown class={cn('transition-transform', open && 'rotate-180')} />
-						</Button>
-					{/snippet}
-				</Collapsible.Trigger>
-			</Card.Header>
-			<Collapsible.Content>
+			<Collapsible.Trigger>
+				<Card.Header class="flex items-center justify-between gap-2 pl-4 pr-2">
+					<Card.Title class={cn('leading-normal font-medium transition-all', !open ? 'truncate text-muted-foreground' : '')} title={line}>
+						{m.lounge_session_line({ sessionType, track: simMapping.labels.track })}
+					</Card.Title>
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						class="shrink-0"
+						aria-label={open ? m.lounge_session_collapse() : m.lounge_session_expand()}
+					>
+						<ChevronDown class={cn('size-5 text-muted-foreground transition-transform', open && 'rotate-180')} />
+					</Button>
+				</Card.Header>
+			</Collapsible.Trigger>
+			<Collapsible.Content >
 				<Card.Content class="flex flex-col gap-4 px-4">
-					<!-- <section class="contents">
-						<Marker.Root variant="separator">
-							<Marker.Content>{m.lounge_section_session()}</Marker.Content>
-						</Marker.Root>
-
-						<div class="grid grid-cols-2 gap-4">
-							<div class="flex min-w-0 flex-col gap-2">
-								<dt class="text-muted-foreground truncate text-xs">
-									{m.lounge_section_session_track()}
-								</dt>
-								<dd class="font-semibold tabular-nums">{simMapping.labels.track}</dd>
-							</div>
-							<div class="flex min-w-0 flex-col gap-2">
-								<dt class="text-muted-foreground truncate text-xs">
-									{m.lounge_section_session_type()}
-								</dt>
-								<dd class="font-semibold tabular-nums">{sessionType}</dd>
-							</div>
-						</div>
-					</section> -->
-
 					<section class="contents">
 						<Marker.Root variant="separator">
 							<Marker.Content>{m.lounge_section_car()}</Marker.Content>
 						</Marker.Root>
 						<p
-							class="flex min-w-0 flex-wrap items-center justify-center gap-2 text-2xl font-bold tracking-tight"
+							class="flex min-w-0 flex-wrap items-center justify-center gap-2 text-2xl font-bold tracking-tight "
 						>
 							<span class="min-w-0 wrap-break-word">{simMapping.labels.car}</span>
 							{#if simMapping.labels.category}
 								<Badge variant="ghost">{simMapping.labels.category}</Badge>
 							{/if}
 						</p>
-						<!-- </section>
-
-					<section class="contents">
-						<Marker.Root variant="separator">
-							<Marker.Content>{m.lounge_section_setup()}</Marker.Content>
-						</Marker.Root> -->
 						<dl class="grid grid-cols-3 gap-4">
 							{#each setup as item (item.label)}
 								<TachometerStat value={item.value} label={item.label} isBB={item.label == 'BB'} />
@@ -226,7 +194,7 @@
 								</div>
 							{/each}
 						</dl>
-						</section>
+					</section>
 
 					<section class="contents">
 						<Marker.Root variant="separator">
@@ -252,7 +220,7 @@
 					</section>
 
 					{#if staleMin !== null}
-						<p class="text-muted-foreground flex items-center justify-center gap-2 mt-3 text-xs">
+						<p class="text-muted-foreground mt-3 flex items-center justify-center gap-2 text-xs">
 							<Clock class="size-3 shrink-0" aria-hidden="true" />
 							{m.lounge_stats_updated_ago({ minutes: staleMin })}
 						</p>
