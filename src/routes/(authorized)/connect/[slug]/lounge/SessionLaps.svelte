@@ -81,7 +81,7 @@
 
 <Card.Root class="gap-2 py-4">
 	<Card.Header class="px-4">
-		<Card.Title>{m.lounge_session_laps()}</Card.Title>
+		<Card.Title class="leading-normal text-md font-medium text-muted-foreground">{m.lounge_session_laps()}</Card.Title>
 		{#if laps.length > 0}
 			<div class="-ml-2 flex gap-1" role="group" aria-label={m.lounge_lap_sort_label()}>
 				{#each sorts as option (option.value)}

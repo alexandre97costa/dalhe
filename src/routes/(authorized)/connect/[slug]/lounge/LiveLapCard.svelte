@@ -139,7 +139,7 @@
 		</Card.Content>
 	{:else}
 		<Card.Header class="px-4">
-			<Card.Description>
+			<Card.Description class="leading-normal text-md font-medium text-muted-foreground">
 				{#if live}
 					{live.lapTotalCount && live.lapNumber !== live.lapTotalCount
 						? m.lounge_lap_number_of({ lap: live.lapNumber, total: live.lapTotalCount })
