@@ -9,7 +9,7 @@
 	import { formatLapClock } from '$lib/utils/laptime';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils';
-	import LabeledSeparator from '$lib/components/lounge/LabeledSeparator.svelte';
+	import * as Marker from '$lib/components/ui/marker/index.js';
 
 	let { groups, bests }: { groups: LapGroup<SessionLap>[]; bests: BestsByKey } = $props();
 
@@ -21,12 +21,12 @@
 </script>
 
 <table class="w-full border-collapse text-sm">
-	<thead>
-		<tr class="text-muted-foreground text-xs">
-			<th scope="col" class="w-6 py-1 pr-2 text-left font-normal">{m.lounge_lap_col_number()}</th>
-			<th scope="col" class="py-1 pr-2 text-left font-normal">{m.lounge_lap_col_time()}</th>
+	<thead class=" text-left">
+		<tr class="text-muted-foreground text-sm ">
+			<th scope="col" class="w-4 py-1 pr-2 text-center font-normal">{m.lounge_lap_col_number()}</th>
+			<th scope="col" class="py-1  text-left font-normal">{m.lounge_lap_col_time()}</th>
 			{#each sectors as sector (sector.kind)}
-				<th scope="col" class="py-1 pl-1 text-right font-normal">{sector.label}</th>
+				<th scope="col" class="border-x py-1 text-center font-normal">{sector.label}</th>
 			{/each}
 		</tr>
 	</thead>
@@ -34,17 +34,19 @@
 		<tbody>
 			<tr>
 				<th scope="rowgroup" colspan={5} class="pt-3 pb-1 font-normal">
-					<LabeledSeparator label={`${group.label.track} · ${group.label.car}`} />
+				<Marker.Root variant="separator">
+							<Marker.Content>{`${group.label.track} · ${group.label.car}`}</Marker.Content>
+						</Marker.Root>
 				</th>
 			</tr>
 			{#each group.laps as lap (lap.id)}
 				{@const paces = classifyLap(lap, bests)}
 				<tr class="align-top">
-					<td class="text-muted-foreground py-1.5 pr-2 tabular-nums">{lap.lapNumber}</td>
+					<td class="text-muted-foreground/70 font-light py-1.5 pr-2 tabular-nums font-mono">{lap.lapNumber.toString().padStart(2, '0')}</td>
 					<td class="py-1.5 pr-2">
 						<div class="flex flex-col items-start gap-1">
-							<span class="font-mono font-semibold tabular-nums">{formatLapClock(lap.timeMs)}</span>
-							{#if hasPaceBadge(paces.lap)}
+							<span class="font-mono font-semibold tabular-nums text-md">{formatLapClock(lap.timeMs, false)}</span>
+							<!-- {#if hasPaceBadge(paces.lap)}
 								<span class="flex flex-wrap gap-1">
 									<span
 										class={cn(
@@ -56,7 +58,7 @@
 										{paceLabel(paces.lap)}
 									</span>
 								</span>
-							{/if}
+							{/if} -->
 						</div>
 					</td>
 					{#each sectors as sector (sector.kind)}
@@ -64,16 +66,16 @@
 						{@const pace = paces[sector.kind]}
 						<td class="py-1.5 pl-1 text-right">
 							{#if time === null}
-								<span class="text-muted-foreground px-1.5 font-mono text-xs">–</span>
+								<span class="text-muted-foreground px-1.5 font-mono text-xs">-</span>
 							{:else}
 								<span
 									class={cn(
 										'inline-block rounded px-1.5 py-0.5 font-mono text-xs tabular-nums',
-										pace !== 'neutral' && paceUndertoneBg[pace],
+										// pace !== 'neutral' && paceUndertoneBg[pace],
 										paceText[pace]
 									)}
 								>
-									{formatLapClock(time)}
+									{formatLapClock(time, true)}
 									<span class="sr-only">({paceAriaLabel(pace)})</span>
 								</span>
 							{/if}

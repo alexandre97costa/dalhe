@@ -8,7 +8,7 @@
 	import { paceBg, paceText } from '$lib/pace/classes';
 	import { formatLapClock } from '$lib/utils/laptime';
 	import { cn } from '$lib/utils';
-	import LabeledSeparator from '$lib/components/lounge/LabeledSeparator.svelte';
+	import * as Marker from '$lib/components/ui/marker/index.js';
 	import { Crown } from '@lucide/svelte';
 
 	let { groups, bests }: { groups: LapGroup<SessionLap>[]; bests: BestsByKey } = $props();
@@ -22,7 +22,9 @@
 
 <div class="flex flex-col gap-1">
 	{#each groups as group (group.key)}
-		<LabeledSeparator label={`${group.label.track} · ${group.label.car}`} class="pt-2" />
+		<Marker.Root variant="separator">
+			<Marker.Content>{`${group.label.track} · ${group.label.car}`}</Marker.Content>
+		</Marker.Root>
 		<ol class="flex flex-col">
 			{#each group.laps as lap (lap.id)}
 				{@const paces = classifyLap(lap, bests)}
@@ -33,7 +35,7 @@
 					</span>
 					<span class="flex min-w-0 flex-1 items-center gap-2">
 						<strong class={cn('font-mono text-lg leading-tight font-semibold tabular-nums')}>
-							{formatLapClock(lap.timeMs)}
+							{formatLapClock(lap.timeMs, false)}
 						</strong>
 						{#if crown}
 							<span
