@@ -143,7 +143,7 @@
 		{#if simSession && simMapping}
 			<Collapsible.Trigger>
 				<Card.Header class="flex items-center justify-between gap-2 pl-4 pr-2">
-					<Card.Title class={cn('leading-normal font-medium transition-all', !open ? 'truncate text-muted-foreground' : '')} title={line}>
+					<Card.Title class={cn(' transition-all', !open ? 'truncate' : '')} title={line}>
 						{m.lounge_session_line({ sessionType, track: simMapping.labels.track })}
 					</Card.Title>
 					<Button
@@ -228,10 +228,10 @@
 				</Card.Content>
 			</Collapsible.Content>
 		{:else}
-			<Card.Header class="px-4">
-				<Card.Description>{m.lounge_sim_session()}</Card.Description>
+			<Card.Header class="px-4 pt-2">
+				<Card.Title>{m.lounge_sim_session()}</Card.Title>
 			</Card.Header>
-			<Card.Content class="px-4">
+			<Card.Content class="px-4 pb-1">
 				<p class="text-muted-foreground text-sm">{m.lounge_sim_session_empty()}</p>
 			</Card.Content>
 		{/if}

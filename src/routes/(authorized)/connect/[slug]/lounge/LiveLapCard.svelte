@@ -105,19 +105,18 @@
 	let deltaMs = $derived(live ? Math.round(live.deltaBest * 1000) : null);
 </script>
 
-<Card.Root class="gap-2 py-4 " aria-label={m.lounge_live_lap()} aria-live="polite">
+<Card.Root class="gap-1 py-4 " aria-label={m.lounge_live_lap()} aria-live="polite">
 	{#if frozen && frozenView}
-		<Card.Header class="px-4 gap-2">
-			<Card.Description class="text-md text-primary font-medium">{m.lounge_lap_submitted({ lap: frozen.lapNumber })}</Card.Description>
-			<Card.Title class="font-mono text-[clamp(1rem,11.6vw,3rem)] font-bold tabular-nums">
-				{formatLapClock(frozen.timeMs, false)}
+		<Card.Header class=" gap-2 px-4">
+			<Card.Title>
+				{m.lounge_lap_submitted({ lap: frozen.lapNumber })}
 			</Card.Title>
 			{#if hasPaceBadge(frozenView.pace)}
-				<Card.Action>
+				<Card.Action class="-mt-1.5">
 					<Badge
 						variant="outline"
 						class={cn(
-							'border-transparent',
+							'border-transparent ',
 							paceUndertoneBg[frozenView.pace],
 							paceText[frozenView.pace]
 						)}
@@ -127,8 +126,13 @@
 				</Card.Action>
 			{/if}
 		</Card.Header>
-		<Card.Content class="flex flex-col gap-5 px-4">
-			<div class="grid grid-cols-3 gap-3">
+		<Card.Content class="flex flex-col gap-2 px-4">
+			<Card.Title
+				class=" col-span-2 font-mono text-[clamp(1rem,11.6vw,3rem)] font-bold tabular-nums"
+			>
+				{formatLapClock(frozen.timeMs, false)}
+			</Card.Title>
+			<div class="mb-3 grid grid-cols-3 gap-3">
 				{#each frozenView.sectors as tile (tile.kind)}
 					<SectorTile {tile} />
 				{/each}
@@ -137,61 +141,60 @@
 				<ShowLiveLapButton durationS={FREEZE_DURATION_S} {remainingS} onclick={unfreeze} />
 			{/key}
 		</Card.Content>
-	{:else}
+	{:else if live}
 		<Card.Header class="px-4">
-			<Card.Description class="leading-normal text-md font-medium text-muted-foreground">
-				{#if live}
-					{live.lapTotalCount && live.lapNumber !== live.lapTotalCount
-						? m.lounge_lap_number_of({ lap: live.lapNumber, total: live.lapTotalCount })
-						: m.lounge_lap_number({ lap: live.lapNumber })}
-				{:else}
-					{m.lounge_live_lap()}
-				{/if}
+			<Card.Description class="text-md text-muted-foreground/70 leading-normal font-medium">
+				{live.lapTotalCount && live.lapNumber !== live.lapTotalCount
+					? m.lounge_lap_number_of({ lap: live.lapNumber, total: live.lapTotalCount })
+					: m.lounge_lap_number({ lap: live.lapNumber })}
 			</Card.Description>
-			{#if live}
-				<div class="col-span-2 flex flex-wrap items-center gap-2">
-					<Card.Title
+			<div class="col-span-2 flex flex-wrap items-center gap-2">
+				<Card.Title
+					class={cn(
+						'font-mono text-[clamp(1rem,8.5vw,2.25rem)] font-medium tabular-nums',
+						!live.valid && 'text-lap-invalid'
+					)}
+				>
+					{formatLapClock(live.laptime_ms, false)}
+				</Card.Title>
+				{#if deltaMs !== null}
+					<Badge
+						variant={deltaMs === 0 ? 'secondary' : 'outline'}
 						class={cn(
-							'font-mono text-[clamp(1rem,8.5vw,2.25rem)] font-medium tabular-nums',
-							!live.valid && 'text-lap-invalid'
+							'font-mono text-sm tabular-nums',
+							deltaMs < 0 && 'border-delta-faster text-secondary bg-delta-faster',
+							deltaMs > 0 && 'border-delta-slower text-secondary bg-delta-slower'
 						)}
 					>
-						{formatLapClock(live.laptime_ms, false)}
-					</Card.Title>
-					{#if deltaMs !== null}
-						<Badge
-							variant={deltaMs === 0 ? 'secondary' : 'outline'}
-							class={cn(
-								'font-mono text-sm tabular-nums',
-								deltaMs < 0 && 'border-delta-faster text-secondary bg-delta-faster',
-								deltaMs > 0 && 'border-delta-slower text-secondary bg-delta-slower'
-							)}
-						>
-							{formatDelta(deltaMs)}
-						</Badge>
-					{/if}
-				</div>
-				<Card.Action class="flex flex-col items-end gap-1">
-					{#if !live.valid}
-						<Badge variant="destructive">{m.lounge_lap_invalid()}</Badge>
-					{/if}
-				</Card.Action>
-			{/if}
+						{formatDelta(deltaMs)}
+					</Badge>
+				{/if}
+			</div>
+			<Card.Action class="flex flex-col items-end gap-1">
+				{#if !live.valid}
+					<Badge variant="destructive">{m.lounge_lap_invalid()}</Badge>
+				{/if}
+			</Card.Action>
 		</Card.Header>
 		<Card.Content class="flex flex-col gap-4 px-4">
-			{#if live}
-				<Progress
-					value={Math.round(Math.min(1, Math.max(0, live.progress)) * 100)}
-					aria-label={m.lounge_lap_progress()}
-				/>
-				<div class="grid grid-cols-3 gap-3">
-					{#each liveTiles as tile (tile.kind)}
-						<SectorTile {tile} />
-					{/each}
-				</div>
-			{:else}
-				<p class="text-muted-foreground px-2 text-sm">{m.lounge_live_lap_empty()}</p>
-			{/if}
+			<Progress
+				value={Math.round(Math.min(1, Math.max(0, live.progress)) * 100)}
+				aria-label={m.lounge_lap_progress()}
+			/>
+			<div class="grid grid-cols-3 gap-3">
+				{#each liveTiles as tile (tile.kind)}
+					<SectorTile {tile} />
+				{/each}
+			</div>
+		</Card.Content>
+	{:else}
+		<Card.Header class="px-4">
+			<Card.Title>
+				{m.lounge_live_lap()}
+			</Card.Title>
+		</Card.Header>
+		<Card.Content class="flex flex-col gap-4 px-4">
+			<p class="text-muted-foreground text-sm">{m.lounge_live_lap_empty()}</p>
 		</Card.Content>
 	{/if}
 </Card.Root>

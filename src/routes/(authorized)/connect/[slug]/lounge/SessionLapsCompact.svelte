@@ -22,7 +22,7 @@
 
 <div class="flex flex-col gap-1">
 	{#each groups as group (group.key)}
-		<Marker.Root variant="separator">
+		<Marker.Root variant="separator" class="py-1">
 			<Marker.Content>{`${group.label.track} · ${group.label.car}`}</Marker.Content>
 		</Marker.Root>
 		<ol class="flex flex-col">

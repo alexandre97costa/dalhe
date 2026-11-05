@@ -140,7 +140,7 @@
 	"rig_connect_warning": "You will disconnect the current driver:",
 	"rig_connected": "Connected",
 	"rig_connecting": "Connecting...",
-	"rig_disconnect_from_rig": "Disconnect from Rig",
+	"rig_disconnect_from_rig": "Leave",
 	"rig_disconnected": "Disconnected",
 	"rig_connect_driving": "{driverName} is driving",
 	"rig_connect_confirm_question": "Are you sure? {driverName}'s session will end.",
@@ -151,6 +151,8 @@
 	"lounge_you_are_driving": "You are driving",
 	"lounge_anonymous_driver": "Anonymous driver",
 	"lounge_refresh": "Refresh",
+	"lounge_title_label": "Now driving:",
+	"lounge_no_session_user": "Nobody",
 	"lounge_no_session_title": "Nobody is driving",
 	"lounge_no_session_description": "Connect to start a session, or wait here for someone to drive.",
 	"lounge_sim_session": "Session",
@@ -223,5 +225,12 @@
 	"lounge_session_type_race": "Race",
 	"lounge_session_type_hotstint": "Hotstint",
 	"lounge_session_type_superpole": "Superpole",
-	"lounge_session_type_unknown": "Session"
+	"lounge_session_type_unknown": "Session",
+	"lounge_color_meaning_link": "What do the colors mean?",
+	"lounge_color_meaning": "Color meaning",
+	"lounge_color_meaning_track_record": "The sector/lap is a track record!",
+	"lounge_color_meaning_session_best": "Best sector/lap of the session.",
+	"lounge_color_meaning_on_pace": "The sector is within 1% of the session best.",
+	"lounge_color_meaning_off_pace": "The sector needs some work...",
+	"lounge_color_meaning_gotit": "Got it!"
 }

@@ -64,7 +64,7 @@
 
 			<form
 				method="POST"
-				class="flex w-full flex-col gap-2 sm:flex-row sm:justify-center"
+				class="flex w-full flex-col gap-4 sm:flex-row sm:justify-center"
 				use:enhance
 			>
 				<input type="hidden" name="expected_driver_id" value={status.driver_id ?? ''} />
