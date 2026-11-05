@@ -117,7 +117,7 @@ insert into public.reference_time (id, created_at, time_ms, track_id, category_i
 -- Synthetic users. Log in with a magic link: enter the email on /login, then
 -- open the link from the local inbox (Mailpit, http://127.0.0.1:54324).
 -- The on_auth_user_created trigger creates each profile (username = the part
--- of the email before the @, full_name from raw_user_meta_data).
+-- of the email before the @, full_name and avatar_url from raw_user_meta_data).
 -- ---------------------------------------------------------------------------
 
 insert into auth.users (
@@ -130,15 +130,15 @@ select
   '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated', u.email, '',
   now() - interval '60 days',
   '{"provider":"email","providers":["email"]}',
-  jsonb_build_object('full_name', u.full_name),
+  jsonb_build_object('full_name', u.full_name, 'avatar_url', u.avatar_url),
   now() - interval '60 days', now() - interval '60 days',
   '', '', '', '', '', '', '', ''
 from (values
-  ('a0000000-0000-4000-8000-000000000001'::uuid, 'alice@example.com', 'Alice Andrade'),
-  ('a0000000-0000-4000-8000-000000000002'::uuid, 'bruno@example.com', 'Bruno Barros'),
-  ('a0000000-0000-4000-8000-000000000003'::uuid, 'carla@example.com', 'Carla Correia'),
-  ('a0000000-0000-4000-8000-000000000004'::uuid, 'diogo@example.com', 'Diogo Dias')
-) as u (id, email, full_name);
+  ('a0000000-0000-4000-8000-000000000001'::uuid, 'alice@example.com', 'Alice Andrade', 'https://i.pravatar.cc/150?img=5'),
+  ('a0000000-0000-4000-8000-000000000002'::uuid, 'bruno@example.com', 'Bruno Barros', 'https://i.pravatar.cc/150?img=8'),
+  ('a0000000-0000-4000-8000-000000000003'::uuid, 'carla@example.com', 'Carla Correia', 'https://i.pravatar.cc/150?img=9'),
+  ('a0000000-0000-4000-8000-000000000004'::uuid, 'diogo@example.com', 'Diogo Dias', 'https://i.pravatar.cc/150?img=12')
+) as u (id, email, full_name, avatar_url);
 
 insert into auth.identities (
   provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at

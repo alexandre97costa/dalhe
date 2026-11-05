@@ -92,7 +92,7 @@
 					</span>
 					<!-- {m.rig_connect_driving({ driverName: status.driver_name })} -->
 					<Avatar.Root size="sm">
-						<Avatar.Image src="https://github.com/shadcn.png" alt={status.driver_name} />
+						<Avatar.Image src={status.driver_avatar_url} alt={status.driver_name} />
 						<Avatar.Fallback>{status.driver_name.charAt(0).toUpperCase()}</Avatar.Fallback>
 					</Avatar.Root>
 				</dd>

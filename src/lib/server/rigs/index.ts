@@ -39,6 +39,7 @@ export type RigStatus = {
 	session_id: string | null;
 	driver_id: string | null;
 	driver_name: string | null;
+	driver_avatar_url: string | null;
 };
 
 // What the overlay gets back: no ids (Sprint 1, Decision 3).
