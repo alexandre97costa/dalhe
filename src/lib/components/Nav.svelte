@@ -2,14 +2,7 @@
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils.js';
-	import {
-		type Icon as IconType,
-		House,
-		Trophy,
-		UserRound,
-		Plus,
-		ChessQueen
-	} from '@lucide/svelte';
+	import { type LucideIcon, House, Trophy, UserRound, Plus, ChessQueen } from '@lucide/svelte';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 	import { Button } from '$lib/components/ui/button/index';
 	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
@@ -21,7 +14,7 @@
 		title: string;
 		href: string;
 		description: string;
-		icon: typeof IconType;
+		icon: LucideIcon;
 		order: number;
 	};
 

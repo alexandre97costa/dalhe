@@ -10,7 +10,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { MediaQuery } from 'svelte/reactivity';
 	// components
-	import { type Icon as IconType, MapPin, Timer, Car } from '@lucide/svelte';
+	import { type LucideIcon, MapPin, Timer, Car } from '@lucide/svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
@@ -86,7 +86,7 @@
 	});
 </script>
 
-{#snippet formIcon(name: typeof IconType)}
+{#snippet formIcon(name: LucideIcon)}
 	{@const Icon = name}
 	<Icon size="18" color="oklch(70.8% 0 0)" />
 {/snippet}
