@@ -9,25 +9,33 @@ import type { LoungeLap, SessionLap, SimMapping } from '$lib/queries/rig';
 export type { BestsByKey, BestsKey, LoungeBests, BestTimes, Pace, PaceKind } from '$lib/pace';
 export type { LoungeLap, SessionLap, SimMapping } from '$lib/queries/rig';
 
-// The newest lap of the active session, plus its age when the page loaded.
+// The newest lap of the active session, plus its age when the session data was read.
 export type LatestLap = SessionLap & {
-	// ms between the lap's created_at and the load (server clock), ≥ 0. Freeze when ≤ FREEZE_WINDOW_S × 1000.
+	// ms between the lap's created_at and the end of the session queries (server clock), ≥ 0. Freeze when ≤ FREEZE_WINDOW_S × 1000.
 	ageMs: number;
 };
 
+// What the load awaits, so the header renders at once, plus two streamed promises.
 export type LoungePageData = {
 	rig: { id: string; name: string };
 	status: RigStatus;
 	// The viewer drives the active session (shows Disconnect).
 	isDriver: boolean;
 
+	// What the three cards show. Resolves at once to the empty values without an active session.
+	session: Promise<LoungeSessionData>;
+	// The rig's laps with no driver and not dismissed, newest first, capped at 50 (unchanged shape).
+	unclaimedLaps: Promise<LoungeLap[]>;
+};
+
+export type LoungeSessionData = {
 	// Latest stats from the overlay, SimHub field names. Null without an active session or before the
 	// first send.
 	simSession: SessionStats | null;
 	liveLap: LapStats | null;
 	// ISO timestamps of the last /send/session and /send/live.
 	statsUpdatedAt: { simSession: string | null; liveLap: string | null };
-	// Age of those stats at load time in ms (server clock), ≥ 0. Null when there are no stats.
+	// Age of those stats after the session queries, in ms (server clock), ≥ 0. Null when there are no stats.
 	statsAgeMs: { simSession: number | null; liveLap: number | null };
 
 	// simSession's TrackId / CarId mapped to the catalog. Null without simSession.
@@ -45,7 +53,4 @@ export type LoungePageData = {
 	sessionLapCount: number;
 	// sessionLaps[0] with its age. Null without an active session or laps.
 	latestLap: LatestLap | null;
-
-	// The rig's laps with no driver and not dismissed, newest first, capped at 50 (unchanged shape).
-	unclaimedLaps: LoungeLap[];
 };

@@ -1,10 +1,13 @@
 <script lang="ts">
 	// Thin shell (Sprint 1.5, F1): header, the three lounge components, Disconnect and the
 	// unclaimed list. The data contract is LoungePageData (docs/sprints/lounge-brief.md).
+	// The header renders from the awaited data; the cards from the streamed promises, skeletons
+	// until the first value (lastResolved).
 	import type { PageProps } from './$types';
 	import { invalidateAll } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { title } from '$lib/store.js';
+	import { toast } from 'svelte-sonner';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
@@ -17,11 +20,29 @@
 	import SessionCard from './SessionCard.svelte';
 	import LiveLapCard from './LiveLapCard.svelte';
 	import SessionLaps from './SessionLaps.svelte';
+	import LoungeSkeleton from './LoungeSkeleton.svelte';
+	import { lastResolved } from './lastResolved.svelte';
 
 	let { data }: PageProps = $props();
 
 	let refreshing = $state(false);
 	let status = $derived(data.status);
+
+	// One id: when both promises fail on the same Refresh, one toast.
+	function refreshFailed() {
+		toast.error(m.lounge_refresh_error(), { id: 'lounge-refresh-error' });
+	}
+
+	const session = lastResolved({
+		promise: () => data.session,
+		scope: () => data.rig.id,
+		onRefreshError: refreshFailed
+	});
+	const unclaimedLaps = lastResolved({
+		promise: () => data.unclaimedLaps,
+		scope: () => data.rig.id,
+		onRefreshError: refreshFailed
+	});
 
 	$effect(() => {
 		title.set(m.lounge_title({ rigName: data.rig.name }));
@@ -31,6 +52,8 @@
 		refreshing = true;
 		try {
 			await invalidateAll();
+			// invalidateAll resolves when the awaited data is in; the cards' data is still streaming.
+			await data.session.catch(() => {});
 		} finally {
 			refreshing = false;
 		}
@@ -117,21 +140,27 @@
 			</Empty.Content>
 		</Empty.Root>
 	{:else}
-		<SessionCard
-			simSession={data.simSession}
-			simMapping={data.simMapping}
-			statsAgeMs={data.statsAgeMs.simSession}
-		/>
+		{#if session.value}
+			<SessionCard
+				simSession={session.value.simSession}
+				simMapping={session.value.simMapping}
+				statsAgeMs={session.value.statsAgeMs.simSession}
+			/>
 
-		<LiveLapCard
-			liveLap={data.liveLap}
-			liveBests={data.liveBests}
-			latestLap={data.latestLap}
-			bests={data.bests}
-			statsAgeMs={data.statsAgeMs.liveLap}
-		/>
+			<LiveLapCard
+				liveLap={session.value.liveLap}
+				liveBests={session.value.liveBests}
+				latestLap={session.value.latestLap}
+				bests={session.value.bests}
+				statsAgeMs={session.value.statsAgeMs.liveLap}
+			/>
 
-		<SessionLaps laps={data.sessionLaps} bests={data.bests} />
+			<SessionLaps laps={session.value.sessionLaps} bests={session.value.bests} />
+		{:else if session.failed}
+			<p class="text-destructive text-sm" role="alert">{m.lounge_load_error()}</p>
+		{:else}
+			<LoungeSkeleton />
+		{/if}
 
 		<Dialog.Root>
 			<Dialog.Trigger>
@@ -145,7 +174,7 @@
 				<Dialog.Header>
 					<Dialog.Title>{m.lounge_color_meaning()}</Dialog.Title>
 				</Dialog.Header>
-				<div class="text-muted-foreground flex flex-col gap-2 text-sm pb-2">
+				<div class="text-muted-foreground flex flex-col gap-2 pb-2 text-sm">
 					<div class="flex items-center gap-2">
 						<div class="h-2 w-8 min-w-8 rounded-sm bg-purple-600"></div>
 						<p>{m.lounge_color_meaning_track_record()}</p>
@@ -163,18 +192,23 @@
 						<p>{m.lounge_color_meaning_off_pace()}</p>
 					</div>
 				</div>
-				<Dialog.Close type="button" class={buttonVariants({size: "sm"})}>{m.lounge_color_meaning_gotit()}</Dialog.Close>
+				<Dialog.Close type="button" class={buttonVariants({ size: 'sm' })}
+					>{m.lounge_color_meaning_gotit()}</Dialog.Close
+				>
 			</Dialog.Content>
 		</Dialog.Root>
 
-		{#if data.unclaimedLaps.length > 0}
+		<!-- No skeleton: the list is usually empty and sits last, so nothing moves when it appears. -->
+		{#if unclaimedLaps.failed}
+			<p class="text-destructive text-sm" role="alert">{m.lounge_unclaimed_load_error()}</p>
+		{:else if unclaimedLaps.value?.length}
 			<Card.Root class="gap-2 py-4">
 				<Card.Header class="px-4">
 					<Card.Title>{m.lounge_unclaimed_laps()}</Card.Title>
 					<Card.Description>{m.lounge_unclaimed_laps_description()}</Card.Description>
 				</Card.Header>
 				<Card.Content class="px-4">
-					<LapList laps={data.unclaimedLaps} />
+					<LapList laps={unclaimedLaps.value} />
 					<!-- <p class="text-muted-foreground py-2 text-sm">{m.lounge_unclaimed_laps_empty()}</p> -->
 				</Card.Content>
 			</Card.Root>
