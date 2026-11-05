@@ -805,6 +805,7 @@ export type Database = {
 			rig_status: {
 				Args: { p_expiry_minutes: number; p_rig_id: string };
 				Returns: {
+					driver_avatar_url: string;
 					driver_id: string;
 					driver_name: string;
 					rig_id: string;

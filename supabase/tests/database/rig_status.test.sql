@@ -7,7 +7,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(7);
+select plan(8);
 
 -- The seed's active session is only recent right after a reset
 update public.rig_session set last_activity_at = now() where id = md5('session-active')::uuid;
@@ -22,6 +22,12 @@ select is(
   (select driver_name from public.rig_status('b0000000-0000-4000-8000-000000000002', 30)),
   'carla',
   'the driver name is the username'
+);
+
+select is(
+  (select driver_avatar_url from public.rig_status('b0000000-0000-4000-8000-000000000002', 30)),
+  (select avatar_url from public.profiles where username = 'carla'),
+  'the driver avatar comes from the profile'
 );
 
 select results_eq(
