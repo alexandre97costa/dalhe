@@ -16,7 +16,7 @@
 	import DriverProfile from '$lib/components/driver/DriverProfile.svelte';
 	import DriverChart from '$lib/components/driver/DriverChart.svelte';
 	import {
-		type Icon as IconType,
+		type LucideIcon,
 		Trophy,
 		BicepsFlexed,
 		Medal,
@@ -33,7 +33,7 @@
 	type statCardContent = {
 		title: string;
 		value: string;
-		icon: typeof IconType;
+		icon: LucideIcon;
 		color: string;
 	};
 
@@ -175,7 +175,7 @@
 	<Tabs.Root value="latest" class="w-full flex-col justify-start gap-6">
 		<div class="flex justify-center">
 			<Label for="tab-selector" class="sr-only">Tab</Label>
-			<Tabs.List class="flex " size="lg">
+			<Tabs.List class="flex ">
 				{#each tabViews as view (view.id)}
 					<Tabs.Trigger value={view.id}>
 						{view.label}
