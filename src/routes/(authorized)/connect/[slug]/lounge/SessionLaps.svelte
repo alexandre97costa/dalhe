@@ -143,7 +143,7 @@
 				<SessionLapsCompact {groups} {bests} />
 			{/if}
 		{:else}
-			<p class="text-muted-foreground pt-2 text-sm">{m.lounge_session_laps_empty()}</p>
+			<p class="text-muted-foreground text-sm">{m.lounge_session_laps_empty()}</p>
 		{/if}
 	</Card.Content>
 </Card.Root>

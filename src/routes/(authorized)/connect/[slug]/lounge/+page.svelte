@@ -51,7 +51,7 @@
 		</Button>
 	</div>
 {/if}
-<main class="relative mx-auto flex w-full max-w-xl flex-col gap-4 pb-10">
+<main class="relative mx-auto flex w-full max-w-xl flex-col gap-5 pb-14">
 	<header class="flex items-center gap-1">
 		<Button
 			class="text-muted-foreground size-7"
@@ -92,8 +92,8 @@
 					</span>
 					<!-- {m.rig_connect_driving({ driverName: status.driver_name })} -->
 					<Avatar.Root size="sm">
-						<Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
-						<Avatar.Fallback>CN</Avatar.Fallback>
+						<Avatar.Image src="https://github.com/shadcn.png" alt={status.driver_name} />
+						<Avatar.Fallback>{status.driver_name.charAt(0).toUpperCase()}</Avatar.Fallback>
 					</Avatar.Root>
 				</dd>
 			{:else}

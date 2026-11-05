@@ -9,7 +9,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils';
 	import { rainLabel, rainLevel, sessionTypeLabel } from '$lib/utils/simhub';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
@@ -139,31 +139,33 @@
 </script>
 
 <Collapsible.Root bind:open {onOpenChange}>
-	<Card.Root class="py-2 gap-2 shadow-none">
+	<Card.Root class="gap-2 py-2 shadow-none">
 		{#if simSession && simMapping}
-			<Collapsible.Trigger>
-				<Card.Header class="flex items-center justify-between gap-2 pl-4 pr-2">
+			<Collapsible.Trigger
+				aria-label={open ? m.lounge_session_collapse() : m.lounge_session_expand()}
+			>
+				<Card.Header class="flex items-center justify-between gap-2 pr-2 pl-4">
 					<Card.Title class={cn(' transition-all', !open ? 'truncate' : '')} title={line}>
 						{m.lounge_session_line({ sessionType, track: simMapping.labels.track })}
 					</Card.Title>
-					<Button
-						variant="ghost"
-						size="icon-sm"
-						class="shrink-0"
-						aria-label={open ? m.lounge_session_collapse() : m.lounge_session_expand()}
+					<span
+						class={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }), 'shrink-0')}
+						aria-hidden="true"
 					>
-						<ChevronDown class={cn('size-5 text-muted-foreground transition-transform', open && 'rotate-180')} />
-					</Button>
+						<ChevronDown
+							class={cn('text-muted-foreground size-5 transition-transform', open && 'rotate-180')}
+						/>
+					</span>
 				</Card.Header>
 			</Collapsible.Trigger>
-			<Collapsible.Content >
+			<Collapsible.Content>
 				<Card.Content class="flex flex-col gap-4 px-4">
 					<section class="contents">
 						<Marker.Root variant="separator">
 							<Marker.Content>{m.lounge_section_car()}</Marker.Content>
 						</Marker.Root>
 						<p
-							class="flex min-w-0 flex-wrap items-center justify-center gap-2 text-2xl font-bold tracking-tight "
+							class="flex min-w-0 flex-wrap items-center justify-center gap-2 text-2xl font-bold tracking-tight"
 						>
 							<span class="min-w-0 wrap-break-word">{simMapping.labels.car}</span>
 							{#if simMapping.labels.category}
@@ -200,7 +202,7 @@
 						<Marker.Root variant="separator">
 							<Marker.Content>{m.lounge_section_temperature()}</Marker.Content>
 						</Marker.Root>
-						<div class="grid grid-cols-3 gap-4">
+						<div class="grid grid-cols-2 gap-2">
 							<div class="flex min-w-0 flex-col items-center gap-2">
 								<dt class="text-muted-foreground truncate text-xs">{m.lounge_air_temp()}</dt>
 								<dd class="flex min-w-0 items-center gap-2 text-lg">
@@ -208,7 +210,6 @@
 									<span class="max-w-full wrap-break-word">{simSession.AirTemperature + 'ºC'}</span>
 								</dd>
 							</div>
-							<span></span>
 							<div class="flex min-w-0 flex-col items-center gap-2">
 								<dt class="text-muted-foreground truncate text-xs">{m.lounge_track_temp()}</dt>
 								<dd class="flex min-w-0 items-center gap-2 text-lg">

@@ -20,37 +20,40 @@
 	] as const;
 </script>
 
-<table class="w-full border-collapse text-sm">
-	<thead class=" text-left">
-		<tr class="text-muted-foreground text-sm">
-			<th scope="col" class="w-4 py-1 pr-2 text-center font-normal">{m.lounge_lap_col_number()}</th>
-			<th scope="col" class="py-1 text-left font-normal">{m.lounge_lap_col_time()}</th>
-			{#each sectors as sector (sector.kind)}
-				<th scope="col" class="border-x py-1 text-center font-normal">{sector.label}</th>
-			{/each}
-		</tr>
-	</thead>
-	{#each groups as group (group.key)}
-		<tbody>
-			<tr>
-				<th scope="rowgroup" colspan={5} class="pt-3 pb-1 font-normal">
-					<Marker.Root variant="separator" class="py-1">
-						<Marker.Content>{`${group.label.track} · ${group.label.car}`}</Marker.Content>
-					</Marker.Root>
-				</th>
+<div class="max-w-full overflow-x-auto ">
+	<table class="w-full border-collapse text-sm">
+		<thead class=" text-left">
+			<tr class="text-muted-foreground text-sm">
+				<th scope="col" class="w-4 py-1 pr-2 text-center font-normal"
+					>{m.lounge_lap_col_number()}</th
+				>
+				<th scope="col" class="py-1 text-left font-normal">{m.lounge_lap_col_time()}</th>
+				{#each sectors as sector (sector.kind)}
+					<th scope="col" class="border-x py-1 text-center font-normal">{sector.label}</th>
+				{/each}
 			</tr>
-			{#each group.laps as lap (lap.id)}
-				{@const paces = classifyLap(lap, bests)}
-				<tr class="align-top">
-					<td class="text-muted-foreground/70 py-1.5 pr-2 font-mono font-light tabular-nums"
-						>{lap.lapNumber.toString().padStart(2, '0')}</td
-					>
-					<td class="py-1.5 pr-2">
-						<div class="flex flex-col items-start gap-1">
-							<span class="text-md font-mono font-semibold tabular-nums"
-								>{formatLapClock(lap.timeMs, false)}</span
-							>
-							<!-- {#if hasPaceBadge(paces.lap)}
+		</thead>
+		{#each groups as group (group.key)}
+			<tbody>
+				<tr>
+					<th scope="rowgroup" colspan={5} class="pt-3 pb-1 font-normal">
+						<Marker.Root variant="separator" class="py-1">
+							<Marker.Content>{`${group.label.track} · ${group.label.car}`}</Marker.Content>
+						</Marker.Root>
+					</th>
+				</tr>
+				{#each group.laps as lap (lap.id)}
+					{@const paces = classifyLap(lap, bests)}
+					<tr class="align-top">
+						<td class="text-muted-foreground/70 py-2 pr-2 font-mono text-xs font-light tabular-nums"
+							>{lap.lapNumber.toString().padStart(2, '0')}</td
+						>
+						<td class="py-1.5 pr-2">
+							<div class="flex flex-col items-start gap-1">
+								<span class="text-md font-mono font-semibold tabular-nums"
+									>{formatLapClock(lap.timeMs, false)}</span
+								>
+								<!-- {#if hasPaceBadge(paces.lap)}
 								<span class="flex flex-wrap gap-1">
 									<span
 										class={cn(
@@ -63,30 +66,31 @@
 									</span>
 								</span>
 							{/if} -->
-						</div>
-					</td>
-					{#each sectors as sector (sector.kind)}
-						{@const time = sector.time(lap)}
-						{@const pace = paces[sector.kind]}
-						<td class="py-1.5 pl-1 text-right">
-							{#if time === null}
-								<span class="text-muted-foreground px-1.5 font-mono text-xs">-</span>
-							{:else}
-								<span
-									class={cn(
-										'inline-block rounded px-1.5 py-0.5 font-mono text-xs tabular-nums',
-										// pace !== 'neutral' && paceUndertoneBg[pace],
-										paceText[pace]
-									)}
-								>
-									{formatLapClock(time, true)}
-									<span class="sr-only">({paceAriaLabel(pace)})</span>
-								</span>
-							{/if}
+							</div>
 						</td>
-					{/each}
-				</tr>
-			{/each}
-		</tbody>
-	{/each}
-</table>
+						{#each sectors as sector (sector.kind)}
+							{@const time = sector.time(lap)}
+							{@const pace = paces[sector.kind]}
+							<td class="py-1.5 pl-1 text-right">
+								{#if time === null}
+									<span class="text-muted-foreground px-1.5 font-mono text-xs">-</span>
+								{:else}
+									<span
+										class={cn(
+											'inline-block rounded px-1.5 py-0.5 font-mono text-xs tabular-nums',
+											// pace !== 'neutral' && paceUndertoneBg[pace],
+											paceText[pace]
+										)}
+									>
+										{formatLapClock(time, true)}
+										<span class="sr-only">({paceAriaLabel(pace)})</span>
+									</span>
+								{/if}
+							</td>
+						{/each}
+					</tr>
+				{/each}
+			</tbody>
+		{/each}
+	</table>
+</div>

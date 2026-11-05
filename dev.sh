@@ -27,7 +27,7 @@ sleep 10
 
 # 4 & 5. Open the target URLs using native Windows execution
 echo -e "\n${BLUE}[4/5] Opening local application and Supabase studio...${NC}"
-start "http://localhost:5173/login"
+start "http://localhost:5173/connect/b0000000-0000-4000-8000-000000000002/lounge"
 start "http://127.0.0.1:54324"
 
 # 6. Output the explicit test link
