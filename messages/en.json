@@ -232,5 +232,9 @@
 	"lounge_color_meaning_session_best": "Best sector/lap of the session.",
 	"lounge_color_meaning_on_pace": "The sector is within 1% of the session best.",
 	"lounge_color_meaning_off_pace": "The sector needs some work...",
-	"lounge_color_meaning_gotit": "Got it!"
+	"lounge_color_meaning_gotit": "Got it!",
+	"lounge_loading": "Loading the session…",
+	"lounge_load_error": "Couldn't load the session. Use Refresh to try again.",
+	"lounge_unclaimed_load_error": "Couldn't load the unclaimed laps. Use Refresh to try again.",
+	"lounge_refresh_error": "Couldn't refresh. Showing the last data."
 }

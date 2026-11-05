@@ -3,41 +3,58 @@
 Replaces the contract in `sprint-1-lounge-brief.md`. The UI streams (L, S, C) build only from this: they read `data` and never fetch, query or change the load. If a stream needs more data, that goes back to F.
 
 - Load: `src/routes/(authorized)/connect/[slug]/lounge/+page.server.ts`
-- Type: `LoungePageData` in `src/lib/types/lounge.ts` (also re-exports `SessionLap`, `LatestLap`, `SimMapping`, `LoungeBests`, `BestsByKey`, `Pace`, `PaceKind`)
+- Type: `LoungePageData` and `LoungeSessionData` in `src/lib/types/lounge.ts` (also re-exports `SessionLap`, `LatestLap`, `SimMapping`, `LoungeBests`, `BestsByKey`, `Pace`, `PaceKind`)
 - Queries: `src/lib/queries/rig.ts`; bests rpc: `get_lounge_bests` (`supabase/migrations/20261030214753_lounge_bests.sql`)
 
-Times are integer milliseconds unless stated. Ages are computed on the server at load time (server clock) and are never negative.
+Times are integer milliseconds unless stated. Ages are computed on the server after the session queries (server clock) and are never negative.
 
 ## Page composition
 
 `+page.svelte` is a thin shell: header (back, rig name, driver line, Refresh), then, with an active session, `SessionCard`, `LiveLapCard`, `SessionLaps`, Disconnect (driver only); always the unclaimed list (`LapList.svelte`). Without an active session the empty state replaces the three cards. The new-lap banner is gone.
 
-| Component            | Owner | Props (from `data`)                                                                  |
-| -------------------- | ----- | ------------------------------------------------------------------------------------ |
-| `SessionCard.svelte` | C     | `simSession`, `simMapping`, `statsAgeMs={data.statsAgeMs.simSession}`                |
-| `LiveLapCard.svelte` | L     | `liveLap`, `liveBests`, `latestLap`, `bests`, `statsAgeMs={data.statsAgeMs.liveLap}` |
-| `SessionLaps.svelte` | S     | `laps={data.sessionLaps}`, `bests`                                                   |
+| Component            | Owner | Props (from `session`)                                                          |
+| -------------------- | ----- | ------------------------------------------------------------------------------- |
+| `SessionCard.svelte` | C     | `simSession`, `simMapping`, `statsAgeMs={statsAgeMs.simSession}`                |
+| `LiveLapCard.svelte` | L     | `liveLap`, `liveBests`, `latestLap`, `bests`, `statsAgeMs={statsAgeMs.liveLap}` |
+| `SessionLaps.svelte` | S     | `laps={sessionLaps}`, `bests`                                                   |
 
-Refresh is `invalidateAll()`: the components stay mounted, so component state (seen laps for the freeze, collapsed state) survives it.
+The props are plain data from the resolved `session` promise, not promises.
+
+## Streaming
+
+The load awaits only `getRigStatus` (404 for an unknown rig), then returns `rig`, `status` and `isDriver` with two un-awaited promises, `session` and `unclaimedLaps`. The header, Disconnect, the no-session empty state and the colour-meaning dialog render at once.
+
+The page keeps the last resolved value of each promise in state (`lastResolved.svelte.ts`) instead of a bare `{#await}` around the cards:
+
+- `LoungeSkeleton.svelte` shows while `session` has no value. `unclaimedLaps` has no skeleton: the list is usually empty and sits last.
+- Refresh is `invalidateAll()` and brings new promises. The old value stays on screen until the new one resolves, so the components stay mounted and component state (seen laps for the freeze, collapsed state) survives it. The button spins until the new `session` promise settles. A promise that is no longer the current one is ignored.
+- Another rig (`data.rig.id` changes) resets to no value: skeletons, then a fresh mount.
+- Errors: with no value yet, an inline error replaces the cards (Refresh retries). With a value on screen, it stays and a toast reports the failed refresh.
 
 ## `LoungePageData`
 
-| Field             | Type                                                      | Meaning                                                                                                                                                                                                                     |
-| ----------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `rig`             | `{ id: string; name: string }`                            | The rig (UUID, name).                                                                                                                                                                                                       |
-| `status`          | `RigStatus`                                               | `rig_id, rig_name, session_active, session_id, driver_id, driver_name, driver_avatar_url`. Lazy expiry: an expired session is `session_active = false`. Session and driver fields null without one; driver null for an anonymous session.      |
-| `isDriver`        | `boolean`                                                 | The viewer drives the active session (shows Disconnect).                                                                                                                                                                    |
-| `simSession`      | `SessionStats \| null`                                    | Latest `/send/session` (SimHub field names, see below). Null without an active session or before the first send.                                                                                                            |
-| `liveLap`         | `LapStats \| null`                                        | Latest `/send/live`. Null like `simSession`.                                                                                                                                                                                |
-| `statsUpdatedAt`  | `{ simSession: string \| null; liveLap: string \| null }` | ISO timestamps of the last sends.                                                                                                                                                                                           |
-| `statsAgeMs`      | `{ simSession: number \| null; liveLap: number \| null }` | Age of each at load time. Stale when `> STATS_STALE_AFTER_S * 1000`. Null without stats.                                                                                                                                    |
-| `simMapping`      | `SimMapping \| null`                                      | `simSession`'s `TrackId` / `CarId` mapped to the catalog. Null without `simSession`.                                                                                                                                        |
-| `bests`           | `BestsByKey`                                              | Bests per track + category, key `` `${trackId}:${categoryId}` `` (e.g. `"3:1"`). Every combination in the session's laps plus the live one. `{}` without a session and without a mapping.                                   |
-| `liveBests`       | `LoungeBests \| null`                                     | The bests of the live track + category (from `simMapping`). Null when the track or car is unmapped, or without `simSession`: everything on the live lap is then neutral.                                                    |
-| `sessionLaps`     | `SessionLap[]`                                            | The active session's laps, **newest first**, at most 100. Empty without a session. Follows the test flag.                                                                                                                   |
-| `sessionLapCount` | `number`                                                  | All laps of the session (past the 100 cap). 0 without one.                                                                                                                                                                  |
-| `latestLap`       | `LatestLap \| null`                                       | `sessionLaps[0]` plus `ageMs` (ms since its `createdAt`). Null without a session or laps. Freeze when `ageMs <= FREEZE_WINDOW_S * 1000`.                                                                                    |
-| `unclaimedLaps`   | `LoungeLap[]`                                             | Unchanged from Sprint 1: laps with no driver, not dismissed, newest first, at most 50 (nested shape: `time_milliseconds`, `sector1_ms`…, `car { model, car_make { name }, car_category { name } }`, `race_track { name }`). |
+| Field           | Type                           | Meaning                                                                                                                                                                                                                                   |
+| --------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rig`           | `{ id: string; name: string }` | The rig (UUID, name).                                                                                                                                                                                                                     |
+| `status`        | `RigStatus`                    | `rig_id, rig_name, session_active, session_id, driver_id, driver_name, driver_avatar_url`. Lazy expiry: an expired session is `session_active = false`. Session and driver fields null without one; driver null for an anonymous session. |
+| `isDriver`      | `boolean`                      | The viewer drives the active session (shows Disconnect).                                                                                                                                                                                  |
+| `session`       | `Promise<LoungeSessionData>`   | What the three cards show. Resolves at once to the empty values without an active session. Queries: stats + laps in parallel, then the mapping, then the bests.                                                                           |
+| `unclaimedLaps` | `Promise<LoungeLap[]>`         | Unchanged from Sprint 1: laps with no driver, not dismissed, newest first, at most 50 (nested shape: `time_milliseconds`, `sector1_ms`…, `car { model, car_make { name }, car_category { name } }`, `race_track { name }`).               |
+
+## `LoungeSessionData`
+
+| Field             | Type                                                      | Meaning                                                                                                                                                                                   |
+| ----------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `simSession`      | `SessionStats \| null`                                    | Latest `/send/session` (SimHub field names, see below). Null without an active session or before the first send.                                                                          |
+| `liveLap`         | `LapStats \| null`                                        | Latest `/send/live`. Null like `simSession`.                                                                                                                                              |
+| `statsUpdatedAt`  | `{ simSession: string \| null; liveLap: string \| null }` | ISO timestamps of the last sends.                                                                                                                                                         |
+| `statsAgeMs`      | `{ simSession: number \| null; liveLap: number \| null }` | Age of each after the session queries. Stale when `> STATS_STALE_AFTER_S * 1000`. Null without stats.                                                                                     |
+| `simMapping`      | `SimMapping \| null`                                      | `simSession`'s `TrackId` / `CarId` mapped to the catalog. Null without `simSession`.                                                                                                      |
+| `bests`           | `BestsByKey`                                              | Bests per track + category, key `` `${trackId}:${categoryId}` `` (e.g. `"3:1"`). Every combination in the session's laps plus the live one. `{}` without a session and without a mapping. |
+| `liveBests`       | `LoungeBests \| null`                                     | The bests of the live track + category (from `simMapping`). Null when the track or car is unmapped, or without `simSession`: everything on the live lap is then neutral.                  |
+| `sessionLaps`     | `SessionLap[]`                                            | The active session's laps, **newest first**, at most 100. Empty without a session. Follows the test flag.                                                                                 |
+| `sessionLapCount` | `number`                                                  | All laps of the session (past the 100 cap). 0 without one.                                                                                                                                |
+| `latestLap`       | `LatestLap \| null`                                       | `sessionLaps[0]` plus `ageMs` (ms since its `createdAt`). Null without a session or laps. Freeze when `ageMs <= FREEZE_WINDOW_S * 1000`.                                                  |
 
 ### `SessionLap`
 

@@ -232,5 +232,9 @@
 	"lounge_color_meaning_session_best": "Melhor setor/volta da sessão.",
 	"lounge_color_meaning_on_pace": "O setor está a <1% do melhor da sessão.",
 	"lounge_color_meaning_off_pace": "O setor precisa de um pouco de trabalho...",
-	"lounge_color_meaning_gotit": "Entendi!"
+	"lounge_color_meaning_gotit": "Entendi!",
+	"lounge_loading": "A carregar a sessão…",
+	"lounge_load_error": "Não foi possível carregar a sessão. Usa Atualizar para tentar de novo.",
+	"lounge_unclaimed_load_error": "Não foi possível carregar as voltas por reclamar. Usa Atualizar para tentar de novo.",
+	"lounge_refresh_error": "Não foi possível atualizar. A mostrar os últimos dados."
 }
