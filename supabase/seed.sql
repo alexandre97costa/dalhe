@@ -156,19 +156,33 @@ where u.email like '%@example.com';
 
 insert into public.rig (id, name) values
   ('b0000000-0000-4000-8000-000000000001', 'Sala'),
-  ('b0000000-0000-4000-8000-000000000002', 'Garagem');
+  ('b0000000-0000-4000-8000-000000000002', 'Garagem'),
+  ('b0000000-0000-4000-8000-000000000003', 'Escritório'),
+  ('b0000000-0000-4000-8000-000000000004', 'Cave');
 
 -- Known keys, so the fake rig can call the local endpoints (?k=). Local only.
 insert into public.rig_key (rig_id, api_key) values
   ('b0000000-0000-4000-8000-000000000001', 'local-sala-key'),
-  ('b0000000-0000-4000-8000-000000000002', 'local-garagem-key');
+  ('b0000000-0000-4000-8000-000000000002', 'local-garagem-key'),
+  ('b0000000-0000-4000-8000-000000000003', 'local-escritorio-key'),
+  ('b0000000-0000-4000-8000-000000000004', 'local-cave-key');
 
-insert into public.rig_drivers (rig_id, driver_id) values
-  ('b0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001'),
-  ('b0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000002'),
-  ('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000001'),
-  ('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000003'),
-  ('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000004');
+-- Rig associations (homepage rig card, Sprint 2):
+--   Alice: four rigs, the "Alex" case. Live first, then most recent:
+--          Escritório (anonymous session, spectated 1 h ago),
+--          Garagem (Carla driving, connected 5 days ago),
+--          Cave (expired session, so free; spectated 1 day ago),
+--          Sala (free, connected 2 days ago).
+--   Bruno: one rig, spectate-only (Garagem, never connected).
+--   Carla: connected and driving at Garagem (red carpet).
+--   Diogo: no rigs (empty state).
+insert into public.rig_drivers (rig_id, driver_id, last_connected_at, last_viewed_at) values
+  ('b0000000-0000-4000-8000-000000000003', 'a0000000-0000-4000-8000-000000000001', null, now() - interval '1 hour'),
+  ('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000001', now() - interval '5 days', null),
+  ('b0000000-0000-4000-8000-000000000004', 'a0000000-0000-4000-8000-000000000001', null, now() - interval '1 day'),
+  ('b0000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', now() - interval '2 days', now() - interval '3 days'),
+  ('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000002', null, now() - interval '6 hours'),
+  ('b0000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-000000000003', now() - interval '20 minutes', null);
 
 -- Six finished sessions per driver, one a week, ending in the current week.
 -- Drivers 1-2 race on "Sala", drivers 3-4 on "Garagem".
@@ -192,6 +206,16 @@ values (
   md5('session-active')::uuid, 'b0000000-0000-4000-8000-000000000002',
   'a0000000-0000-4000-8000-000000000003', now() - interval '20 minutes', now()
 );
+
+-- Escritório: an anonymous session (laps arriving, nobody connected).
+-- Cave: a session left open but idle for 3 hours, past SESSION_TIMEOUT_MINS
+-- (120): lazy expiry reports the rig as free without closing it.
+insert into public.rig_session (id, rig_id, driver_id, started_at, last_activity_at)
+values
+  (md5('session-anonymous')::uuid, 'b0000000-0000-4000-8000-000000000003', null,
+   now() - interval '10 minutes', now()),
+  (md5('session-expired')::uuid, 'b0000000-0000-4000-8000-000000000004',
+   'a0000000-0000-4000-8000-000000000004', now() - interval '4 hours', now() - interval '3 hours');
 
 -- ---------------------------------------------------------------------------
 -- Synthetic laps: five per session on a few popular tracks, a bit slower than

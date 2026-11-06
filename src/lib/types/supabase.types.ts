@@ -405,7 +405,8 @@ export type Database = {
 					created_at: string;
 					driver_id: string;
 					id: number;
-					last_connected_at: string;
+					last_connected_at: string | null;
+					last_viewed_at: string | null;
 					rig_id: string;
 				};
 				ComputedFields: never;
@@ -413,14 +414,16 @@ export type Database = {
 					created_at?: string;
 					driver_id: string;
 					id?: number;
-					last_connected_at?: string;
+					last_connected_at?: string | null;
+					last_viewed_at?: string | null;
 					rig_id: string;
 				};
 				Update: {
 					created_at?: string;
 					driver_id?: string;
 					id?: number;
-					last_connected_at?: string;
+					last_connected_at?: string | null;
+					last_viewed_at?: string | null;
 					rig_id?: string;
 				};
 				Relationships: [
@@ -694,6 +697,25 @@ export type Database = {
 					}
 				];
 			};
+			user_tip: {
+				Row: {
+					dismissed_at: string;
+					tip_key: string;
+					user_id: string;
+				};
+				ComputedFields: never;
+				Insert: {
+					dismissed_at?: string;
+					tip_key: string;
+					user_id: string;
+				};
+				Update: {
+					dismissed_at?: string;
+					tip_key?: string;
+					user_id?: string;
+				};
+				Relationships: [];
+			};
 		};
 		Views: {
 			listing_recent_laptimes: {
@@ -781,6 +803,18 @@ export type Database = {
 					track_id: number;
 				}[];
 			};
+			get_my_rigs: {
+				Args: { p_expiry_minutes: number };
+				Returns: {
+					driver_is_me: boolean;
+					driver_name: string;
+					is_anonymous: boolean;
+					last_used_at: string;
+					rig_id: string;
+					rig_name: string;
+					session_active: boolean;
+				}[];
+			};
 			get_or_create_active_session: {
 				Args: { p_rig_id: string; p_timeout_minutes: number };
 				Returns: string;
@@ -802,6 +836,13 @@ export type Database = {
 					status: string;
 				}[];
 			};
+			rig_active_session: {
+				Args: { p_expiry_minutes: number; p_rig_id: string };
+				Returns: {
+					driver_id: string;
+					id: string;
+				}[];
+			};
 			rig_status: {
 				Args: { p_expiry_minutes: number; p_rig_id: string };
 				Returns: {
@@ -814,6 +855,7 @@ export type Database = {
 					session_id: string;
 				}[];
 			};
+			spectate_rig: { Args: { p_rig_id: string }; Returns: string };
 			upsert_rig_stats: {
 				Args: { p_kind: string; p_rig_id: string; p_stats: Json; p_timeout_minutes: number };
 				Returns: string;
