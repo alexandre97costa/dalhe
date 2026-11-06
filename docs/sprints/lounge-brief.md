@@ -10,7 +10,7 @@ Times are integer milliseconds unless stated. Ages are computed on the server af
 
 ## Page composition
 
-`+page.svelte` is a thin shell: header (back, rig name, driver line, Refresh), then, with an active session, `SessionCard`, `LiveLapCard`, `SessionLaps`, Disconnect (driver only); always the unclaimed list (`LapList.svelte`). Without an active session the empty state replaces the three cards. The new-lap banner is gone.
+`+page.svelte` is a thin shell: header (back, rig name, driver line, Refresh), the "Saved to your homepage" tip when `tips.rigSaved` (Sprint 2, `$lib/components/Tip.svelte`), then, with an active session, `SessionCard`, `LiveLapCard`, `SessionLaps`, Disconnect (driver only); always the unclaimed list (`LapList.svelte`). Without an active session the empty state replaces the three cards. The new-lap banner is gone.
 
 | Component            | Owner | Props (from `session`)                                                          |
 | -------------------- | ----- | ------------------------------------------------------------------------------- |
@@ -22,7 +22,7 @@ The props are plain data from the resolved `session` promise, not promises.
 
 ## Streaming
 
-The load awaits only `getRigStatus` (404 for an unknown rig), then returns `rig`, `status` and `isDriver` with two un-awaited promises, `session` and `unclaimedLaps`. The header, Disconnect, the no-session empty state and the colour-meaning dialog render at once.
+The load awaits only `getRigStatus` (404 for an unknown rig) and, in parallel, the tips (Sprint 2), then returns `rig`, `status`, `isDriver` and `tips` with two un-awaited promises, `session` and `unclaimedLaps`. The header, Disconnect, the no-session empty state and the colour-meaning dialog render at once.
 
 The page keeps the last resolved value of each promise in state (`lastResolved.svelte.ts`) instead of a bare `{#await}` around the cards:
 
@@ -38,6 +38,7 @@ The page keeps the last resolved value of each promise in state (`lastResolved.s
 | `rig`           | `{ id: string; name: string }` | The rig (UUID, name).                                                                                                                                                                                                                     |
 | `status`        | `RigStatus`                    | `rig_id, rig_name, session_active, session_id, driver_id, driver_name, driver_avatar_url`. Lazy expiry: an expired session is `session_active = false`. Session and driver fields null without one; driver null for an anonymous session. |
 | `isDriver`      | `boolean`                      | The viewer drives the active session (shows Disconnect).                                                                                                                                                                                  |
+| `tips`          | `LoungeTips`                   | Sprint 2. `{ rigSaved: boolean }`: true when the viewer has at least one rig association (`rig_drivers`, connected or spectated) and hasn't dismissed `rig_saved` (`user_tip`). Keys in `$lib/config/tips.ts`.                            |
 | `session`       | `Promise<LoungeSessionData>`   | What the three cards show. Resolves at once to the empty values without an active session. Queries: stats + laps in parallel, then the mapping, then the bests.                                                                           |
 | `unclaimedLaps` | `Promise<LoungeLap[]>`         | Unchanged from Sprint 1: laps with no driver, not dismissed, newest first, at most 50 (nested shape: `time_milliseconds`, `sector1_ms`…, `car { model, car_make { name }, car_category { name } }`, `race_track { name }`).               |
 
@@ -143,12 +144,18 @@ CSS custom properties in `src/app.css` (dark in `.dark`, light mapping in `:root
 
 Values are placeholders until the colour pass.
 
+## Actions
+
+- `?/disconnect`: closes the viewer's session (driver only; a quiet no-op otherwise). Returns `{ disconnected }`.
+- `?/dismissTip` (Sprint 2): form field `tip_key`, validated against `TipKey`; stores the dismissal for the user (`user_tip`, RLS: own rows), so it stays dismissed on every device. Returns `{ dismissedTip }`; 400 for an unknown key. `Tip.svelte` hides at once with JS and skips the reload.
+
 ## Message keys (en + pt in `messages/*.json`)
 
 - Pace: `lounge_pace_record`, `lounge_pace_session_best`, `lounge_pace_on_pace`; accessible: `lounge_pace_aria_record`, `lounge_pace_aria_session_best`, `lounge_pace_aria_on_pace`, `lounge_pace_aria_off_pace`, `lounge_pace_aria_neutral`, `lounge_pace_aria_no_time`, `lounge_sector_aria` (`S{sector}: {pace}`).
 - Freeze: `lounge_show_live_lap`, `lounge_show_live_lap_countdown` (`{seconds}`). Lap header: existing `lounge_lap_number` (`{lap}`), `lounge_lap_number_of`.
 - Session laps: `lounge_lap_view_label`, `lounge_lap_view_compact`, `lounge_lap_view_table`, `lounge_lap_sort_label`, `lounge_lap_sort_recent`, `lounge_lap_sort_fastest`, `lounge_lap_col_number`, `lounge_lap_col_time`, `lounge_lap_no_sectors`; existing `lounge_session_laps`, `lounge_session_laps_empty`.
 - Session card: `lounge_session_line` (`{sessionType} at {track}`), `lounge_session_expand`, `lounge_session_collapse`, `lounge_section_session`, `lounge_section_car`, `lounge_section_setup`, `lounge_section_conditions`, `lounge_setup_tc`, `lounge_setup_tc_short`, `lounge_setup_abs`, `lounge_setup_bb`, `lounge_setup_bb_short`, `lounge_setup_off`, `lounge_rain_now`, `lounge_rain_in_10`, `lounge_rain_in_30`, `lounge_stats_updated_ago` (`{minutes}`); existing `lounge_air_temp`, `lounge_track_temp`, `lounge_sim_session_empty`.
+- Tip (Sprint 2): `lounge_tip_rig_saved`, `tip_dismiss` (the × label).
 - Used by the humanizers: `lounge_rain_none` … `lounge_rain_thunderstorm`, `lounge_session_type_practice` … `lounge_session_type_unknown`.
 
 ## Local states (seed + fake rig)

@@ -7,6 +7,7 @@ import type { SessionStats, LapStats } from '$lib/types/rig';
 import * as z from 'zod';
 import { bestsKey, type BestsByKey } from '$lib/pace';
 import { humanizeSimhubId } from '$lib/utils/simhub';
+import type { MyRig } from '$lib/types/home';
 
 // Who is driving, with lazy expiry: an expired session reports as inactive.
 // Null for an unknown rig or a malformed id.
@@ -283,4 +284,54 @@ export async function disconnectFromRig(
 	if (error) throw error;
 
 	return data ?? null;
+}
+
+export type SpectateResult = 'ok' | 'not_found';
+
+// Remembers the rig for the logged-in user (homepage card) without touching the session:
+// no session, no last activity, no connect time. A malformed id is not_found.
+export async function spectateRig(
+	supabaseClient: TypedSupabaseClient,
+	rigId: string
+): Promise<SpectateResult> {
+	if (!z.uuid().safeParse(rigId).success) return 'not_found';
+
+	const { data, error } = await supabaseClient.rpc('spectate_rig', { p_rig_id: rigId });
+	if (error) throw error;
+
+	return data as SpectateResult;
+}
+
+// The logged-in user's rigs with their status, live first, then most recently used.
+// Same expiry rule and timeout as getRigStatus.
+export async function getMyRigs(supabaseClient: TypedSupabaseClient): Promise<MyRig[]> {
+	const { data, error } = await supabaseClient.rpc('get_my_rigs', {
+		p_expiry_minutes: parseInt(SESSION_TIMEOUT_MINS)
+	});
+	if (error) throw error;
+
+	// The generated types say string for every column; driver_name and last_used_at can be null.
+	return data.map((row) => ({
+		id: row.rig_id,
+		name: row.rig_name,
+		sessionActive: row.session_active,
+		driverName: row.driver_name ?? null,
+		driverIsMe: row.driver_is_me,
+		isAnonymous: row.is_anonymous,
+		lastUsedAt: row.last_used_at ?? null
+	}));
+}
+
+// Whether the user is associated with at least one rig (connected or spectated).
+export async function hasRigAssociation(
+	supabaseClient: TypedSupabaseClient,
+	userId: string
+): Promise<boolean> {
+	const { count, error } = await supabaseClient
+		.from('rig_drivers')
+		.select('id', { count: 'exact', head: true })
+		.eq('driver_id', userId);
+	if (error) throw error;
+
+	return (count ?? 0) > 0;
 }

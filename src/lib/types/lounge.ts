@@ -21,12 +21,18 @@ export type LoungePageData = {
 	status: RigStatus;
 	// The viewer drives the active session (shows Disconnect).
 	isDriver: boolean;
+	// Dismissible tips to show (Sprint 2, S3).
+	tips: LoungeTips;
 
 	// What the three cards show. Resolves at once to the empty values without an active session.
 	session: Promise<LoungeSessionData>;
 	// The rig's laps with no driver and not dismissed, newest first, capped at 50 (unchanged shape).
 	unclaimedLaps: Promise<LoungeLap[]>;
 };
+
+// Each true when the tip should show. rigSaved: "Saved to your homepage", for a user with at
+// least one rig association who hasn't dismissed it (tip key rig_saved).
+export type LoungeTips = { rigSaved: boolean };
 
 export type LoungeSessionData = {
 	// Latest stats from the overlay, SimHub field names. Null without an active session or before the

@@ -36,6 +36,7 @@ Local login: request a magic link for a seed user (`alice@example.com`, `bruno@â
 - **Thin routes.** Load functions and actions call `$lib/queries` or database functions; no query logic inline in pages.
 - **The database is the source of truth.** Business rules (lap inserts, ratings, sessions) live in Postgres functions and triggers; the app calls them via `rpc`.
 - **Supabase clients** ([decision](docs/decisions/supabase-clients.md)): server code uses `locals.supabase` (per request, RLS applies). `supabaseAdmin` only in rig endpoints, with a reason at the call site. Never a module-level shared client.
+- **Session expiry has one rule**: `public.rig_active_session` (internal, no API grants) decides whether a rig's session is active; `rig_status` and `get_my_rigs` call it. The timeout is the app's `SESSION_TIMEOUT_MINS`, passed in as an argument. Don't write the rule out again.
 - **Rig endpoints** respond through `rigJson`/`rigNotFound` in `$lib/server/rigs/`, which set `Cache-Control: no-store` so SimHub never caches a response.
 
 ## Database workflow

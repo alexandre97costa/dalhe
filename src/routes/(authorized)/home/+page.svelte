@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { invalidate } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import type { RecentLaptime } from '$lib/types/listings';
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
@@ -10,6 +10,7 @@
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
+	import RigCard from '$lib/components/home/RigCard.svelte';
 	import {
 		type Icon as IconType,
 		SlidersHorizontal,
@@ -23,7 +24,20 @@
 	let { data } = $props();
 
 	let showFilters = $state(false);
+
+	// No realtime: rig status is as of the load. Coming back to the tab reloads it (Decision 9).
+	onMount(() => {
+		const refresh = () => {
+			if (document.visibilityState === 'visible') invalidateAll();
+		};
+		document.addEventListener('visibilitychange', refresh);
+		return () => document.removeEventListener('visibilitychange', refresh);
+	});
 </script>
+
+<div class="mb-6">
+	<RigCard rigs={data.rigs} />
+</div>
 
 {#if showFilters}
 	<div class=" bg-background sticky top-[57px] mb-1 flex items-center justify-between py-2">

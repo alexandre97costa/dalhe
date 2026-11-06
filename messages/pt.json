@@ -236,5 +236,16 @@
 	"lounge_loading": "A carregar a sessão…",
 	"lounge_load_error": "Não foi possível carregar a sessão. Usa Atualizar para tentar de novo.",
 	"lounge_unclaimed_load_error": "Não foi possível carregar as voltas por reclamar. Usa Atualizar para tentar de novo.",
-	"lounge_refresh_error": "Não foi possível atualizar. A mostrar os últimos dados."
+	"lounge_refresh_error": "Não foi possível atualizar. A mostrar os últimos dados.",
+	"home_rigs_title": "Os teus cockpits",
+	"home_rigs_empty": "Lê o código QR de um cockpit para começar.",
+	"home_rig_status_free": "Livre",
+	"home_rig_status_driving": "A conduzir: {driverName}",
+	"home_rig_status_anonymous": "Em uso, sem condutor ligado",
+	"home_rig_you_are_driving": "Estás a conduzir em {rigName}",
+	"home_rig_watch": "Assistir",
+	"home_rig_connect": "Conectar",
+	"home_rig_lounge": "Lounge",
+	"lounge_tip_rig_saved": "Guardado na tua página inicial. Da próxima vez, não precisas do QR.",
+	"tip_dismiss": "Dispensar"
 }

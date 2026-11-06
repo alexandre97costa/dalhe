@@ -64,6 +64,7 @@
 
 			<form
 				method="POST"
+				action="?/connect"
 				class="flex w-full flex-col gap-4 sm:flex-row sm:justify-center"
 				use:enhance
 			>
@@ -85,9 +86,10 @@
 					<Button type="submit" size="lg" variant="cta" class="w-full sm:w-auto">
 						{m.rig_connect_to_rig()}
 					</Button>
-					<!-- Spectating is just looking: a link, no form post, nothing written. -->
+					<!-- Spectating remembers the rig for the homepage; it never touches the session. -->
 					<Button
-						href={`/connect/${status.rig_id}/lounge`}
+						type="submit"
+						formaction="?/spectate"
 						size="lg"
 						variant="outline"
 						class="w-full sm:w-auto"
