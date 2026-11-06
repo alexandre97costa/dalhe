@@ -236,5 +236,17 @@
 	"lounge_loading": "Loading the session…",
 	"lounge_load_error": "Couldn't load the session. Use Refresh to try again.",
 	"lounge_unclaimed_load_error": "Couldn't load the unclaimed laps. Use Refresh to try again.",
-	"lounge_refresh_error": "Couldn't refresh. Showing the last data."
+	"lounge_refresh_error": "Couldn't refresh. Showing the last data.",
+	"home_rigs_title": "Your rigs",
+	"home_rigs_empty": "Scan the QR code on a rig to get started.",
+	"home_rig_status_free": "Free",
+	"home_rig_status_driving": "Driving: {driverName}",
+	"home_rig_status_anonymous": "In use, no driver connected",
+	"home_rig_you_are_driving": "You're driving at {rigName}",
+	"home_rig_watch": "Watch",
+	"home_rig_connect": "Connect",
+	"home_rig_lounge": "Lounge",
+	"home_rig_more_actions": "More for {rigName}",
+	"lounge_tip_rig_saved": "Saved to your homepage. Next time, no QR needed.",
+	"tip_dismiss": "Dismiss"
 }
