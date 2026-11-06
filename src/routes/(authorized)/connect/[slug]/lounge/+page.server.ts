@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import {
 	disconnectFromRig,
@@ -7,11 +7,14 @@ import {
 	getRigStats,
 	getSessionLaps,
 	getSimMapping,
-	getUnclaimedLaps
+	getUnclaimedLaps,
+	hasRigAssociation
 } from '$lib/queries/rig';
+import { dismissTip, getDismissedTips } from '$lib/queries/tips';
+import { isTipKey } from '$lib/config/tips';
 import { bestsFor } from '$lib/pace';
 import type { TypedSupabaseClient } from '$lib/types/supabase';
-import type { LoungePageData, LoungeSessionData } from '$lib/types/lounge';
+import type { LoungePageData, LoungeSessionData, LoungeTips } from '$lib/types/lounge';
 
 // Milliseconds since an ISO timestamp, on the server clock; never negative. Null in, null out.
 function ageMs(timestamp: string | null, now: number): number | null {
@@ -80,12 +83,25 @@ async function loadSession(
 	};
 }
 
+// Which tips the lounge shows. "Saved to your homepage": the user has at least one rig and
+// hasn't dismissed it (Sprint 2, Decision 10).
+async function loadTips(supabase: TypedSupabaseClient, userId: string): Promise<LoungeTips> {
+	const [hasRig, dismissed] = await Promise.all([
+		hasRigAssociation(supabase, userId),
+		getDismissedTips(supabase, userId)
+	]);
+	return { rigSaved: hasRig && !dismissed.includes('rig_saved') };
+}
+
 // The contract is LoungePageData ($lib/types/lounge.ts, docs/sprints/lounge-brief.md).
 export const load: PageServerLoad = async ({ locals, params }): Promise<LoungePageData> => {
 	const { supabase, safeGetSession } = locals;
 	const { user } = await safeGetSession();
 
-	const status = await getRigStatus(supabase, params.slug);
+	const [status, tips] = await Promise.all([
+		getRigStatus(supabase, params.slug),
+		user ? loadTips(supabase, user.id) : Promise.resolve<LoungeTips>({ rigSaved: false })
+	]);
 	if (!status) {
 		throw error(404, 'Rig not found');
 	}
@@ -107,6 +123,7 @@ export const load: PageServerLoad = async ({ locals, params }): Promise<LoungePa
 		rig: { id: status.rig_id, name: status.rig_name },
 		status,
 		isDriver: !!user && status.session_active && status.driver_id === user.id,
+		tips,
 		session,
 		unclaimedLaps
 	};
@@ -122,5 +139,21 @@ export const actions: Actions = {
 		// Null when the caller wasn't driving (stale tab, someone took over): nothing to report.
 		const closedSessionId = await disconnectFromRig(supabase, status.rig_id);
 		return { disconnected: closedSessionId !== null };
+	},
+
+	// Dismisses a tip for the user (stored per user, so it stays dismissed on every device).
+	dismissTip: async ({ locals: { supabase, safeGetSession }, request }) => {
+		const { user } = await safeGetSession();
+		if (!user) {
+			return fail(401, { dismissedTip: null });
+		}
+
+		const tipKey = (await request.formData()).get('tip_key');
+		if (!isTipKey(tipKey)) {
+			return fail(400, { dismissedTip: null });
+		}
+
+		await dismissTip(supabase, user.id, tipKey);
+		return { dismissedTip: tipKey };
 	}
 };
