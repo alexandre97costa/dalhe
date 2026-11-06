@@ -62,6 +62,10 @@ as $$
   where r.id = p_rig_id;
 $$;
 
+-- Restated after the change to security definer: same access as before.
+revoke execute on function public.rig_status(uuid, integer) from public, anon, authenticated;
+grant execute on function public.rig_status(uuid, integer) to authenticated, service_role;
+
 -- get_my_rigs -------------------------------------------------------------------
 -- One row per rig the user is associated with (connected or spectated).
 -- last_used_at is the later of last_connected_at and last_viewed_at.

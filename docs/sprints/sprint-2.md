@@ -207,3 +207,28 @@ Before this batch goes live (with the Sprint 1.5 lounge changes):
 - **Push notifications** ("someone started driving"): needs the PWA on iOS, a `push_subscription` table, VAPID keys and the `web-push` package. Trigger from the connect action; anonymous sessions are harder.
 - **Session history:** a past sessions list page and a session detail page.
 - **Realtime:** postponed; ranked below the homepage rework and tournaments.
+
+## Outcome (2026-11-06, branch `feat/rig-access`)
+
+**Shipped: every story, nothing past the cut line.** D1, D2, D3, seed, S1, S2, S3, U1, U2, U3, plus the `visibilitychange` refresh.
+
+- **Database:** three migrations (`20261106002555_rig_spectate`, `20261106002557_my_rigs`, `20261106002559_user_tip`), all additive, and `prod` keeps working with them. `rig_status` keeps its signature, result and grants. It's now `security definer` with `search_path = ''` and reads the shared rule from `rig_active_session`, which has no API grants. `get_my_rigs(p_expiry_minutes)` and `spectate_rig(p_rig_id)` follow revoke-then-grant, `authenticated` only.
+- **Scenarios:** `supabase/tests/database/rig_access.test.sql` has 30 checks. Spectating leaves `rig_session` (including `last_activity_at`), `rig_stats` and `last_connected_at` untouched, by diffing before and after. Spectating twice moves only `last_viewed_at`. Alice's ordering and statuses are checked, and `get_my_rigs` and `rig_status` agree on the expired session at two timeouts. Anon is refused, and the tip RLS is covered. The full suite has 107 checks and passes after `pnpm db:reset`.
+- **Browser checks at 375 px, local stack:** I checked the empty state (Diogo), the single card, Alice's four-rig list (Escritório anonymous, Garagem driven, Cave expired, Sala free), and the red carpet after a Connect. Watch from the card also works as a native form post with no JS. The tip shows, hides without a reload, also dismisses without JS, and stays dismissed after a fresh sign-in with storage cleared.
+- **Seed:** two new rigs, Escritório (anonymous session) and Cave (session idle for 3 h, so expired). Personas: Diogo has no rigs, Bruno is spectate-only, Carla has the red carpet, Alice has four rigs.
+
+**Small calls made during the build:**
+
+- **`last_connected_at` keeps its `default now()`:** it's only nullable now. `spectate_rig` inserts an explicit null and `connect_to_rig` always sets it, so dropping the default would change nothing today and is one less change on `prod`.
+- **The connect page's `default` action is now `?/connect`:** SvelteKit doesn't allow a default action next to a named one (`?/spectate`). Spectate is a `formaction` button in the same form.
+- **Connect in the list:** in the 2+ list, a row's secondary action is a small "Connect" link, not a menu, so it works without JS.
+- **The status label and red carpet wrap instead of truncating:** "In use, no driver connected" and "You're driving at Garagem" didn't fit at 375 px.
+- **Tip dismissals:** written by the client through RLS on `user_tip`, with no rpc. The key shape is checked in the database (`^[a-z0-9_]{1,64}$`), and the key itself is checked in the action (`isTipKey`).
+- **No parallel worktree agents for U1/U2 and U3:** each worktree needs its own install, `.env` and Paraglide build, which costs more than U3 did. An independent reviewer agent checked the branch against Decisions, Principles and the D1 "Done when". It found no blockers; its should-fixes are in.
+
+**Left for Alex:**
+
+- **Manual decisions:** the anonymous copy (still "In use, no driver connected"), the card visual (a status dot, free = green, driving = amber, anonymous = blue, red carpet in purple) and the tip copy. Portuguese strings are first drafts.
+- **`pnpm lint` on `preview`:** it already fails in 44 files this branch doesn't touch (shadcn `ui/*`, older docs, a few components). Every file changed here passes Prettier. That needs a separate formatting PR.
+- **Release:** the "What's new" card (Release section), `db push` of the three migrations after `--dry-run`, then regenerating types.
+- **Remaining copies of the expiry rule:** `upsert_rig_stats`, `connect_to_rig`, `disconnect_from_rig` and `get_or_create_active_session` still have their own copies (the last one uses `<`). Moving them onto `rig_active_session` is a later cleanup.

@@ -21,6 +21,12 @@ insert into public.rig_stats (id, session_stats, lap_stats) values
   ('b0000000-0000-4000-8000-000000000002', '{"seed": true}', '{"seed": true}')
 on conflict (id) do update set session_stats = excluded.session_stats, lap_stats = excluded.lap_stats;
 
+-- The state the checks below assume, whatever manual testing left behind:
+-- Diogo has no associations; Sala has no open session.
+delete from public.rig_drivers where driver_id = 'a0000000-0000-4000-8000-000000000004';
+update public.rig_session set ended_at = now()
+where rig_id = 'b0000000-0000-4000-8000-000000000001' and ended_at is null;
+
 -- Everything spectating must not touch, as it is now
 create temporary table before_sessions as select * from public.rig_session;
 create temporary table before_stats as select * from public.rig_stats;

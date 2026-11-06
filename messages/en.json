@@ -246,7 +246,6 @@
 	"home_rig_watch": "Watch",
 	"home_rig_connect": "Connect",
 	"home_rig_lounge": "Lounge",
-	"home_rig_more_actions": "More for {rigName}",
 	"lounge_tip_rig_saved": "Saved to your homepage. Next time, no QR needed.",
 	"tip_dismiss": "Dismiss"
 }
