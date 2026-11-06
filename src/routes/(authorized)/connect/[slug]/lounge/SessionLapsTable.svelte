@@ -20,7 +20,7 @@
 	] as const;
 </script>
 
-<div class="max-w-full overflow-x-auto ">
+<div class="scroll-fade-x max-w-full overflow-x-auto">
 	<table class="w-full border-collapse text-sm">
 		<thead class=" text-left">
 			<tr class="text-muted-foreground text-sm">

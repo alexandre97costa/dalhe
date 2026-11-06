@@ -207,4 +207,49 @@
 	.animate-arrow-bounce {
 		animation: arrow-bounce 400ms ease-in-out infinite alternate;
 	}
+
+	/* Horizontal scroller that fades its content out at whichever edge still hides more of it.
+	   A scroll-driven animation sets the fade widths from the scroll position; when nothing
+	   overflows the timeline is inactive and both stay 0. Without animation-timeline support
+	   the block is skipped and the scroller behaves as a plain one. */
+	@supports (animation-timeline: scroll()) {
+		.scroll-fade-x {
+			mask-image: linear-gradient(
+				to right,
+				transparent,
+				#000 var(--fade-l),
+				#000 calc(100% - var(--fade-r)),
+				transparent
+			);
+			animation: scroll-fade-x linear both;
+			animation-timeline: scroll(self inline);
+		}
+	}
+}
+
+@property --fade-l {
+	syntax: '<length>';
+	inherits: false;
+	initial-value: 0px;
+}
+@property --fade-r {
+	syntax: '<length>';
+	inherits: false;
+	initial-value: 0px;
+}
+@keyframes scroll-fade-x {
+	0% {
+		--fade-l: 0px;
+		--fade-r: 32px;
+	}
+	8% {
+		--fade-l: 32px;
+	}
+	92% {
+		--fade-r: 32px;
+	}
+	100% {
+		--fade-l: 32px;
+		--fade-r: 0px;
+	}
 }
