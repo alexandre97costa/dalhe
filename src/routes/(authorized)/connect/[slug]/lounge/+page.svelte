@@ -16,6 +16,7 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { ArrowLeft, TimerOff, LogOut, RefreshCw, User, CircleSlash, Ghost } from '@lucide/svelte';
+	import Tip from '$lib/components/Tip.svelte';
 	import LapList from './LapList.svelte';
 	import SessionCard from './SessionCard.svelte';
 	import LiveLapCard from './LiveLapCard.svelte';
@@ -127,6 +128,10 @@
 			{/if}
 		</div>
 	</header>
+
+	{#if data.tips.rigSaved}
+		<Tip tipKey="rig_saved" message={m.lounge_tip_rig_saved()} />
+	{/if}
 
 	{#if !status.session_active}
 		<Empty.Root class="border">
