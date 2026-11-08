@@ -240,7 +240,7 @@
 	"home_rigs_title": "Os teus cockpits",
 	"home_rigs_empty": "Lê o código QR de um cockpit para começar.",
 	"home_rig_status_free": "Disponível",
-	"home_rig_status_driving": "{driverName} está a conduzir!",
+	"home_rig_status_driving": "{#b}{driverName}{/b} está a conduzir!",
 	"home_rig_status_anonymous": "Sessão anónima",
 	"home_rig_you_are_driving": "Estás a conduzir em {rigName}",
 	"home_rig_watch": "Assistir",
