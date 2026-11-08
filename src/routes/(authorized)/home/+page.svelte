@@ -23,7 +23,7 @@
 
 	let { data } = $props();
 
-	let showFilters = $state(false);
+	let showFilters = $state(true);
 
 	// No realtime: rig status is as of the load. Coming back to the tab reloads it (Decision 9).
 	onMount(() => {
@@ -47,10 +47,10 @@
 			>
 			<!-- <span class="text-muted-foreground text-sm">{m.home_recent_laptimes_description()}</span> -->
 		</div>
-		<Button variant="outline">
+		<!-- <Button variant="outline">
 			Filters
 			<SlidersHorizontal class="ml-1" size="16" strokeWidth="2" />
-		</Button>
+		</Button> -->
 	</div>
 {/if}
 

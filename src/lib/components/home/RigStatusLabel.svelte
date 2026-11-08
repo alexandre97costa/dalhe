@@ -24,9 +24,9 @@
 		aria-hidden="true"
 		class={cn(
 			'mt-1.5 size-2 shrink-0 rounded-full',
-			kind === 'free' && 'bg-emerald-500',
-			kind === 'driving' && 'animate-pulse bg-amber-500',
-			kind === 'anonymous' && 'animate-pulse bg-sky-500'
+			kind === 'free' && 'bg-card-foreground/20',
+			kind === 'driving' && 'animate-pulse bg-green-500',
+			kind === 'anonymous' && 'animate-pulse bg-blue-500'
 		)}
 	></span>
 	<span>{label}</span>

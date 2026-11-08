@@ -6,9 +6,11 @@
 	import type { HomeRigs, MyRig } from '$lib/types/home';
 	import { m } from '$lib/paraglide/messages.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { enhance } from '$app/forms';
-	import { Eye, Gamepad2, ScanQrCode } from '@lucide/svelte';
+	import { Eye, Gamepad2, ScanQrCode, ArrowRight } from '@lucide/svelte';
 	import RigStatusLabel from './RigStatusLabel.svelte';
+	import { cn } from '$lib/utils';
 
 	let { rigs }: { rigs: HomeRigs } = $props();
 </script>
@@ -23,9 +25,56 @@
 {/snippet}
 
 <section aria-labelledby="home-rigs-title" class="flex flex-col gap-3">
-	<h2 id="home-rigs-title" class="text-foreground text-xl font-medium tracking-tight">
+	<!-- <h2 id="home-rigs-title" class="text-foreground text-xl font-medium tracking-tight">
 		{m.home_rigs_title()}
-	</h2>
+	</h2> -->
+
+	<ul class="bg-card text-card-foreground divide-y rounded-xl border shadow-sm">
+		{#each rigs.others as rig (rig.id)}
+			{@const kind = !rig.sessionActive
+				? 'free'
+				: rig.isAnonymous
+					? 'anonymous'
+					: ('driving' as const)}
+			{@const label =
+				kind === 'free'
+					? m.home_rig_status_free()
+					: kind === 'anonymous'
+						? m.home_rig_status_anonymous()
+						: m.home_rig_status_driving({ driverName: rig.driverName ?? '' })}
+
+			<li class={cn('text-muted-foreground flex items-center gap-4 p-4 text-sm')}>
+				<span
+					aria-hidden="true"
+					class={cn(
+						' size-3 shrink-0 rounded-full',
+						kind === 'free' && 'bg-card-foreground/20',
+						kind === 'driving' && 'animate-pulse bg-green-500',
+						kind === 'anonymous' && 'animate-pulse bg-blue-500'
+					)}
+				></span>
+				<Avatar.Root >
+						<Avatar.Image src={"https://github.com/shadcn.png"} alt={""} />
+						<Avatar.Fallback>A</Avatar.Fallback>
+						<!-- <Avatar.Fallback>{status.driver_name.charAt(0).toUpperCase()}</Avatar.Fallback> -->
+					</Avatar.Root>
+				<div class="flex min-w-0 flex-1 flex-col">
+					<span class="truncate text-card-foreground font-medium">{label}</span>
+					<span>{rig.name}</span>
+					<!-- <RigStatusLabel {rig} /> -->
+				</div>
+				<Button
+					href={`/connect/${rig.id}`}
+					variant="secondary"
+					size="icon-sm"
+					class="text-muted-foreground shrink-0"
+					aria-label={m.home_rig_connect()}
+				>
+					<ArrowRight />
+				</Button>
+			</li>
+		{/each}
+	</ul>
 
 	{#if rigs.driving}
 		<!-- Red carpet: the rig the user is driving. Already associated, so a plain link. -->
@@ -33,10 +82,10 @@
 			class="flex items-center justify-between gap-3 rounded-xl border border-purple-500/50 bg-purple-500/10 p-4"
 		>
 			<p class="flex min-w-0 items-start gap-2 font-medium">
-				<span
+				<!-- <span
 					aria-hidden="true"
 					class="mt-2 size-2 shrink-0 animate-pulse rounded-full bg-purple-500"
-				></span>
+				></span> -->
 				<span>{m.home_rig_you_are_driving({ rigName: rigs.driving.name })}</span>
 			</p>
 			<Button href={`/connect/${rigs.driving.id}/lounge`} variant="cta" class="shrink-0">
@@ -70,13 +119,15 @@
 					</div>
 					<Button
 						href={`/connect/${rig.id}`}
-						variant="ghost"
-						size="sm"
+						variant="secondary"
+						size="icon-sm"
 						class="text-muted-foreground shrink-0"
+						aria-label={m.home_rig_connect()}
 					>
-						{m.home_rig_connect()}
+						<ArrowRight />
+						<!-- {m.home_rig_connect()} -->
 					</Button>
-					<div class="shrink-0">{@render watch(rig, 'sm')}</div>
+					<!-- <div class="shrink-0">{@render watch(rig, 'sm')}</div> -->
 				</li>
 			{/each}
 		</ul>
