@@ -8,6 +8,8 @@ export type MyRig = {
 	sessionActive: boolean;
 	// The driver's username; null when free or anonymous.
 	driverName: string | null;
+	// The driver's avatar; null when free, anonymous or the driver has none.
+	driverAvatarUrl: string | null;
 	// The user drives the active session (the red carpet).
 	driverIsMe: boolean;
 	// Active session with no driver: laps are landing unclaimed.

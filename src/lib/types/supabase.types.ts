@@ -806,6 +806,7 @@ export type Database = {
 			get_my_rigs: {
 				Args: { p_expiry_minutes: number };
 				Returns: {
+					driver_avatar_url: string;
 					driver_is_me: boolean;
 					driver_name: string;
 					is_anonymous: boolean;

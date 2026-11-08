@@ -4,18 +4,12 @@
 	import type { MyRig } from '$lib/types/home';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils';
+	import Message from '$lib/components/Message.svelte';
 
 	let { rig, class: className }: { rig: MyRig; class?: string } = $props();
 
 	let kind = $derived(
 		!rig.sessionActive ? 'free' : rig.isAnonymous ? 'anonymous' : ('driving' as const)
-	);
-	let label = $derived(
-		kind === 'free'
-			? m.home_rig_status_free()
-			: kind === 'anonymous'
-				? m.home_rig_status_anonymous()
-				: m.home_rig_status_driving({ driverName: rig.driverName ?? '' })
 	);
 </script>
 
@@ -29,5 +23,13 @@
 			kind === 'anonymous' && 'animate-pulse bg-blue-500'
 		)}
 	></span>
-	<span>{label}</span>
+	<span>
+		{#if kind === 'free'}
+			{m.home_rig_status_free()}
+		{:else if kind === 'anonymous'}
+			{m.home_rig_status_anonymous()}
+		{:else}
+			<Message message={m.home_rig_status_driving} inputs={{ driverName: rig.driverName ?? '' }} />
+		{/if}
+	</span>
 </span>

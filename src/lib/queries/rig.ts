@@ -310,12 +310,14 @@ export async function getMyRigs(supabaseClient: TypedSupabaseClient): Promise<My
 	});
 	if (error) throw error;
 
-	// The generated types say string for every column; driver_name and last_used_at can be null.
+	// The generated types say string for every column; driver_name, driver_avatar_url and
+	// last_used_at can be null.
 	return data.map((row) => ({
 		id: row.rig_id,
 		name: row.rig_name,
 		sessionActive: row.session_active,
 		driverName: row.driver_name ?? null,
+		driverAvatarUrl: row.driver_avatar_url ?? null,
 		driverIsMe: row.driver_is_me,
 		isAnonymous: row.is_anonymous,
 		lastUsedAt: row.last_used_at ?? null

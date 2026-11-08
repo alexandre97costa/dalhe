@@ -240,7 +240,7 @@
 	"home_rigs_title": "Your rigs",
 	"home_rigs_empty": "Scan the QR code on a rig to get started.",
 	"home_rig_status_free": "Empty seat",
-	"home_rig_status_driving": "{driverName} is driving!",
+	"home_rig_status_driving": "{#b}{driverName}{/b} is driving!",
 	"home_rig_status_anonymous": "Anonymous session",
 	"home_rig_you_are_driving": "You're driving at {rigName}",
 	"home_rig_watch": "Watch",

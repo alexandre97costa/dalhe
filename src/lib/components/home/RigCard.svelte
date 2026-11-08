@@ -11,6 +11,7 @@
 	import { Eye, Gamepad2, ScanQrCode, ArrowRight } from '@lucide/svelte';
 	import RigStatusLabel from './RigStatusLabel.svelte';
 	import { cn } from '$lib/utils';
+	import Message from '$lib/components/Message.svelte';
 
 	let { rigs }: { rigs: HomeRigs } = $props();
 </script>
@@ -36,12 +37,6 @@
 				: rig.isAnonymous
 					? 'anonymous'
 					: ('driving' as const)}
-			{@const label =
-				kind === 'free'
-					? m.home_rig_status_free()
-					: kind === 'anonymous'
-						? m.home_rig_status_anonymous()
-						: m.home_rig_status_driving({ driverName: rig.driverName ?? '' })}
 
 			<li class={cn('text-muted-foreground flex items-center gap-4 p-4 text-sm')}>
 				<span
@@ -54,12 +49,22 @@
 					)}
 				></span>
 				<Avatar.Root >
-						<Avatar.Image src={"https://github.com/shadcn.png"} alt={""} />
-						<Avatar.Fallback>A</Avatar.Fallback>
-						<!-- <Avatar.Fallback>{status.driver_name.charAt(0).toUpperCase()}</Avatar.Fallback> -->
+						<Avatar.Image src={rig.driverAvatarUrl} alt={rig.driverName ?? ''} />
+						<Avatar.Fallback>{rig.driverName?.charAt(0).toUpperCase()}</Avatar.Fallback>
 					</Avatar.Root>
 				<div class="flex min-w-0 flex-1 flex-col">
-					<span class="truncate text-card-foreground font-medium">{label}</span>
+					<span class="truncate text-card-foreground font-medium">
+						{#if kind === 'free'}
+							{m.home_rig_status_free()}
+						{:else if kind === 'anonymous'}
+							{m.home_rig_status_anonymous()}
+						{:else}
+							<Message
+								message={m.home_rig_status_driving}
+								inputs={{ driverName: rig.driverName ?? '' }}
+							/>
+						{/if}
+					</span>
 					<span>{rig.name}</span>
 					<!-- <RigStatusLabel {rig} /> -->
 				</div>
