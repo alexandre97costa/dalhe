@@ -2,12 +2,10 @@
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
 	import { cn } from '$lib/utils.js';
-	import { type LucideIcon, House, Trophy, UserRound, Plus, ChessQueen } from '@lucide/svelte';
+	import { type LucideIcon, House, Trophy, UserRound, ChessQueen } from '@lucide/svelte';
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
-	import { Button } from '$lib/components/ui/button/index';
-	import NavigationMenuItem from './ui/navigation-menu/navigation-menu-item.svelte';
 
-	let { open = $bindable(false), driverId, isNavigating } = $props();
+	let { driverId, isNavigating } = $props();
 	let titleValue = $derived($title);
 
 	type MenuItem = {
@@ -88,45 +86,5 @@
 		{#each menuItems as item, i}
 			{@render menuItem(item, i)}
 		{/each}
-
-		<!-- 
-		<NavigationMenuItem class="relative col-span-2 flex h-3 justify-center ">
-			<NavigationMenu.Link>
-				{#snippet child()}
-					<Button
-						onclick={() => (open = !open)}
-						class="
-								absolute
-								bottom-0.5 
-								aspect-square
-								h-13
-								w-13 cursor-pointer
-
-								rounded-4xl
-								border-[1.5px]
-								border-purple-300 
-								bg-zinc-50
-								text-purple-600
-
-								backdrop-blur-lg
-								hover:bg-white
-								dark:border-purple-400
-								dark:bg-zinc-900 
-								dark:text-purple-400  
-								dark:shadow-purple-400/20
-								dark:hover:bg-zinc-800
-
-							"
-					>
-
-							<div class="scale-[180%]">
-								<Plus strokeWidth="2" />
-							</div>
-						<span class="sr-only">{m.nav_add}</span>
-					</Button>
-				{/snippet}
-			</NavigationMenu.Link>
-		</NavigationMenuItem>
-		 -->
 	</NavigationMenu.List>
 </NavigationMenu.Root>

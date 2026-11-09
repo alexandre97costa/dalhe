@@ -13,9 +13,7 @@
 	import { Button } from '$lib/components/ui/button/index';
 	import UserSession from '$lib/components/UserSession.svelte';
 	import Nav from '$lib/components/Nav.svelte';
-	import New from '$lib/components/New.svelte';
 	import LogoImg from '$lib/images/500w.png';
-	import { is } from 'zod/locales';
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
@@ -27,20 +25,14 @@
 	});
 
 	let { data, children }: LayoutProps = $props();
-	let { supabase, session, user, laptimeForm, formDataRecord } = $derived(data);
+	let { supabase, session, user } = $derived(data);
 
-	let open = $state(false);
 	let isNavigating: boolean = $derived(navigating.complete !== null);
 
 	$effect(() => {
-		// console.log(isNavigating);
 		if (isNavigating) {
 			navigator.vibrate?.(20);
 		}
-	});
-
-	$effect(() => {
-		// console.log(data);
 	});
 </script>
 
@@ -93,6 +85,5 @@
 </div>
 
 <div class="fixed right-0 bottom-0 left-0 z-20 flex w-full justify-center">
-	<Nav bind:open driverId={session?.user.id} {isNavigating} />
-	<New bind:open data={{ laptimeForm, formDataRecord }} />
+	<Nav driverId={session?.user.id} {isNavigating} />
 </div>

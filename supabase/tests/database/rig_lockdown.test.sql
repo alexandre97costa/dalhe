@@ -7,7 +7,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(33);
+select plan(35);
 
 -- Fixtures (as postgres) ----------------------------------------------------
 
@@ -236,20 +236,34 @@ select is(
   'the rig is free after disconnect'
 );
 
--- Manual entry still works and still updates pole ratings
+-- Laps come only from rigs: no manual entry, even in your own name
 
-insert into public.lap_time (track_id, car_id, time_milliseconds)
-select track_id, car_id, time_milliseconds + 12345 from record_lap;
-select is(
-  (select pole_rating from public.lap_time where id = (select id from record_lap)),
-  (select pole_rating + 1 from record_lap)::smallint,
-  'manual entry updates the record holder''s pole rating'
+select throws_ok(
+  $$insert into public.lap_time (track_id, car_id, time_milliseconds, driver_id)
+    select track_id, car_id, time_milliseconds + 12345, 'a0000000-0000-4000-8000-000000000001' from record_lap$$,
+  '42501', null, 'a user cannot insert a lap in their own name'
 );
 
 select throws_ok(
   $$insert into public.lap_time (track_id, car_id, time_milliseconds, driver_id)
     select track_id, car_id, time_milliseconds + 23456, 'a0000000-0000-4000-8000-000000000002' from record_lap$$,
-  '42501', null, 'manual entry cannot add a lap in someone else''s name'
+  '42501', null, 'a user cannot insert a lap in someone else''s name'
+);
+
+select throws_ok(
+  $$delete from public.lap_time where id = (select id from record_lap)$$,
+  '42501', null, 'a user cannot delete a lap'
+);
+
+-- The pole rating trigger still runs for laps inserted by the server
+
+reset role;
+insert into public.lap_time (track_id, car_id, time_milliseconds, driver_id)
+select track_id, car_id, time_milliseconds + 12345, 'a0000000-0000-4000-8000-000000000001' from record_lap;
+select is(
+  (select pole_rating from public.lap_time where id = (select id from record_lap)),
+  (select pole_rating + 1 from record_lap)::smallint,
+  'a slower lap by another driver updates the record holder''s pole rating'
 );
 
 select * from finish();
