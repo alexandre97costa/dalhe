@@ -126,9 +126,12 @@ file_size_limit = "50MiB"
 # allowed_mime_types = ["image/png", "image/jpeg"]
 # objects_path = "./images"
 
-# Mirrors the hosted project's avatars bucket (private, no limits set there).
+# Profile avatars, `avatars/<user id>/avatar.webp`. The settings come from the
+# avatars_bucket_policies migration (hosted too); keep these in sync with it.
 [storage.buckets.avatars]
-public = false
+public = true
+file_size_limit = "2MiB"
+allowed_mime_types = ["image/png", "image/jpeg", "image/webp"]
 
 # Rig QR codes for the overlay. The bucket itself comes from the rig_qr_bucket migration (hosted
 # too); keep these settings in sync with it. objects_path uploads the seed rigs' QR images

@@ -14,7 +14,6 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
 	import DriverProfile from '$lib/components/driver/DriverProfile.svelte';
-	import DriverChart from '$lib/components/driver/DriverChart.svelte';
 	import {
 		type LucideIcon,
 		Trophy,
@@ -44,10 +43,6 @@
 		{
 			id: 'latest',
 			label: m.driver_profile_latest()
-		},
-		{
-			id: 'progress',
-			label: m.driver_profile_progress()
 		},
 		{
 			id: 'stats',
@@ -165,7 +160,7 @@
 	<DriverProfile
 		driverForm={data.driverForm}
 		username={data.driver?.username ?? 'Unknown Driver'}
-		photoUrl={data.driver?.avatar_url ?? 'https://github.com/shadcn.png'}
+		photoUrl={data.driver?.avatar_url ?? null}
 		bio={data.driver?.bio ?? undefined}
 		isCurrentUser={data.driver?.id === data.session!.user!.id}
 	/>
@@ -184,11 +179,6 @@
 			</Tabs.List>
 		</div>
 		{@render Tab_LatestLaps()}
-
-		<Tabs.Content value={'progress'}>
-			{@render TabTitle(m.driver_profile_progress())}
-			<DriverChart />
-		</Tabs.Content>
 
 		{@render Tab_Stats()}
 	</Tabs.Root>
