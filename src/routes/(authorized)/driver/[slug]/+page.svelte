@@ -50,11 +50,15 @@
 		}
 	];
 
-	if (data.driver?.id === data.session!.user!.id) {
-		title.set(m.nav_profile());
-	} else {
-		title.set(m.nav_driver());
-	}
+	const pageTitle = () =>
+		data.driver?.id === data.session?.user?.id ? m.nav_profile() : m.nav_driver();
+	// Set once for the server render, and again in an effect: going from one driver to another
+	// reuses this page without re-running the script, so the title (and the Career highlight)
+	// would otherwise stay stale.
+	title.set(pageTitle());
+	$effect(() => {
+		title.set(pageTitle());
+	});
 </script>
 
 {#snippet StatCard(statCard: statCardContent)}
