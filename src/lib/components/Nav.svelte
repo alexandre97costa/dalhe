@@ -14,6 +14,7 @@
 		description: string;
 		icon: LucideIcon;
 		order: number;
+		disabled?: boolean;
 	};
 
 	const menuItems: MenuItem[] = [
@@ -37,7 +38,9 @@
 			href: '/tournaments',
 			description: 'Tournament information and results',
 			icon: Trophy,
-			order: 3
+			order: 3,
+			// Shown but not clickable until the page exists (backlog).
+			disabled: true
 		},
 		{
 			title: m.nav_profile(),
@@ -53,8 +56,13 @@
 	{@const Icon = item.icon}
 	<NavigationMenu.Item class={cn(`flex justify-center order-${i}`)}>
 		<NavigationMenu.Link
-			href={item.href}
-			class={cn('flex size-18 flex-col items-center gap-2 pt-2')}
+			href={item.disabled ? undefined : item.href}
+			aria-disabled={item.disabled || undefined}
+			tabindex={item.disabled ? -1 : undefined}
+			class={cn(
+				'flex size-18 flex-col items-center gap-2 pt-2',
+				item.disabled && 'pointer-events-none opacity-50'
+			)}
 		>
 			<Icon
 				strokeWidth={titleValue == item.title ? '1.5' : '1'}

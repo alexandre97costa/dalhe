@@ -6,7 +6,7 @@ import type { RequestHandler } from './$types';
 export const POST: RequestHandler = async ({ locals: { supabase } }) => {
 	const { error } = await supabase.auth.signOut();
 	if (error) {
-		console.log('Sign out error:', error.message);
+		console.error('Sign out error:', error.message);
 	}
 	redirect(303, '/');
 };
