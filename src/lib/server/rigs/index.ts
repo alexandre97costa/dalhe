@@ -72,7 +72,7 @@ export async function resolveRig(rigId: string, key: string | null): Promise<Rig
 		.maybeSingle();
 
 	if (keyError) {
-		console.log('resolveRig key error:', keyError.message);
+		console.error('resolveRig key error:', keyError.message);
 		return null;
 	}
 	if (!rigKey) return null;
@@ -83,7 +83,7 @@ export async function resolveRig(rigId: string, key: string | null): Promise<Rig
 	});
 
 	if (error) {
-		console.log('resolveRig error:', error);
+		console.error('resolveRig error:', error);
 		return null;
 	}
 

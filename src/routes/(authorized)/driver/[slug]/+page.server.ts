@@ -52,7 +52,7 @@ export const actions: Actions = {
 			try {
 				avatarUrl = await uploadAvatar(supabase, user.id, form.data.avatar);
 			} catch (e) {
-				console.log('Avatar upload error:', e instanceof Error ? e.message : e);
+				console.error('Avatar upload error:', e instanceof Error ? e.message : e);
 				return setError(form, 'avatar', m.formdriver_avatar_error_upload());
 			}
 		}
@@ -68,7 +68,7 @@ export const actions: Actions = {
 			if (updateError.code === '23505') {
 				return setError(form, 'username', m.formdriver_username_error_taken());
 			}
-			console.log('Profile update error:', updateError.message);
+			console.error('Profile update error:', updateError.message);
 			return message(form, 'error', { status: 500 });
 		}
 

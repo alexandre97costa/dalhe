@@ -45,7 +45,8 @@ Front A is further along than the first draft of this doc assumed, and several t
    - `api_key`: **secret**. Lives only in the database and the overlay config. Every rig endpoint requires it as a query param.
 
    The QR image is static, stored in the Supabase bucket per rig, and encodes the connect URL with the UUID only. Changing a key is manual: update the key in the database, paste it into the overlay config. UUID, QR, URLs and lap history are untouched.
-   *Why:* without a key, anyone who has ever seen the QR can inject laps remotely into whoever is driving that rig, or into its unclaimed list (the repo is public and documents the endpoints). With it, that needs access to the rig PC, the same level as the threat that always existed (sitting in the rig and driving). Manual entry still lets any user add laps under their own name; the key is about laps landing in *someone else's* name. Not strong security; the right size for a family app.
+   _Why:_ without a key, anyone who has ever seen the QR can inject laps remotely into whoever is driving that rig, or into its unclaimed list (the repo is public and documents the endpoints). With it, that needs access to the rig PC, the same level as the threat that always existed (sitting in the rig and driving). Manual entry still lets any user add laps under their own name; the key is about laps landing in _someone else's_ name. Not strong security; the right size for a family app.
+
 2. **Takeover.** Connecting while someone else drives is allowed, but deliberate: the connect page warns that the rig has a driver and asks for confirmation. Switching seats should be quick, never accidental.
 3. **Poll response.** Rig name, `sessionActive` and driver name only. No ids. (The trimming happens in the endpoint; `rig_status` itself keeps the ids, because the connect and lounge pages need the driver id.)
 4. **Session creation.** Lazy: an anonymous session is created by the first lap. The poll and the stats endpoints never create sessions. Connecting closes any active session, including an anonymous one; its laps stay unclaimed (claiming is Sprint 3).
@@ -79,8 +80,9 @@ No short public rig code. Easy access without scanning comes later through the "
 
 ## Front A: Rig to App
 
-### A0. Lock down writes *(new)*
-*As the system, I want rig data and laps writable only through the paths meant for them, so nobody can drive someone else's session or edit someone else's lap with the public anon key.*
+### A0. Lock down writes _(new)_
+
+_As the system, I want rig data and laps writable only through the paths meant for them, so nobody can drive someone else's session or edit someone else's lap with the public anon key._
 
 One migration:
 
@@ -101,7 +103,8 @@ One migration:
 - **Done when:** with the anon key, and with a logged-in user's token, direct writes to `rig_session` / `rig_stats` / `rig_drivers`, updates to `lap_time`, and calls to `insert_lap` all fail; `connect_to_rig` only ever connects the caller; manual entry still works and still updates pole ratings.
 
 ### A1. Rig api key
-*As the system, I want rig endpoints to require the rig's secret key, so seeing the QR is not enough to submit laps.*
+
+_As the system, I want rig endpoints to require the rig's secret key, so seeing the QR is not enough to submit laps._
 
 - Key stored in its own table (`rig_key`: `rig_id` primary key → `rig`, `api_key`), RLS on with no policies, no client grants, not in the realtime publication. Not a column on `rig`, which is publicly readable and broadcast by realtime.
 - The migration generates a random key for every existing rig; seed rigs get known values.
@@ -110,13 +113,15 @@ One migration:
 - `docs/rig-endpoints.md` updated: the key, the response contract, and how to change a key.
 
 ### A2. Poll response
-*As the overlay, I want to know whether my rig has an active session and who's driving.*
+
+_As the overlay, I want to know whether my rig has an active session and who's driving._
 
 - Returns rig name, `sessionActive`, driver name (or null). No ids.
 - Expired sessions report as inactive without any write.
 
 ### A3. Lap endpoint: handled outcomes
-*As the overlay, I want every lap I send to get a definite answer, so I can stop retrying and show feedback.*
+
+_As the overlay, I want every lap I send to get a definite answer, so I can stop retrying and show feedback._
 
 - New lap: inserted via `insert_lap`; `200 {status: "created", lapId}`. The session's `last_activity_at` is updated. No session: an anonymous one is created.
 - Same lap again: `200 {status: "duplicate"}`. No second row, no session created, `last_activity_at` untouched.
@@ -124,7 +129,8 @@ One migration:
 - `insert_lap` returns the outcome (lap id plus status) instead of a bare null; the old signature is dropped.
 
 ### A4. Stats endpoints (live lap stats + sim session stats)
-*As the overlay, I want to send live lap and sim session stats, so the lounge can show them.*
+
+_As the overlay, I want to send live lap and sim session stats, so the lounge can show them._
 
 - Upserts the rig's `rig_stats` row (latest values only): `/send/live` → `lap_stats`, `/send/session` → `session_stats`, each with its timestamp. One rpc, service role only.
 - Active session: stored, `200 {status: "ok"}`. No active or a stale session: nothing written, `200 {status: "ignored"}`. Invalid params: `200 {status: "rejected", reason}`.
@@ -132,7 +138,8 @@ One migration:
 - If time slips, defer this story. The lounge is demoable with laps alone.
 
 ### A5. Fake rig
-*As the developer, I want to simulate a rig from the terminal, so I can test without SimHub.*
+
+_As the developer, I want to simulate a rig from the terminal, so I can test without SimHub._
 
 - Targets the local stack by default, using a seed rig and its known key.
 - Scenarios: poll, created lap, duplicate lap, rejected lap, wrong key, unknown rig, stats with a session, stats without a session, stale session.
@@ -145,7 +152,8 @@ One migration:
 ## Front B: User to App
 
 ### B1. Connect action, with deliberate takeover
-*As a family member, I want to connect to a rig after scanning its QR, so my laps are mine.*
+
+_As a family member, I want to connect to a rig after scanning its QR, so my laps are mine._
 
 - Rig free (no session, or an anonymous one): Connect calls `connect_to_rig` and redirects to the lounge room.
 - Rig has a driver: the page warns ("Alex is driving") and Connect asks "Are you sure?" before taking over. The confirmation re-renders the same form with a confirm field; no client JS needed.
@@ -156,20 +164,23 @@ One migration:
 - Connect page reads `rig_status` and is clean in `pnpm check`.
 
 ### B2. Spectate action
-*As a family member, I want to watch a rig without driving it.*
+
+_As a family member, I want to watch a rig without driving it._
 
 - The secondary button on the connect page redirects to the lounge room.
 - No association, no session change, no database write.
 
 ### B3. Disconnect action
-*As the driver, I want to leave the rig, so the next person's laps aren't mine.*
+
+_As the driver, I want to leave the rig, so the next person's laps aren't mine._
 
 - Calls `disconnect_from_rig` and shows the rig as free.
 - A non-driver (or stale tab) pressing it changes nothing.
 - No active session is a quiet no-op, not an error.
 
 ### B4. Lounge room load
-*As a viewer, I want the lounge to deliver everything it needs in one typed load.*
+
+_As a viewer, I want the lounge to deliver everything it needs in one typed load._
 
 - Returns: rig, status (`rig_status`), sim session stats, live lap stats, the latest lap (for the new-lap banner), the session's laps, and the rig's unclaimed laps (no driver, not dismissed).
 - Uses `rig_status` instead of `getRigById`, so expired sessions show as inactive.
@@ -179,7 +190,8 @@ One migration:
 - No data fetching in components. Lounge page is clean in `pnpm check`.
 
 ### B5. Lounge room UI
-*As a viewer, I want to see who's driving and how they're doing.*
+
+_As a viewer, I want to see who's driving and how they're doing._
 
 - Renders B4's data, mobile first: header, sim session card, live lap card, new-lap banner, session laps, unclaimed laps (read-only).
 - A refresh button reloads the data (realtime comes in Waterfall 2).

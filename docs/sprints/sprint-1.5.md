@@ -32,14 +32,13 @@ Out of scope: realtime and auto-refresh (Sprint 2), the unclaimed laps page and 
 
 1. **Pace colours.** Sectors and laps share one ladder. First match wins:
 
-   | Colour (undertone) | Rule | Label (laps only) |
-   |---|---|---|
-   | Purple (violet) | ≤ app-wide best | "Track Record" |
-   | Blue (violet) | ≤ session best | "Session best" |
-   | Green (teal) | ≤ session best × (1 + `PACE_BAND`) | "On pace" |
-   | Yellow (orange) | anything else | none |
-   | Neutral (white / grey) | sector in progress, or no best to compare with | none |
-
+   | Colour (undertone)     | Rule                                           | Label (laps only) |
+   | ---------------------- | ---------------------------------------------- | ----------------- |
+   | Purple (violet)        | ≤ app-wide best                                | "Track Record"    |
+   | Blue (violet)          | ≤ session best                                 | "Session best"    |
+   | Green (teal)           | ≤ session best × (1 + `PACE_BAND`)             | "On pace"         |
+   | Yellow (orange)        | anything else                                  | none              |
+   | Neutral (white / grey) | sector in progress, or no best to compare with | none              |
    - Purple and blue share a violet undertone: both mean "best in something".
    - Sectors carry colour only (no text). Laps carry badges (or crowns in the compact view), never colour stripes.
    - The delta badge on the live lap uses its own colours: lime green when faster, pink-red when slower. An invalid lap uses a darker "normal" red. The final colour pass and colour-blind tests come later.
@@ -92,7 +91,8 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 ## Foundation (F)
 
 ### F1. Split the lounge page and define the load contract
-*As the developer, I want each lounge component in its own file with a fixed data contract, so the three UI streams can run in parallel without editing the same file.*
+
+_As the developer, I want each lounge component in its own file with a fixed data contract, so the three UI streams can run in parallel without editing the same file._
 
 - `lounge/+page.svelte` becomes a thin shell composing `SessionCard`, `LiveLapCard`, `SessionLaps` (plus the existing header, Disconnect and unclaimed list).
 - The load's return type is written down in `docs/sprints/lounge-brief.md` (replacing the Sprint 1 contract) and exported as a type. It includes everything F2–F4 add.
@@ -100,14 +100,16 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 - **Done when:** the page renders as before minus the banner; `pnpm check` is clean for the lounge.
 
 ### F2. SimHub id mapping
-*As a viewer, I want the lounge to use the app's own names for cars and tracks, so the session card matches the lap list.*
+
+_As a viewer, I want the lounge to use the app's own names for cars and tracks, so the session card matches the lap list._
 
 - Unique constraints on `car.simhub_carid` and `race_track.simhub_trackid`. Check for duplicates in hosted and local first; the migration fails otherwise.
 - The load maps the sim session's `TrackId` / `CarId` to: track (id, name), car (id, make, model), category (id, name). Null when unmapped.
 - Fallback labels: humanized SimHub ids.
 
 ### F3. Bests rpc
-*As a viewer, I want every lap and sector compared with the right bests.*
+
+_As a viewer, I want every lap and sector compared with the right bests._
 
 - New rpc, e.g. `get_lounge_bests(p_session_id, p_track_id, p_category_id, p_testing)`. Returns one row per track + category combination: every combination present in the session's laps, plus the live one (from F2) if given.
 - Each row: app-wide best lap, app-wide best S1 / S2 / S3, session best lap, session best S1 / S2 / S3. Nulls when there is nothing to compare with.
@@ -116,7 +118,8 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 - Check the query plan on a realistic seed; add an index on `lap_time` if it helps (track + car, filtered by the test flag).
 
 ### F4. Load additions
-*As the UI streams, we want everything we need computed on the server.*
+
+_As the UI streams, we want everything we need computed on the server._
 
 - Bests from F3, keyed by track + category, so each lap can find its own.
 - For the latest lap of the active session: `ageMs`, computed on the server. Null when there is no active session or no lap.
@@ -124,7 +127,8 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 - The session's laps carry track and car ids plus category id, so the list can look up bests and group.
 
 ### F5. Pace classification, constants, colour tokens
-*As the UI streams, we want one implementation of the colour ladder.*
+
+_As the UI streams, we want one implementation of the colour ladder._
 
 - `classifyPace(time, bests, kind)` → `'record' | 'sessionBest' | 'onPace' | 'offPace' | 'neutral'`. `kind` is lap or S1 / S2 / S3. Unit tests cover each step of the ladder, ties, nulls and the band edge.
 - `$lib/config/lounge.ts` with the constants from Decision 7. Proposed `STATS_STALE_AFTER_S = 120`.
@@ -132,12 +136,14 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 - One shared label map: `record` → "Track Record", `sessionBest` → "Session best", `onPace` → "On pace".
 
 ### F6. Separator component
-*As the list and the session card, we want one separator look.*
+
+_As the list and the session card, we want one separator look._
 
 - Grey text label with a horizontal line, as in the list design. Used by S and C.
 
 ### F7. `zSessionStats` fixes and the `rainIntensity` rename
-*As the overlay, I want field names spelled the way SimHub spells them.*
+
+_As the overlay, I want field names spelled the way SimHub spells them._
 
 - `rainIntesity` → `rainIntensity` in the schema, the endpoint, the fake rig and `docs/rig-endpoints.md`.
 - **Coordinated with Alex:** the overlay config changes in the same release. Until then the endpoint answers `rejected` for the old name.
@@ -145,7 +151,8 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 - `SessionTypeName` keeps strings and numbers (that's what SimHub sends); the humanizer maps `7` → "Hotstint", `8` → "Superpole", unknown → "Session".
 
 ### F8. Seed and fake rig for the new states
-*As the developer, I want every new state reproducible locally.*
+
+_As the developer, I want every new state reproducible locally._
 
 - Seed: a session with two tracks and two cars (one shared category at one track), app-wide record laps in other sessions, a lap without sectors, enough laps to produce every colour.
 - Fake rig scenarios:
@@ -161,25 +168,29 @@ Sprint 1's principles still apply (thin routes, rpc as source of truth, revoke-t
 UI only. Owns `LiveLapCard.svelte`.
 
 ### L1. Current sector and split
-*As a viewer, I want to see the time in the sector being driven, in the right tile.*
+
+_As a viewer, I want to see the time in the sector being driven, in the right tile._
 
 - `currentSector` (1–3) decides which tile is in progress. `currentSplit` is shown in that tile, neutral (white or grey).
 - Completed sectors of this lap (`s1_ms`, `s2_ms`) show their time.
 - Future sectors show "–".
 
 ### L2. Sector colours
-*As a viewer, I want to see at a glance whether each completed sector was quick.*
+
+_As a viewer, I want to see at a glance whether each completed sector was quick._
 
 - Completed sectors take their colour from `classifyPace` with the bests of the live track + category (F2 / F3). The colour is shown as the tile's bar.
 - The sector in progress, and every sector when there is no mapping or no best, stays neutral.
 - `bestSx_ms` from the live stats is not used.
 
 ### L3. Invalid lap
+
 - Lap time in invalid red, plus the existing "Invalid" badge.
 - Sector colours still apply.
 
 ### L4. Freeze frame
-*As a viewer, I want the card to pause on a lap that just finished, so I can see all three sectors.*
+
+_As a viewer, I want the card to pause on a lap that just finished, so I can see all three sectors._
 
 - Implements Decision 5.
 - Frozen content: "Lap n" (session lap number), the final lap time, the lap's pace badge (Decision 1), three sector tiles with all three times coloured, full progress bar.
@@ -187,6 +198,7 @@ UI only. Owns `LiveLapCard.svelte`.
 - The set of seen lap ids survives Refresh (component state, not a fresh mount).
 
 ### L5. Delta badge colours
+
 - Lime green when faster, pink-red when slower (tokens from F5). The delta itself is unchanged.
 
 Progress bar: unchanged.
@@ -198,7 +210,8 @@ Progress bar: unchanged.
 UI only. Owns `SessionLaps.svelte`.
 
 ### S1. Two views and the toggle
-*As a viewer, I want a compact list when I just want the highlights.*
+
+_As a viewer, I want a compact list when I just want the highlights._
 
 - Icon toggle to the right of the section title: compact (list) and table. Default compact. Persisted (Decision 9).
 - **Compact:** no header. Each row:
@@ -214,11 +227,13 @@ UI only. Owns `SessionLaps.svelte`.
 - The +delta is removed from the list.
 
 ### S2. Sort
+
 - Small text button under the title: "Recent first" / "Fastest first". Default recent first. Persisted.
 - Lap numbers stay the session's chronological numbers in both sorts.
 
 ### S3. Track/car separators
-*As a viewer, I want to know which track and car a group of laps belongs to without reading it on every row.*
+
+_As a viewer, I want to know which track and car a group of laps belongs to without reading it on every row._
 
 - A pure function turns the sorted laps into groups. The page renders a separator (F6) with "Track · Car" before each group, in both views.
 - **Recent first:** a separator wherever track or car differs from the previous lap. A session that goes Brands → Spa → Brands shows Brands twice.
@@ -227,6 +242,7 @@ UI only. Owns `SessionLaps.svelte`.
 - Track and car are removed from the rows.
 
 ### S4. Accessibility
+
 - Each dot and crown has an accessible label ("S1: session best", "Track Record").
 - The view toggle and the sort button have labels and pressed states.
 
@@ -237,13 +253,15 @@ UI only. Owns `SessionLaps.svelte`.
 UI only. Owns `SessionCard.svelte`.
 
 ### C1. Collapsed by default
-*As a viewer, I want the session card to stay out of the way of the live lap.*
+
+_As a viewer, I want the session card to stay out of the way of the live lap._
 
 - One line: "{Session type} at {Track} · {Make Model}", e.g. "Practice at Brands Hatch · McLaren 720S". Truncated with an ellipsis to stay on one line; losing part of the car name is fine.
 - An arrow expands and collapses the card. Default collapsed. Persisted (Decision 9).
 - Empty state unchanged ("Waiting for session info from the rig.").
 
 ### C2. Expanded view
+
 Sections with the shared separator (F6):
 
 - **Session:** session type on one line, track on the next.
@@ -257,6 +275,7 @@ Sections with the shared separator (F6):
 - Unmapped ids fall back to the humanized SimHub id.
 
 ### C3. Stale stats
+
 - When the sim session stats are older than `STATS_STALE_AFTER_S`, show "Updated 12 min ago" (from `statsAgeMs`), in both states.
 
 ---
@@ -266,24 +285,29 @@ Sections with the shared separator (F6):
 Independent of the lounge. Can run from day one.
 
 ### X1. Sector conversion rounding
+
 - Check whether `convertTimeStringToMilliseconds` still multiplies a float without rounding. If so: `Math.round`, plus a test with a value that used to come out as `10861.999…`.
 
 ### X2. Sector sum tolerance
+
 - Measure first: a query over existing laps with sectors, showing how far `s1 + s2 + s3` is from the lap time.
 - Then decide: strict, or a ± tolerance in ms (a constant). Update the rejection rule and `docs/rig-endpoints.md`.
 
 ### X3. `rig-qr` bucket
+
 - Bucket declared in the repo (config or migration): public read, no client writes.
 - Seed rigs get a QR image locally.
 - `docs/rig-endpoints.md` gap note removed.
 
 ### X4. SimHub id completeness check
-*Launch requirement (Decision 4).*
+
+_Launch requirement (Decision 4)._
 
 - A query or script listing catalog cars and tracks without a SimHub id (hosted and local).
 - Filling the values in hosted is a data change for Alex (SQL editor, noted in the PR).
 
 ### X5. Docs
+
 - `docs/rig-endpoints.md`: `rainIntensity`, best sectors no longer used by the lounge, tolerance from X2, resolved open issues removed.
 - Open issue 6 (poll interval) stays open unless decided.
 
@@ -317,13 +341,13 @@ This is your four-way split, with the shared work pulled into F so the three com
 
 ### Session briefs
 
-| Session | Owns | Must not touch | Starts after |
-|---|---|---|---|
-| F | lounge load, `$lib/queries/rig.ts`, migrations, `$lib/config/lounge.ts`, `$lib/pace/*`, tokens, separator, `$lib/types/rig.ts`, rig endpoints (F7), seed, fake rig | — | — |
-| X | `$lib/server/rigs/*` (validation), migrations (bucket), `docs/rig-endpoints.md`, scripts | lounge files | — |
-| L | `LiveLapCard.svelte` (+ subcomponents) | server, types, other components | F merged |
-| S | `SessionLaps.svelte` (+ subcomponents, grouping function) | server, types, other components | F merged |
-| C | `SessionCard.svelte` (+ subcomponents) | server, types, other components | F merged |
+| Session | Owns                                                                                                                                                               | Must not touch                  | Starts after |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------- | ------------ |
+| F       | lounge load, `$lib/queries/rig.ts`, migrations, `$lib/config/lounge.ts`, `$lib/pace/*`, tokens, separator, `$lib/types/rig.ts`, rig endpoints (F7), seed, fake rig | —                               | —            |
+| X       | `$lib/server/rigs/*` (validation), migrations (bucket), `docs/rig-endpoints.md`, scripts                                                                           | lounge files                    | —            |
+| L       | `LiveLapCard.svelte` (+ subcomponents)                                                                                                                             | server, types, other components | F merged     |
+| S       | `SessionLaps.svelte` (+ subcomponents, grouping function)                                                                                                          | server, types, other components | F merged     |
+| C       | `SessionCard.svelte` (+ subcomponents)                                                                                                                             | server, types, other components | F merged     |
 
 ---
 
@@ -332,6 +356,7 @@ This is your four-way split, with the shared work pulled into F so the three com
 F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8, with X1–X5 alongside. Then L, S and C in parallel.
 
 **Cut line:**
+
 - Cannot slip: F (all), L1–L4, S1, S3, X1 (if the bug is still there), X4.
 - Can slip: the fill animation of the "Show live lap" button (a plain button that auto-dismisses is enough), S2, C3, X2 (stay strict), X3.
 
@@ -353,7 +378,7 @@ F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8, with X1–X5 alongside. The
 - **"Track Record" badge** may be too long on a phone; check the copy.
 - **`STATS_STALE_AFTER_S`:** 120 s proposed.
 - **`PACE_BAND`:** 1% for now; revisit after real laps.
-- **Delta badge source:** `deltaBest` is SimHub's delta to *its* best lap, while everything else now uses the database's bests. Kept for now because it's the only live delta available. Decide whether to keep it, relabel it, or replace it once realtime makes a computed delta possible.
+- **Delta badge source:** `deltaBest` is SimHub's delta to _its_ best lap, while everything else now uses the database's bests. Kept for now because it's the only live delta available. Decide whether to keep it, relabel it, or replace it once realtime makes a computed delta possible.
 
 ## Notes for Sprint 2 (realtime)
 

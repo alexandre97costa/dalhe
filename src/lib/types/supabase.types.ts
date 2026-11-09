@@ -754,6 +754,15 @@ export type Database = {
 				Args: { p_rig_id: string; p_timeout_minutes: number };
 				Returns: string;
 			};
+			get_driver_stats: {
+				Args: { p_driver_id: string; p_testing: boolean };
+				Returns: {
+					dominance: number;
+					podiums: number;
+					poles: number;
+					total_laps: number;
+				}[];
+			};
 			get_driver_timeline: {
 				Args: { driverid: string; testing: boolean };
 				Returns: {

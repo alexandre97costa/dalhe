@@ -35,7 +35,7 @@
 		<div
 			class="flex items-center justify-between gap-3 rounded-xl border border-purple-500/50 bg-purple-500/10 p-4"
 		>
-			<p class="flex min-w-0 items-start gap-2 font-medium text-sm">
+			<p class="flex min-w-0 items-start gap-2 text-sm font-medium">
 				<!-- <span
 					aria-hidden="true"
 					class="mt-2 size-2 shrink-0 animate-pulse rounded-full bg-purple-500"

@@ -10,7 +10,7 @@ Items deferred from sprints. Each one notes where it came from.
 
 - **Driver progress tab** (removed from the profile page on 2026-11-09). The profile had a "Progress" tab with an area chart (`DriverChart.svelte`), but it only showed shadcn's sample data (desktop/mobile visitors), never the driver's laps. The tab, the component and the `driver_profile_progress` string were removed; the shadcn chart component and `layerchart` stay (the lounge tachometer uses them). To bring it back: decide what "progress" means (e.g. best lap per track over time, or the last N laps on one car/track), add a query in `$lib/queries/driver.ts`, and a tab on `/driver/[slug]` next to Latest laps and Stats.
 
-- **Tournaments page** (from Sprint 0, S3). `/tournaments` renders only the nav; the seed has a tournament with participants and tracks ready for it. On the roadmap, after Sprints 0 and 1, as its own sprint or alongside realtime.
+- **Tournaments page** (from Sprint 0, S3). `/tournaments` renders only the nav, so its nav item was disabled on 2026-11-09 (`disabled: true` in `menuItems`, `Nav.svelte`: half opacity, not clickable). Enable it with the page. The seed has a tournament with participants and tracks ready for it. On the roadmap, after Sprints 0 and 1, as its own sprint or alongside realtime.
 
 ## Auth
 

@@ -4,7 +4,6 @@
 
 The refresh button could be bigger or at the very least a primary button.
 
-
 ## Session
 
 - The "Updated X min ago" label should be either inside the expanded view or below the refresh button
