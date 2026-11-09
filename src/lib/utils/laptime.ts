@@ -64,7 +64,10 @@ export function compareLaptimes(
 }
 
 // Lap time without the leading zero: 1:23.456. Under a minute (sectors): 34.102.
-export function formatLapClock(milliseconds: number | null | undefined, isSectors: boolean): string {
+export function formatLapClock(
+	milliseconds: number | null | undefined,
+	isSectors: boolean
+): string {
 	if (milliseconds === null || milliseconds === undefined) return '–:––.–––';
 	const ms = Math.max(0, Math.round(milliseconds));
 	const minutes = Math.floor(ms / 60_000);

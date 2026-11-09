@@ -8,23 +8,23 @@ Checked on 2026-11-06. Tick items as they're done; delete this file (or start a 
 
 The hosted database has only the first 3 of 18 migrations (`supabase migration list --linked`). Three of the 15 pending ones break something the code on `prod` uses today, so they can't go out early:
 
-| Migration                                           | Sprint | Breaks `prod`?                                                                                  |
-| --------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------- |
-| `20261029002729_lock_down_rig_writes`               | 1      | **Yes.** `connect_to_rig` takes new arguments; client write policies on rig tables are dropped. |
-| `20261029223121_rig_key`                            | 1      | No, but from then on the new rig endpoints require `?k=` (see Overlay).                         |
-| `20261030000014_insert_lap_outcomes`                | 1      | **Yes.** `insert_lap` returns an outcome instead of an id.                                      |
-| `20261030000440_rig_stats_upsert`                   | 1      | No (new function).                                                                              |
-| `20261030214753_lounge_bests`                       | 1.5    | No (new function).                                                                              |
-| `20261030214826_rig_qr_bucket`                      | 1.5    | No (new bucket).                                                                                |
-| `20261105171322_lounge_driver_avatar`               | 1.5    | No (`rig_status` gains a column).                                                               |
-| `20261106002555_rig_spectate`                       | 2      | No (nullable column, new function).                                                             |
-| `20261106002557_my_rigs`                            | 2      | No (`rig_status` same signature; new functions).                                                |
-| `20261106002559_user_tip`                           | 2      | No (new table).                                                                                 |
-| `20261108202214_home_driver_avatar`                 | 2      | No (`get_my_rigs` gains a column; `prod` doesn't call it).                                      |
-| `20261109103857_avatars_bucket_policies`            | —      | No (avatars bucket made public, upload limited to the user's own folder).                       |
-| `20261109120531_profiles_username_case_insensitive` | —      | No, if hosted has no usernames that differ only in case (see section 2).                        |
+| Migration                                           | Sprint | Breaks `prod`?                                                                                     |
+| --------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------- |
+| `20261029002729_lock_down_rig_writes`               | 1      | **Yes.** `connect_to_rig` takes new arguments; client write policies on rig tables are dropped.    |
+| `20261029223121_rig_key`                            | 1      | No, but from then on the new rig endpoints require `?k=` (see Overlay).                            |
+| `20261030000014_insert_lap_outcomes`                | 1      | **Yes.** `insert_lap` returns an outcome instead of an id.                                         |
+| `20261030000440_rig_stats_upsert`                   | 1      | No (new function).                                                                                 |
+| `20261030214753_lounge_bests`                       | 1.5    | No (new function).                                                                                 |
+| `20261030214826_rig_qr_bucket`                      | 1.5    | No (new bucket).                                                                                   |
+| `20261105171322_lounge_driver_avatar`               | 1.5    | No (`rig_status` gains a column).                                                                  |
+| `20261106002555_rig_spectate`                       | 2      | No (nullable column, new function).                                                                |
+| `20261106002557_my_rigs`                            | 2      | No (`rig_status` same signature; new functions).                                                   |
+| `20261106002559_user_tip`                           | 2      | No (new table).                                                                                    |
+| `20261108202214_home_driver_avatar`                 | 2      | No (`get_my_rigs` gains a column; `prod` doesn't call it).                                         |
+| `20261109103857_avatars_bucket_policies`            | —      | No (avatars bucket made public, upload limited to the user's own folder).                          |
+| `20261109120531_profiles_username_case_insensitive` | —      | No, if hosted has no usernames that differ only in case (see section 2).                           |
 | `20261109152935_lock_down_manual_laps`              | —      | **Yes.** `prod` still has the "+" manual lap entry; after the push it fails (laps only from rigs). |
-| `20261109153143_driver_stats`                       | —      | No (new function).                                                                              |
+| `20261109153143_driver_stats`                       | —      | No (new function).                                                                                 |
 
 So the database push and the `prod` deploy happen in one short window, and the overlay on every rig is updated in that same window (new endpoints need the rig key and the `rainIntensity` spelling).
 

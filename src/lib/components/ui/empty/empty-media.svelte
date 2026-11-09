@@ -7,7 +7,8 @@
 			variant: {
 				default: 'bg-transparent',
 				icon: "bg-muted text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg [&_svg:not([class*='size-'])]:size-4",
-				iconLg: "bg-muted text-foreground flex size-18 shrink-0 items-center justify-center rounded-lg [&_svg:not([class*='size-'])]:size-12"
+				iconLg:
+					"bg-muted text-foreground flex size-18 shrink-0 items-center justify-center rounded-lg [&_svg:not([class*='size-'])]:size-12"
 			}
 		},
 		defaultVariants: {

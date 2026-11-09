@@ -10,11 +10,14 @@
 	const maxBB = 30;
 	const preBB = Math.sign(value) == -1 ? maxBB - Math.abs(value) : maxBB;
 	const postBB = Math.sign(value) == 1 ? maxBB - Math.abs(value) : maxBB;
-    const currentColor = (
-        label == 'TC' ?  'var(--chart-1)' : '' +
-        label == 'ABS' ? 'var(--chart-2)' : '' +
-        label == 'BB' ?  'var(--chart-3)' : ''
-    )
+	const currentColor =
+		label == 'TC'
+			? 'var(--chart-1)'
+			: '' + label == 'ABS'
+				? 'var(--chart-2)'
+				: '' + label == 'BB'
+					? 'var(--chart-3)'
+					: '';
 
 	const chartConfig = {
 		muted: { label: 'muted', color: 'var(--muted)' },
@@ -22,7 +25,6 @@
 		ABS: { label: 'ABS', color: 'var(--chart-3)' },
 		BB: { label: 'BB', color: 'var(--chart-1)' }
 	} satisfies Chart.ChartConfig;
-
 </script>
 
 <Card.Root class="flex flex-col border-0 p-0 pt-9 pb-5 shadow-none">
@@ -47,7 +49,6 @@
 				range={[-135, 135]}
 				props={{ pie: { sort: null } }}
 				cornerRadius={4}
-				
 			>
 				{#snippet aboveMarks()}
 					<Text
@@ -58,7 +59,7 @@
 						dy={-48}
 					/>
 					<Text
-						value={isBB ? '-' + maxBB: '0'}
+						value={isBB ? '-' + maxBB : '0'}
 						textAnchor="middle"
 						verticalAnchor="middle"
 						class="text-muted-foreground/70 text-xs"
@@ -66,7 +67,7 @@
 						dx={-22}
 					/>
 					<Text
-                        value={isBB ? '+' + maxBB: maxValue}
+						value={isBB ? '+' + maxBB : maxValue}
 						textAnchor="middle"
 						verticalAnchor="middle"
 						class="text-muted-foreground/70 text-xs"

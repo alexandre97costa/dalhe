@@ -2,7 +2,7 @@
 
 How a sim rig talks to Dá-lhe!, seen from the rig. Part 1 is the checklist for bringing a new rig online. Part 2 is the endpoint reference. Part 3 describes what the SimHub overlay does with each endpoint.
 
-This describes the **Sprint 1 target**. Where the code isn't there yet, the story is noted (e.g. *A1*). Update this file when a story lands.
+This describes the **Sprint 1 target**. Where the code isn't there yet, the story is noted (e.g. _A1_). Update this file when a story lands.
 
 ---
 
@@ -10,7 +10,7 @@ This describes the **Sprint 1 target**. Where the code isn't there yet, the stor
 
 A rig is a row in `rig` with a public **UUID** and a secret **api key** (in `rig_key`). The UUID goes in the QR code and every link users see. The key lives only in the database and in the overlay config. The overlay knows both and sends them on every request. SimHub's Dash Studio can only send `GET`, so everything travels in the query string; there is no body. The app answers JSON, never cached (`Cache-Control: no-store`).
 
-Who is driving is decided on the **phone**, not the rig: a family member scans the QR, logs in, presses Connect. The rig only *asks* who is driving (poll) and *reports* what happens (laps, stats). It never tells the app who it thinks the driver is.
+Who is driving is decided on the **phone**, not the rig: a family member scans the QR, logs in, presses Connect. The rig only _asks_ who is driving (poll) and _reports_ what happens (laps, stats). It never tells the app who it thinks the driver is.
 
 ---
 
@@ -24,7 +24,7 @@ Creating a rig is a data change, so the SQL editor is allowed. Note it in the ne
   ```sql
   insert into public.rig (name) values ('Sala') returning id;
   ```
-- [ ] Create its key (*A1*). 32 hex characters, URL-safe, no encoding needed.
+- [ ] Create its key (_A1_). 32 hex characters, URL-safe, no encoding needed.
   ```sql
   insert into public.rig_key (rig_id, api_key)
   values ('<rig uuid>', replace(gen_random_uuid()::text, '-', ''))
@@ -60,13 +60,13 @@ The bucket is public on purpose: the UUID is public anyway, and the overlay can'
   ```
 - [ ] Bind the **NewValidLap** event to the lap-send action (see Part 3, "Send a lap").
 
-Anyone sitting at the rig can read this file. That's accepted: the key stops people who only *saw* the QR, not people at the rig (who could just drive).
+Anyone sitting at the rig can read this file. That's accepted: the key stops people who only _saw_ the QR, not people at the rig (who could just drive).
 
 ### 4. Verify
 
 Run these in order. Each step tells you which layer is broken if it fails.
 
-- [ ] **Poll:** with SimHub running, the overlay shows the rig name and "no driver". *Fails →* URL, UUID or key typo.
+- [ ] **Poll:** with SimHub running, the overlay shows the rig name and "no driver". _Fails →_ URL, UUID or key typo.
 - [ ] **Wrong key:** change one character of the key, restart the dash. Overlay shows "rig not recognized". Put it back.
 - [ ] **Connect:** scan the QR on the overlay, log in, press Connect. Within one poll interval the overlay shows your name.
 - [ ] **Lap:** drive one valid lap. Overlay shows "Lap saved". The lap appears in the lounge room under your name.
@@ -82,17 +82,17 @@ To test against the hosted database without polluting real leaderboards, point `
 All endpoints:
 
 - Method `GET`. Parameters in the query string.
-- `k` = the rig's api key. Required everywhere (*A1*).
+- `k` = the rig's api key. Required everywhere (_A1_).
 - Response is JSON, camelCase, `Cache-Control: no-store`.
 - Unknown rig, malformed UUID, missing or wrong key: **`404 {"error": "not_found"}`**, the same body for all of them on purpose.
 - `5xx`: server error. Safe to retry.
 
-| Endpoint | Purpose | Trigger | Story |
-|---|---|---|---|
-| `/rig/{uuid}` | Who's driving | Timer | *A2* |
-| `/rig/{uuid}/send/new` | New valid lap | NewValidLap event | *A3* |
-| `/rig/{uuid}/send/live` | Live lap stats | Timer, while on track | *A4* |
-| `/rig/{uuid}/send/session` | Sim session stats | Timer, or on change | *A4* |
+| Endpoint                   | Purpose           | Trigger               | Story |
+| -------------------------- | ----------------- | --------------------- | ----- |
+| `/rig/{uuid}`              | Who's driving     | Timer                 | _A2_  |
+| `/rig/{uuid}/send/new`     | New valid lap     | NewValidLap event     | _A3_  |
+| `/rig/{uuid}/send/live`    | Live lap stats    | Timer, while on track | _A4_  |
+| `/rig/{uuid}/send/session` | Sim session stats | Timer, or on change   | _A4_  |
 
 ### Poll: `GET /rig/{uuid}?k={key}`
 
@@ -102,24 +102,24 @@ Read-only. Never creates or closes anything; an expired session simply reports a
 { "rigName": "Sala", "sessionActive": true, "driverName": "Alex" }
 ```
 
-| `sessionActive` | `driverName` | Meaning | Overlay shows |
-|---|---|---|---|
-| `false` | `null` | Nobody connected, no laps recently | "No driver", QR |
-| `true` | `"Alex"` | Alex connected | "Driving: Alex" |
-| `true` | `null` | Anonymous session (laps arrived with nobody connected) | "No driver", QR |
+| `sessionActive` | `driverName` | Meaning                                                | Overlay shows   |
+| --------------- | ------------ | ------------------------------------------------------ | --------------- |
+| `false`         | `null`       | Nobody connected, no laps recently                     | "No driver", QR |
+| `true`          | `"Alex"`     | Alex connected                                         | "Driving: Alex" |
+| `true`          | `null`       | Anonymous session (laps arrived with nobody connected) | "No driver", QR |
 
 No ids in the response (Decision 3).
 
 ### New lap: `GET /rig/{uuid}/send/new?k={key}&...`
 
-| Param | Example | SimHub source |
-|---|---|---|
-| `laptime_ms` | `102431` | last lap time, in ms |
-| `s1_time` | `00:00:34.1200000` | last lap sector 1 |
-| `s2_time` | `00:00:38.0510000` | last lap sector 2 |
-| `s3_time` | `00:00:30.2600000` | last lap sector 3 |
-| `carId` | `mclaren_720s_gt3` | `GameData.CarId` |
-| `trackId` | `brands_hatch` | `GameData.TrackId` |
+| Param        | Example            | SimHub source        |
+| ------------ | ------------------ | -------------------- |
+| `laptime_ms` | `102431`           | last lap time, in ms |
+| `s1_time`    | `00:00:34.1200000` | last lap sector 1    |
+| `s2_time`    | `00:00:38.0510000` | last lap sector 2    |
+| `s3_time`    | `00:00:30.2600000` | last lap sector 3    |
+| `carId`      | `mclaren_720s_gt3` | `GameData.CarId`     |
+| `trackId`    | `brands_hatch`     | `GameData.TrackId`   |
 
 Rules:
 
@@ -136,57 +136,57 @@ Responses (all `200`):
 { "status": "rejected", "reason": "sectors_mismatch" }
 ```
 
-| Status | What happened in the database | Overlay should |
-|---|---|---|
-| `created` | Lap inserted; session's `last_activity_at` refreshed | Stop. Show "Lap saved" |
-| `duplicate` | Nothing. Already saved earlier | Stop. Show "Lap saved" too |
-| `rejected` | Nothing. Logged server-side with its params (never the key) | Stop. Show "Lap not saved" |
+| Status      | What happened in the database                               | Overlay should             |
+| ----------- | ----------------------------------------------------------- | -------------------------- |
+| `created`   | Lap inserted; session's `last_activity_at` refreshed        | Stop. Show "Lap saved"     |
+| `duplicate` | Nothing. Already saved earlier                              | Stop. Show "Lap saved" too |
+| `rejected`  | Nothing. Logged server-side with its params (never the key) | Stop. Show "Lap not saved" |
 
 `duplicate` is how a retry finds out its earlier attempt worked (the response was lost, the lap wasn't), so the overlay treats it as success.
 
-Rejection reasons: `invalid_params`, `sectors_mismatch`, `unknown_car`, `unknown_track`. *(Exact strings to be fixed in A3; keep them in sync here.)*
+Rejection reasons: `invalid_params`, `sectors_mismatch`, `unknown_car`, `unknown_track`. _(Exact strings to be fixed in A3; keep them in sync here.)_
 
 ### Live lap stats: `GET /rig/{uuid}/send/live?k={key}&...`
 
 Current lap, for the lounge room's live card. Latest value only, no history.
 
-| Param | Notes |
-|---|---|
-| `lapNumber` | |
-| `lapTotalCount` | optional |
-| `laptime_ms` | current lap time so far |
-| `deltaBest` | vs best lap |
-| `progress` | 0 to 1 |
-| `valid` | `true`/`false` |
-| `currentSector` | 1–3 |
-| `currentSplit` | |
-| `s1_ms`, `s2_ms` | optional, once completed |
+| Param                                 | Notes                                                                                                                 |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `lapNumber`                           |                                                                                                                       |
+| `lapTotalCount`                       | optional                                                                                                              |
+| `laptime_ms`                          | current lap time so far                                                                                               |
+| `deltaBest`                           | vs best lap                                                                                                           |
+| `progress`                            | 0 to 1                                                                                                                |
+| `valid`                               | `true`/`false`                                                                                                        |
+| `currentSector`                       | 1–3                                                                                                                   |
+| `currentSplit`                        |                                                                                                                       |
+| `s1_ms`, `s2_ms`                      | optional, once completed                                                                                              |
 | `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | optional; accepted and stored, but no longer used by the lounge (bests come from the database, Sprint 1.5 Decision 2) |
 
 ### Sim session stats: `GET /rig/{uuid}/send/session?k={key}&...`
 
 The game's practice/race session (the **sim session**), for the lounge room's session card.
 
-| Param | Example |
-|---|---|
-| `CurrentGame` | `AssettoCorsaCompetizione` |
-| `TrackId` | `brands_hatch` |
-| `SessionTypeName` | `PRACTICE`, `HOTLAP`, `RACE`, `7` (hotstint), `8` (superpole): strings and numbers, as SimHub sends them; humanized by the app (unknown → Session) |
-| `CarId` | `audi_r8_lms_evo` |
-| `CarClass` | `GT3` |
-| `TCLevel`, `ABSLevel`, `BrakeBias` | `6`, `5`, `-17` |
-| `AirTemperature`, `TrackTemperature` | `30`, `37` |
-| `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` | `ACC_NO_RAIN` |
+| Param                                                           | Example                                                                                                                                            |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CurrentGame`                                                   | `AssettoCorsaCompetizione`                                                                                                                         |
+| `TrackId`                                                       | `brands_hatch`                                                                                                                                     |
+| `SessionTypeName`                                               | `PRACTICE`, `HOTLAP`, `RACE`, `7` (hotstint), `8` (superpole): strings and numbers, as SimHub sends them; humanized by the app (unknown → Session) |
+| `CarId`                                                         | `audi_r8_lms_evo`                                                                                                                                  |
+| `CarClass`                                                      | `GT3`                                                                                                                                              |
+| `TCLevel`, `ABSLevel`, `BrakeBias`                              | `6`, `5`, `-17`                                                                                                                                    |
+| `AirTemperature`, `TrackTemperature`                            | `30`, `37`                                                                                                                                         |
+| `rainIntensity`, `rainIntensityIn10min`, `rainIntensityIn30min` | `ACC_NO_RAIN`                                                                                                                                      |
 
 The old spelling `rainIntesity` (before Sprint 1.5) is now `rejected` with `invalid_params`: the overlay config must send `rainIntensity` from the same release.
 
 ### Stats responses (both endpoints, all `200`)
 
-| Status | Meaning |
-|---|---|
-| `ok` | Stored on the rig's stats row |
-| `ignored` | No active session. Nothing written (a game left open in the menu costs nothing) |
-| `rejected` | Invalid params. Nothing written |
+| Status     | Meaning                                                                         |
+| ---------- | ------------------------------------------------------------------------------- |
+| `ok`       | Stored on the rig's stats row                                                   |
+| `ignored`  | No active session. Nothing written (a game left open in the menu costs nothing) |
+| `rejected` | Invalid params. Nothing written                                                 |
 
 Stats never create a session and never refresh `last_activity_at`. Consequence: an anonymous driver's stats are `ignored` until their first lap creates the session.
 
@@ -212,7 +212,7 @@ Suggested interval: **5 s**. Every poll is a serverless call plus a database que
 
 Triggered by SimHub's **NewValidLap** event.
 
-1. Capture the lap's values *at the event* into variables (the "pending lap"). Don't re-read SimHub later; by then the sector values belong to the next lap.
+1. Capture the lap's values _at the event_ into variables (the "pending lap"). Don't re-read SimHub later; by then the sector values belong to the next lap.
 2. Send `/send/new` with the pending lap.
 3. On the response:
    - `200` with a `status`: done. Clear the pending lap. Show feedback for a few seconds ("Lap saved" for `created` and `duplicate`, "Lap not saved" for `rejected`).
@@ -247,14 +247,14 @@ The UUID, QR, links, lap history and `rig_drivers` are untouched.
 
 ### Troubleshooting
 
-| Symptom | Likely cause |
-|---|---|
-| Overlay says "Rig not recognized" | UUID or key typo in config; rig row or `rig_key` row missing |
-| Name doesn't appear after connecting | Poll interval; or the connect failed (check the phone) |
-| Lap "not saved" | Unmapped car/track (check server logs for the rejected lap); sectors don't add up |
-| Lap saved but unclaimed | Nobody was connected, or the session expired (`SESSION_TIMEOUT_MINS`, 120 by default) |
-| Lounge stats empty | No active session (stats are `ignored`); or not on track |
-| Overlay shows an HTML/garbled response | Vercel deployment protection on a preview URL |
+| Symptom                                | Likely cause                                                                          |
+| -------------------------------------- | ------------------------------------------------------------------------------------- |
+| Overlay says "Rig not recognized"      | UUID or key typo in config; rig row or `rig_key` row missing                          |
+| Name doesn't appear after connecting   | Poll interval; or the connect failed (check the phone)                                |
+| Lap "not saved"                        | Unmapped car/track (check server logs for the rejected lap); sectors don't add up     |
+| Lap saved but unclaimed                | Nobody was connected, or the session expired (`SESSION_TIMEOUT_MINS`, 120 by default) |
+| Lounge stats empty                     | No active session (stats are `ignored`); or not on track                              |
+| Overlay shows an HTML/garbled response | Vercel deployment protection on a preview URL                                         |
 
 ---
 
@@ -263,5 +263,5 @@ The UUID, QR, links, lap history and `rig_drivers` are untouched.
 Found while writing this. Each is small; each needs an owner.
 
 2. **Sector sum tolerance.** Decided in Sprint 1.5 (X2): strict, because no stored lap had sectors to measure against. Revisit with the first real laps: if valid laps get `sectors_mismatch` by 1–2 ms (check the server logs for "Lap rejected"), add a tolerance constant next to the check in `submitLap`.
-4. **Duplicate key is global.** `lap_time_dedupe_uniq` ignores rig and driver. Two people setting the exact same time and sectors on the same car and track (to the millisecond) would collide. Practically impossible; noted so nobody "discovers" it later.
-6. **Poll cost.** Decide the poll interval before it ships; the overlay runs all day on some rigs.
+3. **Duplicate key is global.** `lap_time_dedupe_uniq` ignores rig and driver. Two people setting the exact same time and sectors on the same car and track (to the millisecond) would collide. Practically impossible; noted so nobody "discovers" it later.
+4. **Poll cost.** Decide the poll interval before it ships; the overlay runs all day on some rigs.

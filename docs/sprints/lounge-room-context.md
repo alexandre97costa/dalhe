@@ -57,53 +57,53 @@ Context for planning lounge changes. Describes the page as merged into `preview`
 
 Field names are SimHub's. The whole object is optional on the page (`null` = no stats yet).
 
-| Field | Type | Shown? |
-| --- | --- | --- |
-| `CurrentGame` | `'AssettoCorsaCompetizione'` | no |
-| `TrackId` | string (SimHub id, `brands_hatch`) | card title |
-| `SessionTypeName` | `'PRACTICE' \| 'HOTLAP' \| 'RACE' \| 7 (hotstint) \| 8 (superpole)` | badge |
-| `CarId` | string (SimHub id, `audi_r8_lms_evo`) | badge (humanized id) |
-| `CarClass` | string, optional (GT3) | badge |
-| `TCLevel` | int ≥ 0 (0 = off) | badge |
-| `ABSLevel` | int ≥ 0 (0 = off) | badge |
-| `BrakeBias` | int (−17) | badge |
-| `AirTemperature` | int °C | badge |
-| `TrackTemperature` | int °C | badge |
-| `rainIntesity` | `ACC_NO_RAIN \| ACC_DRIZZLE \| ACC_LIGHT_RAIN \| ACC_MEDIUM_RAIN \| ACC_HEAVY_RAIN \| ACC_THUNDERSTORM` | badge |
-| `rainIntensityIn10min` | same | **no** |
-| `rainIntensityIn30min` | same | **no** |
+| Field                  | Type                                                                                                    | Shown?               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- | -------------------- |
+| `CurrentGame`          | `'AssettoCorsaCompetizione'`                                                                            | no                   |
+| `TrackId`              | string (SimHub id, `brands_hatch`)                                                                      | card title           |
+| `SessionTypeName`      | `'PRACTICE' \| 'HOTLAP' \| 'RACE' \| 7 (hotstint) \| 8 (superpole)`                                     | badge                |
+| `CarId`                | string (SimHub id, `audi_r8_lms_evo`)                                                                   | badge (humanized id) |
+| `CarClass`             | string, optional (GT3)                                                                                  | badge                |
+| `TCLevel`              | int ≥ 0 (0 = off)                                                                                       | badge                |
+| `ABSLevel`             | int ≥ 0 (0 = off)                                                                                       | badge                |
+| `BrakeBias`            | int (−17)                                                                                               | badge                |
+| `AirTemperature`       | int °C                                                                                                  | badge                |
+| `TrackTemperature`     | int °C                                                                                                  | badge                |
+| `rainIntesity`         | `ACC_NO_RAIN \| ACC_DRIZZLE \| ACC_LIGHT_RAIN \| ACC_MEDIUM_RAIN \| ACC_HEAVY_RAIN \| ACC_THUNDERSTORM` | badge                |
+| `rainIntensityIn10min` | same                                                                                                    | **no**               |
+| `rainIntensityIn30min` | same                                                                                                    | **no**               |
 
 Also available: `statsUpdatedAt.simSession`, the time of the last `/send/session`. **Not shown.**
 
 ### Live lap: `LapStats` (`zLapStats` in `src/lib/types/rig.ts`)
 
-| Field | Type | Shown? |
-| --- | --- | --- |
-| `lapNumber` | int ≥ 0 | "Lap n" |
-| `lapTotalCount` | int, optional | "/ total" |
-| `laptime_ms` | int ms, running time of the current lap | big time |
-| `deltaBest` | number, **seconds**, vs best lap | delta badge |
-| `progress` | 0–1, position in the lap | progress bar |
-| `valid` | boolean | "Invalid" badge |
-| `currentSector` | 1–3 | highlighted tile |
-| `currentSplit` | int ms | **no** |
-| `s1_ms`, `s2_ms` | int ms, optional, completed sectors of this lap | sector tiles |
-| `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | int ms, optional, best sectors | purple bar only (the values themselves aren't shown) |
+| Field                                 | Type                                            | Shown?                                               |
+| ------------------------------------- | ----------------------------------------------- | ---------------------------------------------------- |
+| `lapNumber`                           | int ≥ 0                                         | "Lap n"                                              |
+| `lapTotalCount`                       | int, optional                                   | "/ total"                                            |
+| `laptime_ms`                          | int ms, running time of the current lap         | big time                                             |
+| `deltaBest`                           | number, **seconds**, vs best lap                | delta badge                                          |
+| `progress`                            | 0–1, position in the lap                        | progress bar                                         |
+| `valid`                               | boolean                                         | "Invalid" badge                                      |
+| `currentSector`                       | 1–3                                             | highlighted tile                                     |
+| `currentSplit`                        | int ms                                          | **no**                                               |
+| `s1_ms`, `s2_ms`                      | int ms, optional, completed sectors of this lap | sector tiles                                         |
+| `bestS1_ms`, `bestS2_ms`, `bestS3_ms` | int ms, optional, best sectors                  | purple bar only (the values themselves aren't shown) |
 
 Also available: `statsUpdatedAt.liveLap`, the time of the last `/send/live`. **Not shown.** There's no S3 for the lap in progress, because a lap ends when S3 completes. The finished lap then arrives via `/send/new`.
 
 ### Session laps and unclaimed laps: `LoungeLap` (`src/lib/queries/rig.ts`)
 
-| Field | Type | Shown? |
-| --- | --- | --- |
-| `id` | number | (key) |
-| `time_milliseconds` | int ms | lap time |
-| `sector1_ms`, `sector2_ms`, `sector3_ms` | int ms, nullable | S1 S2 S3 |
-| `created_at` | timestamp | banner "Just now", unclaimed "x ago" |
-| `driver.username` | string or null (unclaimed) | banner only |
-| `car.model`, `car.car_make.name` | strings | "Porsche 911 II" |
-| `car.car_category.name` | string (GT3…) | **no** |
-| `race_track.name` | string | track |
+| Field                                    | Type                       | Shown?                               |
+| ---------------------------------------- | -------------------------- | ------------------------------------ |
+| `id`                                     | number                     | (key)                                |
+| `time_milliseconds`                      | int ms                     | lap time                             |
+| `sector1_ms`, `sector2_ms`, `sector3_ms` | int ms, nullable           | S1 S2 S3                             |
+| `created_at`                             | timestamp                  | banner "Just now", unclaimed "x ago" |
+| `driver.username`                        | string or null (unclaimed) | banner only                          |
+| `car.model`, `car.car_make.name`         | strings                    | "Porsche 911 II"                     |
+| `car.car_category.name`                  | string (GT3…)              | **no**                               |
+| `race_track.name`                        | string                     | track                                |
 
 Computed on the page: the session best (minimum time), each lap's delta to it, and the lap number (count from the oldest).
 

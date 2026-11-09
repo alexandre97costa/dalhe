@@ -42,7 +42,8 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 ## Front C: Clean
 
 ### C1. Remove dead and demo code
-*As the developer, I want only live code in the repo, so neither I nor Claude Code waste time reading the wrong files.*
+
+_As the developer, I want only live code in the repo, so neither I nor Claude Code waste time reading the wrong files._
 
 - `/demo/*` and `/testing/*` routes deleted; `/testing` paths removed from the `hooks.server.ts` allowlist.
 - Unused components removed after a usage check (`HeroBanner2`, `New`, any other unreferenced file).
@@ -50,20 +51,23 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 - App builds and every remaining route loads.
 
 ### C2. Dedupe JS/TS twins
-*As the developer, I want one file per module, so imports are unambiguous.*
+
+_As the developer, I want one file per module, so imports are unambiguous._
 
 - Each `index.js` / `index.ts` pair and `utils.js` / `utils.ts` reduced to the `.ts` version; imports updated.
 - Remaining `.js` files in `src/lib` listed in the backlog (not converted now).
 
 ### C3. Supabase client rules
-*As the developer, I want one documented rule for which client to use, so RLS is never bypassed by accident.*
+
+_As the developer, I want one documented rule for which client to use, so RLS is never bypassed by accident._
 
 - `supabaseClient.ts` removed if unused, or its remaining use documented.
 - `supabaseAdmin` only importable from `$lib/server/` (already the case; keep it so).
 - The rule is written in `CLAUDE.md` (D2): SSR client by default, admin client only for rig endpoints and with a reason.
 
 ### C4. Type check script
-*As the developer, I want `pnpm check` to catch type errors, so Claude Code can verify its own work.*
+
+_As the developer, I want `pnpm check` to catch type errors, so Claude Code can verify its own work._
 
 - `check` script running `svelte-check` added.
 - Current errors either fixed (if few) or listed in the backlog. The script runs clean or with a known baseline.
@@ -73,7 +77,8 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 ## Front S: Supabase
 
 ### S1. Local toolchain
-*As the developer, I want the Supabase CLI and a local stack, so I can develop without touching prod.*
+
+_As the developer, I want the Supabase CLI and a local stack, so I can develop without touching prod._
 
 - Docker Desktop installed with the WSL2 backend.
 - Supabase CLI added as a dev dependency, and `supabase` added to `pnpm.onlyBuiltDependencies` in `package.json` (pnpm otherwise blocks the install script that downloads the CLI binary).
@@ -81,7 +86,8 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 - `supabase start` runs; local Studio opens. If the analytics/logging containers fail on Windows, disable analytics in `config.toml` (not needed for this app).
 
 ### S2. Baseline migration
-*As the developer, I want the current hosted schema as a migration, so the repo becomes the source of truth.*
+
+_As the developer, I want the current hosted schema as a migration, so the repo becomes the source of truth._
 
 - `supabase db pull` creates the baseline in `supabase/migrations/`, including tables, rpcs, RLS policies, triggers and grants.
 - Auth/storage objects checked separately (e.g. a trigger that creates `profiles` on sign-up lives on `auth.users`).
@@ -89,35 +95,40 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 - **Done when:** `supabase db reset` locally recreates the schema, and a diff against the linked project is empty.
 
 ### S3. Seed data
-*As the developer, I want a local database with realistic data, so pages are not empty.*
+
+_As the developer, I want a local database with realistic data, so pages are not empty._
 
 - `supabase/seed.sql` with reference data (game, cars, tracks, reference times) plus synthetic drivers, rigs, sessions and laps.
 - At least two local users that can log in (magic link via the local mail inbox).
 - No real personal data (Decision 2).
 
 ### S4. Automatic types
-*As the developer, I want types generated from the database, so I never download them from the dashboard again.*
+
+_As the developer, I want types generated from the database, so I never download them from the dashboard again._
 
 - `pnpm db:types` generates `src/lib/types/supabase.types.ts` from the local database.
 - Convenience script that resets the local database and regenerates types in one go.
 - Generated file is committed; a header comment says it is generated.
 
 ### S5. Local environment config
-*As the developer, I want the app to point at the local stack by default in dev.*
+
+_As the developer, I want the app to point at the local stack by default in dev._
 
 - `.env.example` committed with every variable the app needs (no values for secrets).
 - Local values documented (taken from `supabase status`).
 - Login works locally. Google sign-in is optional locally; magic link is enough.
 
 ### S6. Change workflow and prod release
-*As the developer, I want one documented way to change the database, so dashboard edits stop.*
+
+_As the developer, I want one documented way to change the database, so dashboard edits stop._
 
 - Documented loop: change locally → create migration (`db diff` or `migration new`) → `db reset` → `db:types` → commit on `preview` → `db push` to prod when releasing.
 - Rule: the hosted dashboard is read-only from now on (except data fixes, noted in the PR).
 - First real use: a trivial migration (e.g. a table comment) goes through the whole loop to prod.
 
 ### S7. (Optional) Migrations on merge to `prod`
-*As the developer, I want migrations applied automatically when I release.*
+
+_As the developer, I want migrations applied automatically when I release._
 
 - GitHub Action runs `supabase db push` on merge to `prod`.
 - Only if Decision 4 says so. Otherwise backlog.
@@ -127,7 +138,8 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 ## Front D: Docs
 
 ### D1. `docs/` folder
-*As the developer, I want all planning and design docs in one place.*
+
+_As the developer, I want all planning and design docs in one place._
 
 - `docs/sprints/` (sprint-0, sprint-1), `docs/roadmap.md`, `docs/decisions/` (short notes on choices and why).
 - `md/`, `home/plan.md` and `rig/[slug]/doc.md` moved or deleted; `sprint-1-initial.md` deleted.
@@ -135,7 +147,8 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 - shadcn-svelte skill moved to `.claude/skills/` so Claude Code picks it up.
 
 ### D2. `CLAUDE.md`
-*As Claude Code, I want a project brief that loads every session, so I start informed.*
+
+_As Claude Code, I want a project brief that loads every session, so I start informed._
 
 - Stack, commands (`dev`, `check`, `db:types`, `db reset`), folder map.
 - Conventions: thin routes, rpc as source of truth, `$lib/server/rigs/`, client rule (C3), Cache-Control on rig endpoints.
@@ -145,7 +158,8 @@ Out of scope: rewriting queries to a new pattern, converting all JS to TS, CI pi
 - `.mcp.json` with the Supabase server in read-only mode.
 
 ### D3. Sprint doc mirror
-*As the developer, I want the repo's sprint docs to match the Project's.*
+
+_As the developer, I want the repo's sprint docs to match the Project's._
 
 - `docs/sprints/` matches the Project at sprint start; updated again at sprint end with what actually happened.
 
