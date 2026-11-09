@@ -242,7 +242,7 @@
 	"lounge_unclaimed_load_error": "Não foi possível carregar as voltas por reclamar. Usa Atualizar para tentar de novo.",
 	"lounge_refresh_error": "Não foi possível atualizar. A mostrar os últimos dados.",
 	"home_rigs_title": "Os teus cockpits",
-	"home_rigs_empty": "Lê o código QR de um cockpit para começar.",
+	"home_rigs_empty": "Lê o código QR de um cockpit para começar. As tuas voltas vão aparecer aqui!",
 	"home_rig_status_free": "Disponível",
 	"home_rig_status_driving": "{#b}{driverName}{/b} está a conduzir!",
 	"home_rig_status_anonymous": "Sessão anónima",

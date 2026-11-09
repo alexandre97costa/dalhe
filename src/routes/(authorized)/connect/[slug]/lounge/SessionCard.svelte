@@ -202,7 +202,7 @@
 						<Marker.Root variant="separator">
 							<Marker.Content>{m.lounge_section_temperature()}</Marker.Content>
 						</Marker.Root>
-						<div class="grid grid-cols-2 gap-2">
+						<div class="flex justify-evenly gap-2">
 							<div class="flex min-w-0 flex-col items-center gap-2">
 								<dt class="text-muted-foreground truncate text-xs">{m.lounge_air_temp()}</dt>
 								<dd class="flex min-w-0 items-center gap-2 text-lg">
