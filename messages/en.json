@@ -238,7 +238,7 @@
 	"lounge_unclaimed_load_error": "Couldn't load the unclaimed laps. Use Refresh to try again.",
 	"lounge_refresh_error": "Couldn't refresh. Showing the last data.",
 	"home_rigs_title": "Your rigs",
-	"home_rigs_empty": "Scan the QR code on a rig to get started.",
+	"home_rigs_empty": "Scan the QR code on a rig to get started. Your laps will appear here!",
 	"home_rig_status_free": "Empty seat",
 	"home_rig_status_driving": "{#b}{driverName}{/b} is driving!",
 	"home_rig_status_anonymous": "Anonymous session",

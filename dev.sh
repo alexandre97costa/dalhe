@@ -10,29 +10,26 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}=== Starting Local Development Environment (Windows) ===${NC}\n"
 
 # 1. Start the local Supabase containers
-echo -e "${BLUE}[1/5] Initializing Supabase...${NC}"
+echo -e "${BLUE}[1/4] Initializing Supabase...${NC}"
 pnpm exec supabase start
 
 # 2. Reset and seed the database
-echo -e "\n${BLUE}[2/5] Resetting database...${NC}"
+echo -e "\n${BLUE}[2/4] Resetting database...${NC}"
 pnpm db:reset
 
 # 3. Spin up the Vite/Dev server in the background
-echo -e "\n${BLUE}[3/5] Launching development server...${NC}"
+echo -e "\n${BLUE}[3/4] Launching development server...${NC}"
 pnpm run dev &
 DEV_SERVER_PID=$!
 
 # Give the dev server 3 seconds to spin up before opening browsers
-sleep 10
+sleep 3
 
 # 4 & 5. Open the target URLs using native Windows execution
-echo -e "\n${BLUE}[4/5] Opening local application and Supabase studio...${NC}"
+echo -e "\n${BLUE}[4/4] Opening local app, Mailpit and Supabase Studio...${NC}"
 start "http://localhost:5173/connect/b0000000-0000-4000-8000-000000000002/lounge"
-start "http://127.0.0.1:54324"
-
-# 6. Output the explicit test link
-echo -e "\n${BLUE}[5/5] Deep link for testing:${NC}"
-echo -e "${GREEN}http://localhost:5173/connect/b0000000-0000-4000-8000-000000000002/lounge${NC}\n"
+start "http://localhost:54324" # mailpit
+start "http://localhost:54323/project/default/database/schemas" # supabase studio
 
 echo -e "${GREEN}✔ Environment is up and running!${NC}"
 echo "Press Ctrl+C to stop the development server."

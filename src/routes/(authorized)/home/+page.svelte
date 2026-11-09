@@ -16,7 +16,9 @@
 		SlidersHorizontal,
 		CircleUserRound,
 		ListFilter,
-		Swords
+		Swords,
+		Monitor,
+		Timer
 	} from '@lucide/svelte';
 
 	title.set(m.nav_home());
@@ -35,16 +37,23 @@
 	});
 </script>
 
-<div class="mb-6">
+<div class="mb-6 flex flex-1 flex-col gap-3">
+	{#if data.rigs.others.length > 0}
+		<span class="text-foreground flex items-center gap-3 text-xl font-medium tracking-tight">
+			<Monitor size={21} />
+			{m.home_rigs_title()}
+		</span>
+	{/if}
 	<RigCard rigs={data.rigs} />
 </div>
 
 {#if showFilters}
 	<div class=" bg-background sticky top-[57px] mb-1 flex items-center justify-between py-2">
 		<div class="flex flex-1 flex-col">
-			<span class="text-foreground text-xl font-medium tracking-tight"
-				>{m.home_recent_laptimes()}</span
-			>
+			<span class="text-foreground flex items-center gap-3 text-xl font-medium tracking-tight">
+				<Timer size={21} />
+				{m.home_recent_laptimes()}
+			</span>
 			<!-- <span class="text-muted-foreground text-sm">{m.home_recent_laptimes_description()}</span> -->
 		</div>
 		<!-- <Button variant="outline">
