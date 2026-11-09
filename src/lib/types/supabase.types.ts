@@ -5,6 +5,25 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
 	public: {
 		Tables: {
+			app_settings: {
+				Row: {
+					id: boolean;
+					manual_laps_enabled: boolean;
+					updated_at: string;
+				};
+				ComputedFields: never;
+				Insert: {
+					id?: boolean;
+					manual_laps_enabled?: boolean;
+					updated_at?: string;
+				};
+				Update: {
+					id?: boolean;
+					manual_laps_enabled?: boolean;
+					updated_at?: string;
+				};
+				Relationships: [];
+			};
 			car: {
 				Row: {
 					category_id: number | null;
@@ -839,6 +858,22 @@ export type Database = {
 					p_s2_ms: number;
 					p_s3_ms: number;
 					p_timeout_minutes: number;
+					p_track_id: number;
+				};
+				Returns: {
+					lap_id: number;
+					status: string;
+				}[];
+			};
+			insert_manual_lap: {
+				Args: {
+					p_car_id: number;
+					p_for_testing?: boolean;
+					p_game_id: number;
+					p_lap_time_ms: number;
+					p_s1_ms?: number;
+					p_s2_ms?: number;
+					p_s3_ms?: number;
 					p_track_id: number;
 				};
 				Returns: {

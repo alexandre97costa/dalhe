@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { convertTimeStringToMilliseconds } from './laptime';
+import {
+	convertTimeStringToMilliseconds,
+	digitsToMilliseconds,
+	lastSectorMilliseconds
+} from './laptime';
 
 // SimHub sends sector times as HH:MM:SS.fffffff. Float seconds times 1000 can land just off an
 // integer (8.001 * 1000 = 8000.999…), which used to fail the `.int()` check and reject the lap.
@@ -33,5 +37,39 @@ describe('convertTimeStringToMilliseconds', () => {
 		expect(convertTimeStringToMilliseconds('')).toBeNull();
 		expect(convertTimeStringToMilliseconds('29.165')).toBeNull();
 		expect(convertTimeStringToMilliseconds('not a time')).toBeNull();
+	});
+});
+
+describe('digitsToMilliseconds', () => {
+	it('reads MMSSmmm', () => {
+		expect(digitsToMilliseconds('0127898')).toBe(87_898);
+		expect(digitsToMilliseconds('0029165')).toBe(29_165);
+		expect(digitsToMilliseconds('1000000')).toBe(600_000);
+		expect(digitsToMilliseconds('0000000')).toBe(0);
+	});
+
+	it('refuses anything that is not 7 digits or has 60+ seconds', () => {
+		expect(digitsToMilliseconds('')).toBeNull();
+		expect(digitsToMilliseconds('012789')).toBeNull();
+		expect(digitsToMilliseconds('01278980')).toBeNull();
+		expect(digitsToMilliseconds('01:27.898')).toBeNull();
+		expect(digitsToMilliseconds('0160000')).toBeNull();
+	});
+});
+
+describe('lastSectorMilliseconds', () => {
+	it('is the lap minus S1 and S2', () => {
+		expect(lastSectorMilliseconds(87_898, 29_165, 31_318)).toBe(27_415);
+	});
+
+	it('is null until all three are known', () => {
+		expect(lastSectorMilliseconds(null, 29_165, 31_318)).toBeNull();
+		expect(lastSectorMilliseconds(87_898, null, 31_318)).toBeNull();
+		expect(lastSectorMilliseconds(87_898, 29_165, null)).toBeNull();
+	});
+
+	it('can be zero or negative (the form refuses it)', () => {
+		expect(lastSectorMilliseconds(60_000, 30_000, 30_000)).toBe(0);
+		expect(lastSectorMilliseconds(60_000, 40_000, 30_000)).toBe(-10_000);
 	});
 });
