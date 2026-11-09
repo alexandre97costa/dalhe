@@ -30,7 +30,7 @@ export interface LeaderboardEntry {
 export interface DriverProfileProps {
 	driverForm: SuperValidated<Infer<DriverSchema>>;
 	username: string;
-	photoUrl: string;
+	photoUrl: string | null;
 	bio?: string;
 	isCurrentUser: boolean;
 }

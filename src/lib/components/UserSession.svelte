@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { redirect } from '@sveltejs/kit';
 	import { m } from '$lib/paraglide/messages.js';
 	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import { resetMode, setMode } from 'mode-watcher';
@@ -7,7 +6,7 @@
 	import Button from './ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	import { Moon, Sun, Monitor, ChevronDownIcon } from '@lucide/svelte';
+	import { Moon, Sun, Monitor, ChevronDownIcon, LogOut } from '@lucide/svelte';
 
 	let { user = $bindable(null), open = $bindable(false) } = $props();
 	let theme: 'light' | 'dark' | 'system' = $state('system');
@@ -21,7 +20,7 @@
 <!-- <Button variant="cta" size="sm" onclick={() => supabase.auth.signInWithOAuth({ provider: 'google' })}> -->
 
 <DropdownMenu.Root bind:open>
-	<DropdownMenu.Trigger >
+	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline" class="dark:bg-background cursor-pointer gap-2 ">
 				<span>{user?.email.split('@')[0] ?? ''}</span>
@@ -81,6 +80,16 @@
 			</DropdownMenu.RadioGroup>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item class="text-destructive">{m.user_dropdown_logout()}</DropdownMenu.Item>
+		<!-- A real form so sign-out works without client JS. -->
+		<form method="POST" action="/logout">
+			<DropdownMenu.Item class="text-destructive w-full cursor-pointer">
+				{#snippet child({ props })}
+					<button type="submit" {...props}>
+						<LogOut />
+						{m.user_dropdown_logout()}
+					</button>
+				{/snippet}
+			</DropdownMenu.Item>
+		</form>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
