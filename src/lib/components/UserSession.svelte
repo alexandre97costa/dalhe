@@ -6,9 +6,14 @@
 	import Button from './ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	import { Moon, Sun, Monitor, ChevronDownIcon, LogOut } from '@lucide/svelte';
+	import { Moon, Sun, Monitor, ChevronDownIcon, LogOut, Plus } from '@lucide/svelte';
 
-	let { user = $bindable(null), open = $bindable(false) } = $props();
+	let {
+		user = $bindable(null),
+		open = $bindable(false),
+		// Manual laps fallback (app_settings): shows "Add lap" while it's on.
+		manualLapsEnabled = false
+	} = $props();
 	let theme: 'light' | 'dark' | 'system' = $state('system');
 	let language = $state(getLocale());
 </script>
@@ -26,6 +31,17 @@
 	</DropdownMenu.Trigger>
 
 	<DropdownMenu.Content class="w-56" align="start">
+		{#if manualLapsEnabled}
+			<DropdownMenu.Item class="cursor-pointer">
+				{#snippet child({ props })}
+					<a href="/new" {...props}>
+						<Plus />
+						{m.user_dropdown_add_lap()}
+					</a>
+				{/snippet}
+			</DropdownMenu.Item>
+			<DropdownMenu.Separator />
+		{/if}
 		<DropdownMenu.Group>
 			<!-- <DropdownMenu.Label>{m.user_dropdown_account()}</DropdownMenu.Label>
 			<DropdownMenu.Item>{m.user_dropdown_profile()}</DropdownMenu.Item>

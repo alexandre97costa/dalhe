@@ -67,7 +67,7 @@
 		</div> -->
 	</div>
 	<div class="flex items-center gap-1.5 pr-1">
-		<UserSession {user} />
+		<UserSession {user} manualLapsEnabled={data.manualLapsEnabled} />
 	</div>
 </div>
 

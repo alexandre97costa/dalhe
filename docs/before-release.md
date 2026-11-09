@@ -6,7 +6,7 @@ Checked on 2026-11-06. Tick items as they're done; delete this file (or start a 
 
 ## Why this release is all at once
 
-The hosted database has only the first 3 of 18 migrations (`supabase migration list --linked`). Three of the 15 pending ones break something the code on `prod` uses today, so they can't go out early:
+The hosted database has only the first 3 of 19 migrations (`supabase migration list --linked`). Three of the 16 pending ones break something the code on `prod` uses today, so they can't go out early:
 
 | Migration                                           | Sprint | Breaks `prod`?                                                                                     |
 | --------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------- |
@@ -25,6 +25,7 @@ The hosted database has only the first 3 of 18 migrations (`supabase migration l
 | `20261109120531_profiles_username_case_insensitive` | —      | No, if hosted has no usernames that differ only in case (see section 2).                           |
 | `20261109152935_lock_down_manual_laps`              | —      | **Yes.** `prod` still has the "+" manual lap entry; after the push it fails (laps only from rigs). |
 | `20261109153143_driver_stats`                       | —      | No (new function).                                                                                 |
+| `20261109223838_manual_laps`                        | —      | No (new table and function; the switch starts off). See Deploy for turning it on.                  |
 
 So the database push and the `prod` deploy happen in one short window, and the overlay on every rig is updated in that same window (new endpoints need the rig key and the `rainIntensity` spelling).
 
@@ -55,8 +56,8 @@ These don't depend on the new schema and can be done ahead.
 Follow [`database-workflow.md`](database-workflow.md). Pick a time when nobody is driving: between the push and the new deploy, connects and laps on the old `prod` fail.
 
 - [ ] Have the `preview` → `prod` PR open, reviewed and green, so merging is one click.
-- [ ] Drift check: `pnpm exec supabase db diff --linked` shows nothing beyond the 15 pending migrations.
-- [ ] `pnpm exec supabase db push --dry-run`: exactly the 15 migrations in the table above, in that order.
+- [ ] Drift check: `pnpm exec supabase db diff --linked` shows nothing beyond the 16 pending migrations.
+- [ ] `pnpm exec supabase db push --dry-run`: exactly the 16 migrations in the table above, in that order.
 - [ ] `pnpm exec supabase db push`.
 - [ ] `pnpm exec supabase migration list --linked`: local and remote match.
 
@@ -66,6 +67,7 @@ No type regeneration needed: `src/lib/types/supabase.types.ts` comes from the lo
 
 - [ ] Merge the `preview` → `prod` PR. Wait for the Vercel Production deployment to finish and check its build log.
 - [ ] Smoke test on the production URL: log in, homepage (rig card in its empty state for a new user), a connect page, a lounge.
+- [ ] **Manual laps fallback** ([decision](decisions/manual-laps.md)): the lockdown removes the old "+" entry, and the fallback starts off. If an overlay can't send laps, turn it on in the SQL editor: `update public.app_settings set manual_laps_enabled = true;` (and `false` once rigs work again).
 
 **Rollback:** fix forward. Vercel's instant rollback would put the old code back on a database it no longer matches (the two breaking migrations above), and migrations aren't reversible by push.
 

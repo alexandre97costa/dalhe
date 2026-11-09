@@ -82,3 +82,25 @@ export function formatDelta(milliseconds: number): string {
 	const sign = milliseconds > 0 ? '+' : milliseconds < 0 ? '-' : '±';
 	return `${sign}${(Math.abs(milliseconds) / 1000).toFixed(3)}`;
 }
+
+// The manual lap form types times as 7 digits, MMSSmmm (the input shows MM:SS.mmm).
+// Null when it isn't 7 digits or the seconds are 60 or more.
+export function digitsToMilliseconds(digits: string): number | null {
+	if (!/^\d{7}$/.test(digits)) return null;
+	const minutes = Number(digits.slice(0, 2));
+	const seconds = Number(digits.slice(2, 4));
+	const ms = Number(digits.slice(4, 7));
+	if (seconds > 59) return null;
+	return minutes * 60_000 + seconds * 1_000 + ms;
+}
+
+// The last sector of a manual lap: lap minus S1 and S2. Null until all three are known.
+// Can be zero or negative when S1 + S2 doesn't leave room for it; the form refuses that.
+export function lastSectorMilliseconds(
+	lapMs: number | null,
+	s1Ms: number | null,
+	s2Ms: number | null
+): number | null {
+	if (lapMs === null || s1Ms === null || s2Ms === null) return null;
+	return lapMs - s1Ms - s2Ms;
+}

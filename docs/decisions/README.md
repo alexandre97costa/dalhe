@@ -10,6 +10,7 @@ Short notes on choices that shape how this repo works, and why. One file per dec
 | [Test flag](test-flag.md)                 | Keep `for_testing` and `GET_TEST_RECORDS`.                                          | Sprint 0      |
 | [Planning docs](planning-docs.md)         | The claude.ai Project is the source of truth; `docs/sprints/` is a copy.            | Sprint 0      |
 | [Supabase clients](supabase-clients.md)   | `locals.supabase` by default; admin client only for rig endpoints.                  | Sprint 0 (C3) |
+| [Manual laps](manual-laps.md)             | Fallback lap entry at `/new`, behind a database switch that starts off.             | 2026-11-09    |
 
 ## Agent skills
 
