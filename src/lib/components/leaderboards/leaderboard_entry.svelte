@@ -6,7 +6,11 @@
 
 	let { laptime }: { laptime: LeaderboardEntry } = $props();
 
-	const { diff, isFaster } = compareLaptimes(laptime.laptime, laptime.track_record ?? null);
+	// Derived, not computed once: an unkeyed {#each} reuses this component for another lap when
+	// the list reloads in place (filter change), and a plain const would keep the old lap's diff.
+	const { diff, isFaster } = $derived(
+		compareLaptimes(laptime.laptime, laptime.track_record ?? null)
+	);
 </script>
 
 <!-- class={cn("flex flex-col items-center gap-2 pt-3", titleValue == item.title ? "dark:bg-zinc-800 bg-white" : "")} -->

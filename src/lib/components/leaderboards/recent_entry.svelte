@@ -8,7 +8,12 @@
 
 	let { laptime }: { laptime: RecentLaptime } = $props();
 
-	const { diff, isFaster } = compareLaptimes(laptime.laptime, laptime.previous_laptime ?? null);
+	// Derived, not computed once: an unkeyed {#each} reuses this component for another lap when
+	// the list reloads in place (home refresh, driver → driver), and a plain const would keep
+	// the old lap's diff.
+	const { diff, isFaster } = $derived(
+		compareLaptimes(laptime.laptime, laptime.previous_laptime ?? null)
+	);
 </script>
 
 <Accordion.Trigger
