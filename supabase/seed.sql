@@ -1,7 +1,7 @@
 -- Local seed data, loaded by `supabase db reset` (and `pnpm db:reset`).
 --
 -- Catalog tables (game, car_category, car_make, car, race_track, reference_time)
--- are copied from the hosted database as of 2026-10-27, ids included.
+-- are copied from the hosted database as of 2026-11-10, ids included.
 -- Everything else is synthetic: no real people, emails or rigs. The repo is
 -- public, so keep it that way.
 
@@ -36,40 +36,47 @@ insert into public.car_make (id, created_at, name) values
   (15, '2025-04-21 19:27:29.862495+00', 'Nissan'),
   (16, '2025-04-21 19:27:35.851081+00', 'Porsche'),
   (17, '2025-04-21 19:27:44.912375+00', 'Reiter Engineering'),
-  (18, '2026-09-26 18:18:44.916631+00', 'Ford');
+  (18, '2026-09-26 18:18:44.916631+00', 'Ford'),
+  (19, '2026-11-10 01:31:37.106123+00', 'KTM');
 
 insert into public.car (id, created_at, make_id, model, year, category_id, simhub_carid) values
-  (1, '2025-04-21 19:28:58.919968+00', 2, 'V12 Vantage', 2013, 1, null),
+  (1, '2025-04-21 19:28:58.919968+00', 2, 'V12 Vantage', 2013, 1, 'amr_v12_vantage_gt3'),
   (2, '2025-04-21 19:31:46.626927+00', 2, 'V8 Vantage', 2019, 1, 'amr_v8_vantage_gt3'),
-  (3, '2025-06-26 20:13:36.922236+00', 3, 'R8 LMS', 2015, 1, null),
+  (3, '2025-06-26 20:13:36.922236+00', 3, 'R8 LMS', 2015, 1, 'audi_r8_lms'),
   (4, '2025-06-26 20:13:36.922236+00', 3, 'R8 LMS Evo', 2019, 1, 'audi_r8_lms_evo'),
   (5, '2025-06-26 20:13:36.922236+00', 3, 'R8 LMS Evo II', 2022, 1, null),
-  (6, '2025-06-26 20:13:36.922236+00', 4, 'Continental', 2015, 1, null),
+  (6, '2025-06-26 20:13:36.922236+00', 4, 'Continental', 2015, 1, 'bentley_continental_gt3_2016'),
   (7, '2025-06-26 20:13:36.922236+00', 4, 'Continental', 2018, 1, 'bentley_continental_gt3_2018'),
   (8, '2025-06-26 20:13:36.922236+00', 5, 'M6', 2017, 1, 'bmw_m6_gt3'),
-  (9, '2025-06-26 20:13:36.922236+00', 5, 'M4', 2021, 1, null),
-  (10, '2025-06-26 20:13:36.922236+00', 7, 'Jaguar', 2012, 1, null),
+  (9, '2025-06-26 20:13:36.922236+00', 5, 'M4', 2021, 1, 'bmw_m4_gt3'),
+  (10, '2025-06-26 20:13:36.922236+00', 7, 'Jaguar', 2012, 1, 'jaguar_g3'),
   (11, '2025-06-26 20:13:36.922236+00', 8, '488', 2018, 1, 'ferrari_488_gt3'),
   (12, '2025-06-26 20:13:36.922236+00', 8, '488 EVO', 2020, 1, null),
   (13, '2025-06-26 20:13:36.922236+00', 8, '296', 2023, 1, null),
-  (14, '2025-06-26 20:13:36.922236+00', 9, 'NSX', 2017, 1, null),
+  (14, '2025-06-26 20:13:36.922236+00', 9, 'NSX', 2017, 1, 'honda_nsx_gt3'),
   (15, '2025-06-26 20:13:36.922236+00', 9, 'NSX Evo', 2019, 1, 'honda_nsx_gt3_evo'),
   (16, '2025-06-26 20:13:36.922236+00', 10, 'Huracan', 2015, 1, 'lamborghini_huracan_gt3'),
   (17, '2025-06-26 20:13:36.922236+00', 10, 'Huracan Evo', 2019, 1, 'lamborghini_huracan_gt3_evo'),
   (18, '2025-06-26 20:13:36.922236+00', 10, 'Huracan Evo2', 2023, 1, null),
   (19, '2025-06-26 20:13:36.922236+00', 11, 'RC F', 2016, 1, 'lexus_rc_f_gt3'),
-  (20, '2025-06-26 20:13:36.922236+00', 13, '650S', 2015, 1, null),
-  (21, '2025-06-26 20:13:36.922236+00', 13, '720S', 2019, 1, null),
+  (20, '2025-06-26 20:13:36.922236+00', 13, '650S', 2015, 1, 'mclaren_650s_gt3'),
+  (21, '2025-06-26 20:13:36.922236+00', 13, '720S', 2019, 1, 'mclaren_720s_gt3'),
   (22, '2025-06-26 20:13:36.922236+00', 13, '720S Evo', 2015, 1, 'mclaren_720s_gt3_evo'),
   (23, '2025-06-26 20:13:36.922236+00', 14, 'AMG', 2015, 1, 'mercedes_amg_gt3'),
   (24, '2025-06-26 20:13:36.922236+00', 14, 'AMG Evo', 2020, 1, null),
-  (25, '2025-06-26 20:13:36.922236+00', 15, 'GTR Nismo', 2015, 1, null),
-  (26, '2025-06-26 20:13:36.922236+00', 15, 'GTR Nismo', 2018, 1, null),
-  (27, '2025-06-26 20:13:36.922236+00', 16, '911', 2018, 1, null),
+  (25, '2025-06-26 20:13:36.922236+00', 15, 'GTR Nismo', 2015, 1, 'nissan_gt_r_gt3_2017'),
+  (26, '2025-06-26 20:13:36.922236+00', 15, 'GTR Nismo', 2018, 1, 'nissan_gt_r_gt3_2018'),
+  (27, '2025-06-26 20:13:36.922236+00', 16, '911', 2018, 1, 'porsche_991_gt3_r'),
   (28, '2025-06-26 20:13:36.922236+00', 16, '911 II', 2019, 1, 'porsche_991ii_gt3_r'),
   (29, '2025-06-26 20:13:36.922236+00', 16, '992', 2023, 1, null),
-  (30, '2025-06-26 20:13:36.922236+00', 17, 'R-EX', 2017, 1, null),
-  (31, '2026-09-26 18:19:52.613408+00', 18, 'Mustang', 2024, 1, null);
+  (30, '2025-06-26 20:13:36.922236+00', 17, 'R-EX', 2017, 1, 'lamborghini_gallardo_rex'),
+  (31, '2026-09-26 18:19:52.613408+00', 18, 'Mustang', 2024, 1, 'ford_mustang_gt3'),
+  (34, '2026-11-10 01:31:03.828209+00', 3, 'R8 LMS', 2021, 2, 'audi_r8_lms_gt2'),
+  (35, '2026-11-10 01:32:16.122562+00', 19, 'Xbow', 2021, 2, 'ktm_xbow_gt2'),
+  (36, '2026-11-10 01:32:39.184597+00', 12, 'MC20', 2023, 2, 'maserati_mc20_gt2'),
+  (37, '2026-11-10 01:32:58.550851+00', 14, 'AMG', 2023, 2, 'mercedes_amg_gt2'),
+  (38, '2026-11-10 01:33:19.793872+00', 16, '935', 2019, 2, 'porsche_935'),
+  (39, '2026-11-10 01:33:40.808671+00', 16, '991 II GT2RS EVO', 2023, 2, 'porsche_991_gt2_rs_mr');
 
 insert into public.race_track (id, created_at, name, location, length, country_code, simhub_trackid) values
   (1, '2025-04-21 19:34:01.646854+00', 'Silverstone', 'United Kingdom', 5891, 'GB', 'Silverstone'),
@@ -83,14 +90,14 @@ insert into public.race_track (id, created_at, name, location, length, country_c
   (9, '2025-06-26 19:57:39.605999+00', 'Spa-Francorchamps', 'Belgium', 7004, 'BE', 'Spa'),
   (10, '2025-06-26 19:57:39.605999+00', 'Zandvoort', 'Netherlands', 4252, 'NL', 'Zandvoort'),
   (11, '2025-06-26 19:57:39.605999+00', 'Zolder', 'Belgium', 4011, 'BE', 'Zolder'),
-  (12, '2025-06-26 19:57:39.605999+00', 'Kyalami', 'South Africa', null, 'ZA', null),
-  (13, '2025-06-26 19:57:39.605999+00', 'Suzuka', 'Japan', null, 'JP', null),
-  (14, '2025-06-26 19:57:39.605999+00', 'Laguna Seca', 'United States of America', null, 'US', null),
-  (15, '2025-06-26 19:57:39.605999+00', 'Mount Panorama', 'Australia', null, 'AU', null),
+  (12, '2025-06-26 19:57:39.605999+00', 'Kyalami', 'South Africa', null, 'ZA', 'Kyalami'),
+  (13, '2025-06-26 19:57:39.605999+00', 'Suzuka', 'Japan', null, 'JP', 'Suzuka'),
+  (14, '2025-06-26 19:57:39.605999+00', 'Laguna Seca', 'United States of America', null, 'US', 'Laguna_Seca'),
+  (15, '2025-06-26 19:57:39.605999+00', 'Mount Panorama', 'Australia', null, 'AU', 'mount_panorama'),
   (16, '2025-06-26 19:57:39.605999+00', 'Imola', 'Italy', null, 'IT', null),
-  (17, '2025-06-26 19:57:39.605999+00', 'Nordschleife', 'Germany', null, 'DE', null),
-  (18, '2026-03-12 12:16:07.738471+00', 'Red Bull Ring', 'Austria', 4326, 'AT', null),
-  (19, '2026-04-04 10:32:28.615347+00', 'Valencia', 'Spain', 4005, 'ES', null);
+  (17, '2025-06-26 19:57:39.605999+00', 'Nordschleife', 'Germany', null, 'DE', 'nurburgring_24h'),
+  (18, '2026-03-12 12:16:07.738471+00', 'Red Bull Ring', 'Austria', 4326, 'AT', 'red_bull_ring'),
+  (19, '2026-04-04 10:32:28.615347+00', 'Valencia', 'Spain', 4005, 'ES', 'Valencia');
 
 insert into public.reference_time (id, created_at, time_ms, track_id, category_id, game_id) values
   (1, '2026-04-20 22:40:19.297046+00', 115842, 1, 1, 1),
