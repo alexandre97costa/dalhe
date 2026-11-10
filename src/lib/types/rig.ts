@@ -6,7 +6,7 @@ const num = z.coerce.number<number>();
 export const zRainIntensity = z.enum([
 	'ACC_NO_RAIN',
 	'ACC_DRIZZLE',
-	'ACC_LIGHT_RAIN',
+	'ACC_LIGHT_RAIN', // Doesnt seem to exist but its ok to leave it here for future proofing
 	'ACC_MEDIUM_RAIN',
 	'ACC_HEAVY_RAIN',
 	'ACC_THUNDERSTORM'
