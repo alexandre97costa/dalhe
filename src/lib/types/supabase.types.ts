@@ -881,6 +881,17 @@ export type Database = {
 					status: string;
 				}[];
 			};
+			lap_is_duplicate: {
+				Args: {
+					p_car_id: number;
+					p_lap_time_ms: number;
+					p_s1_ms: number;
+					p_s2_ms: number;
+					p_s3_ms: number;
+					p_track_id: number;
+				};
+				Returns: boolean;
+			};
 			rig_active_session: {
 				Args: { p_expiry_minutes: number; p_rig_id: string };
 				Returns: {
