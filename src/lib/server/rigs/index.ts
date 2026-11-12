@@ -137,9 +137,94 @@ export type LapOutcome =
 	| { status: 'duplicate' }
 	| { status: 'rejected'; reason: LapRejectReason };
 
-// Parses, validates and stores a lap from the overlay's query params.
+// The values the server would use for a lap, as returned by a dry run. Null where a value
+// couldn't be read or the catalog lookup failed.
+export type ParsedLap = {
+	laptimeMs: number | null;
+	s1Ms: number | null;
+	s2Ms: number | null;
+	s3Ms: number | null;
+	carId: number | null;
+	trackId: number | null;
+};
+
+// A dry run (`dryRun=1`) answers with the status a real lap would get, and writes nothing.
+export type LapDryRunOutcome = (
+	| { status: 'created' }
+	| { status: 'duplicate' }
+	| { status: 'rejected'; reason: LapRejectReason }
+) & { dryRun: true; parsed: ParsedLap; driverName: string | null };
+
+// `dryRun`: absent, 0 or false → a real lap; 1 or true → a dry run; anything else → null
+// (rejected as invalid_params, so a typo never inserts a real lap).
+export function parseDryRun(value: string | null): boolean | null {
+	if (value === null) return false;
+	const v = value.trim().toLowerCase();
+	if (v === '0' || v === 'false') return false;
+	if (v === '1' || v === 'true') return true;
+	return null;
+}
+
+type LapCheck =
+	| { reason: LapRejectReason; parsed: ParsedLap; lap: null }
+	| { reason: null; parsed: ParsedLap; lap: NewLapConverted };
+
+// Every rule a lap goes through before the database, shared by real laps and dry runs.
+// Reasons come in a fixed order: params, car, track, sector values, sector sum.
+async function checkLap(rigId: string, params: URLSearchParams): Promise<LapCheck> {
+	const parsed: ParsedLap = {
+		laptimeMs: null,
+		s1Ms: null,
+		s2Ms: null,
+		s3Ms: null,
+		carId: null,
+		trackId: null
+	};
+
+	const validated = validateRouteParams(params, zNewLap);
+	if (!validated.success) return { reason: 'invalid_params', parsed, lap: null };
+	const newLap = validated.data;
+
+	const car = await resolveCar(newLap.carId);
+	const track = await resolveTrack(newLap.trackId);
+	parsed.laptimeMs = newLap.laptime_ms;
+	parsed.s1Ms = convertTimeStringToMilliseconds(newLap.s1_time);
+	parsed.s2Ms = convertTimeStringToMilliseconds(newLap.s2_time);
+	parsed.s3Ms = convertTimeStringToMilliseconds(newLap.s3_time);
+	parsed.carId = car?.id ?? null;
+	parsed.trackId = track?.id ?? null;
+
+	if (!car) return { reason: 'unknown_car', parsed, lap: null };
+	if (!track) return { reason: 'unknown_track', parsed, lap: null };
+
+	const converted = zNewLapConverted.safeParse({
+		rigId,
+		laptime_ms: parsed.laptimeMs,
+		s1_ms: parsed.s1Ms,
+		s2_ms: parsed.s2Ms,
+		s3_ms: parsed.s3Ms,
+		carId: car.id,
+		trackId: track.id
+	});
+	if (!converted.success) return { reason: 'invalid_params', parsed, lap: null };
+
+	const lap = converted.data;
+	// Strict on purpose (Sprint 1.5, X2): no stored lap had sectors to measure a drift against.
+	// If real laps get `sectors_mismatch` by a millisecond or two, add a tolerance here and in the docs.
+	if (lap.laptime_ms !== lap.s1_ms + lap.s2_ms + lap.s3_ms)
+		return { reason: 'sectors_mismatch', parsed, lap: null };
+
+	return { reason: null, parsed, lap };
+}
+
+// Parses, validates and stores a lap from the overlay's query params, or with `dryRun=1`
+// runs the same checks and writes nothing.
 // Throws only on server errors (the endpoint answers 500 and the overlay retries).
-export async function submitLap(rigId: string, params: URLSearchParams): Promise<LapOutcome> {
+export async function submitLap(
+	rig: RigStatus,
+	params: URLSearchParams
+): Promise<LapOutcome | LapDryRunOutcome> {
+	const rigId = rig.rig_id;
 	const reject = (reason: LapRejectReason): LapOutcome => {
 		// Logged so a lap on a car or track missing from the catalog can be recovered by hand. Never the key.
 		const logged = Object.fromEntries([...params].filter(([name]) => name !== 'k'));
@@ -147,32 +232,36 @@ export async function submitLap(rigId: string, params: URLSearchParams): Promise
 		return { status: 'rejected', reason };
 	};
 
-	const parsed = validateRouteParams(params, zNewLap);
-	if (!parsed.success) return reject('invalid_params');
-	const newLap = parsed.data;
+	const dryRun = parseDryRun(params.get('dryRun'));
+	if (dryRun === null) return reject('invalid_params');
 
-	const car = await resolveCar(newLap.carId);
-	if (!car) return reject('unknown_car');
-	const track = await resolveTrack(newLap.trackId);
-	if (!track) return reject('unknown_track');
+	const check = await checkLap(rigId, params);
+	if (!dryRun) return check.lap ? insertNewLap(check.lap) : reject(check.reason);
 
-	const converted = zNewLapConverted.safeParse({
-		rigId,
-		laptime_ms: newLap.laptime_ms,
-		s1_ms: convertTimeStringToMilliseconds(newLap.s1_time),
-		s2_ms: convertTimeStringToMilliseconds(newLap.s2_time),
-		s3_ms: convertTimeStringToMilliseconds(newLap.s3_time),
-		carId: car.id,
-		trackId: track.id
+	// Dry run: no recovery log for rejections (they show up in the RIG_DEBUG log only).
+	// The driver comes from rig_status (same lazy expiry as the poll): null = anonymous / unclaimed.
+	const extra = {
+		dryRun: true as const,
+		parsed: check.parsed,
+		driverName: rig.session_active ? rig.driver_name : null
+	};
+	if (!check.lap) return { status: 'rejected', reason: check.reason, ...extra };
+	if (await isDuplicateLap(check.lap)) return { status: 'duplicate', ...extra };
+	return { status: 'created', ...extra };
+}
+
+// The duplicate rule lives in the database (lap_is_duplicate), shared with insert_lap.
+async function isDuplicateLap(l: NewLapConverted): Promise<boolean> {
+	const { data, error } = await supabaseAdmin.rpc('lap_is_duplicate', {
+		p_track_id: l.trackId,
+		p_car_id: l.carId,
+		p_lap_time_ms: l.laptime_ms,
+		p_s1_ms: l.s1_ms,
+		p_s2_ms: l.s2_ms,
+		p_s3_ms: l.s3_ms
 	});
-	if (!converted.success) return reject('invalid_params');
-
-	const lap = converted.data;
-	// Strict on purpose (Sprint 1.5, X2): no stored lap had sectors to measure a drift against.
-	// If real laps get `sectors_mismatch` by a millisecond or two, add a tolerance here and in the docs.
-	if (lap.laptime_ms !== lap.s1_ms + lap.s2_ms + lap.s3_ms) return reject('sectors_mismatch');
-
-	return insertNewLap(lap);
+	if (error) throw error;
+	return data === true;
 }
 
 export async function insertNewLap(l: NewLapConverted): Promise<LapOutcome> {

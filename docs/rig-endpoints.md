@@ -58,7 +58,55 @@ The overlay retries a lap until it is handled, so every handled outcome returns 
 
 **Sector sum: strict.** Each sector is converted to whole milliseconds (rounded), and `s1 + s2 + s3` must equal `laptime_ms` exactly, with no tolerance. Sprint 1.5 (X2) set out to measure the drift on real laps, but no stored lap had sectors yet. If real laps get `sectors_mismatch` by a millisecond or two, add a tolerance constant next to the check in `submitLap` and note it here.
 
-Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it.
+Rejected laps are logged on the server with their params (never the key), so a lap on a car or track missing from the catalog can be added by hand once the catalog has it. This log is always on, whatever `RIG_DEBUG` says; dry-run rejections don't go to it.
+
+#### Dry run: `dryRun`
+
+Add `dryRun=1` (or `true`) to check a lap without storing it. It runs exactly the same checks as a real lap (params, sector sum, car and track lookup by SimHub id, duplicate check; the duplicate rule is `lap_is_duplicate` in the database, shared with `insert_lap`) and writes nothing: no lap, no anonymous session, no activity refresh.
+
+| `dryRun`                 | Behaviour                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| absent, `0`, `false`     | A real lap.                                                                   |
+| `1`, `true`              | A dry run.                                                                    |
+| anything else (`banana`) | `{"status": "rejected", "reason": "invalid_params"}`, so a typo never stores. |
+
+The answer has the same `status` (and `reason`) a real lap would get, never a `lapId`, plus:
+
+```json
+{
+	"status": "created",
+	"dryRun": true,
+	"parsed": {
+		"laptimeMs": 87898,
+		"s1Ms": 29165,
+		"s2Ms": 31318,
+		"s3Ms": 27415,
+		"carId": 12,
+		"trackId": 3
+	},
+	"driverName": "carla"
+}
+```
+
+- `parsed`: the values the server would store: milliseconds after rounding, and the catalog ids for `carId` / `trackId`. `null` where a value couldn't be read or the lookup failed (all `null` on `invalid_params` from a missing or malformed param).
+- `driverName`: who the lap would land on, with the same expiry rule as the poll. `null` = anonymous (no active session, or nobody connected).
+
+Dry-run rejections are not written to the rejected-lap log; with `RIG_DEBUG` on they show in the debug log.
+
+### Ping: `/ping`
+
+`GET /rig/[uuid]/ping?anything=...&k=...` echoes what the overlay sent, to check its config while building it. Always available, writes nothing, same `404` as every rig endpoint.
+
+```json
+{
+	"status": "ok",
+	"rigName": "Garagem",
+	"receivedAt": "2026-11-12T22:41:07.512Z",
+	"params": { "speed": " 212.5 ", "tag": ["a", "b"] }
+}
+```
+
+`params` holds every query param except `k`, as raw strings (no parsing or trimming); a repeated param comes back as an array.
 
 Every car and track in use needs its SimHub id. `pnpm simhub:check` lists catalog cars and tracks without one (and how many laps each has) on the local stack, read-only. For hosted, run the SQL at the top of `scripts/simhub-ids.mjs` in the dashboard's SQL editor.
 
@@ -85,6 +133,22 @@ Stats never refresh the session's activity: only laps and connects do. Connectin
 - **Change a key** (e.g. it leaked): `update public.rig_key set api_key = encode(extensions.gen_random_bytes(16), 'hex') where rig_id = '<uuid>'`, then paste the new key into the overlay config. The UUID, QR code, URLs and lap history don't change.
 - **QR image:** upload `<uuid>.png` (the connect URL, never the key) to the public `rig-qr` bucket in Studio; the overlay reads it from `<supabase url>/storage/v1/object/public/rig-qr/<uuid>.png`. Clients can't write to the bucket. Locally the seed rigs' images are uploaded on `supabase start` / `db reset`.
 - **Local stack:** the seed rigs have fixed keys, `local-sala-key` (Sala) and `local-garagem-key` (Garagem).
+
+## Maintenance
+
+### Debug log: `RIG_DEBUG`
+
+With `RIG_DEBUG=1` (or `true`; anything else is off), every `/rig/` request logs one JSON line on the server (`rigDebug: true`): `ts`, `method`, `route` (the route id, e.g. `/rig/[slug]/send/new`), `rigId`, `params` (the query params with `k` removed), `status`, `durationMs` and `body` (the JSON response, cut to about 2 KB). It never logs the URL or the key. It's a `handle` in `src/lib/server/rigs/debug.ts`, wired first in `hooks.server.ts`.
+
+Locally, set it in `.env` and restart `pnpm dev`. On Vercel, set it in the project's environment variables; a change only applies after a redeploy. Turn it off when done: the overlay polls often.
+
+### Troubleshooting
+
+| Symptom                                        | What to do                                                                                                             |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Not sure what the overlay sends                | Point the overlay at `/ping`: it echoes every param (except the key) as the server received it.                        |
+| Not sure how a lap will be read or who gets it | Send it with `dryRun=1`: same checks and status as a real lap, with `parsed` values and `driverName`, nothing written. |
+| Need to see every request and response         | Turn on `RIG_DEBUG` (above) and read the server logs.                                                                  |
 
 ## Testing locally: the fake rig
 

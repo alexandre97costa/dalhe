@@ -266,6 +266,36 @@ function sameKeys(body, keys) {
 	return body !== null && Object.keys(body).sort().join() === [...keys].sort().join();
 }
 
+// What a dry run must leave untouched: the lap count and the rig's sessions (ids, activity, end).
+async function lapsAndSessions(rig) {
+	const db = admin();
+	const { count, error } = await db.from('lap_time').select('id', { count: 'exact', head: true });
+	if (error) throw error;
+	const { data: sessions, error: sessionError } = await db
+		.from('rig_session')
+		.select('id, last_activity_at, ended_at')
+		.eq('rig_id', rig.id)
+		.order('id');
+	if (sessionError) throw sessionError;
+	return JSON.stringify({ laps: count, sessions });
+}
+
+// A dry run: same status as a real lap, plus dryRun, parsed and driverName, never a lapId.
+// Checks that nothing was written.
+async function dryRun(rig, lap) {
+	const before = await lapsAndSessions(rig);
+	const r = await call(rig, '/send/new', { ...lap, dryRun: '1' });
+	const after = await lapsAndSessions(rig);
+	if (before !== after) console.log('  the dry run wrote to the database');
+	const shape =
+		r.status === 200 &&
+		r.body?.dryRun === true &&
+		!('lapId' in r.body) &&
+		'driverName' in r.body &&
+		sameKeys(r.body.parsed ?? null, ['laptimeMs', 's1Ms', 's2Ms', 's3Ms', 'carId', 'trackId']);
+	return { r, ok: shape && before === after };
+}
+
 // Each scenario returns true when the response is what the contract says (docs/rig-endpoints.md).
 const scenarios = {
 	poll: {
@@ -373,6 +403,109 @@ const scenarios = {
 		async run(rig) {
 			const r = await call(rig, '/send/new', randomLap(), { key: 'wrong-key' });
 			return r.status === 404 && r.text === NOT_FOUND;
+		}
+	},
+	ping: {
+		about: 'ping: rig name, receivedAt, params echoed raw (repeated as an array), k not echoed',
+		async run(rig) {
+			const query = new URLSearchParams([
+				['speed', ' 212.5 '],
+				['tag', 'a'],
+				['tag', 'b']
+			]);
+			const r = await call(rig, '/ping', query);
+			const p = r.body?.params;
+			return (
+				r.status === 200 &&
+				r.body?.status === 'ok' &&
+				typeof r.body?.rigName === 'string' &&
+				!Number.isNaN(Date.parse(r.body?.receivedAt)) &&
+				sameKeys(p ?? null, ['speed', 'tag']) &&
+				p.speed === ' 212.5 ' &&
+				JSON.stringify(p.tag) === '["a","b"]' &&
+				!r.text.includes(rig.key)
+			);
+		}
+	},
+	'ping-wrong-key': {
+		about: 'ping with a wrong key: 404, same body as an unknown rig',
+		async run(rig) {
+			const r = await call(rig, '/ping', {}, { key: 'wrong-key' });
+			return r.status === 404 && r.text === NOT_FOUND;
+		}
+	},
+	'dry-created': {
+		about: 'dry run of a new lap: created, with parsed values; lap count and sessions unchanged',
+		async run(rig) {
+			const lap = randomLap();
+			const { r, ok } = await dryRun(rig, lap);
+			return (
+				ok &&
+				r.body.status === 'created' &&
+				r.body.parsed.laptimeMs === Number(lap.laptime_ms) &&
+				Number.isInteger(r.body.parsed.carId) &&
+				Number.isInteger(r.body.parsed.trackId)
+			);
+		}
+	},
+	'dry-duplicate': {
+		about: 'dry run of a lap that is already stored: duplicate, nothing written',
+		async run(rig) {
+			const lap = randomLap();
+			const first = await call(rig, '/send/new', lap);
+			const { r, ok } = await dryRun(rig, lap);
+			return first.body?.status === 'created' && ok && r.body.status === 'duplicate';
+		}
+	},
+	'dry-sectors': {
+		about: "dry run with sectors that don't add up: rejected sectors_mismatch, nothing written",
+		async run(rig) {
+			const lap = randomLap();
+			const { r, ok } = await dryRun(rig, {
+				...lap,
+				laptime_ms: String(Number(lap.laptime_ms) + 1)
+			});
+			return ok && r.body.status === 'rejected' && r.body.reason === 'sectors_mismatch';
+		}
+	},
+	'dry-unknown-car': {
+		about: 'dry run with a car missing from the catalog: rejected unknown_car, carId null',
+		async run(rig) {
+			const { r, ok } = await dryRun(rig, randomLap({ carId: 'not_a_real_car' }));
+			return (
+				ok &&
+				r.body.status === 'rejected' &&
+				r.body.reason === 'unknown_car' &&
+				r.body.parsed.carId === null &&
+				Number.isInteger(r.body.parsed.trackId)
+			);
+		}
+	},
+	'dry-invalid-flag': {
+		about: 'dryRun=banana: rejected invalid_params, no lap inserted',
+		async run(rig) {
+			const before = await lapsAndSessions(rig);
+			const r = await call(rig, '/send/new', { ...randomLap(), dryRun: 'banana' });
+			const after = await lapsAndSessions(rig);
+			return (
+				r.status === 200 &&
+				sameKeys(r.body, ['status', 'reason']) &&
+				r.body.status === 'rejected' &&
+				r.body.reason === 'invalid_params' &&
+				before === after
+			);
+		}
+	},
+	'dry-off': {
+		about: 'dryRun=0: a normal lap is created',
+		async run(rig) {
+			const r = await call(rig, '/send/new', { ...randomLap(), dryRun: '0' });
+			return (
+				r.status === 200 &&
+				r.body?.status === 'created' &&
+				Number.isInteger(r.body?.lapId) &&
+				!('dryRun' in r.body)
+			);
 		}
 	},
 	'stats-live': {

@@ -1,10 +1,12 @@
 import type { Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
+import { rigDebugHandle } from '$lib/server/rigs/debug';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createServerClient } from '@supabase/ssr';
 import type { Database } from '$lib/types/supabase.types';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public';
 
-export const handle: Handle = async ({ event, resolve }) => {
+const appHandle: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient<Database>(
 		PUBLIC_SUPABASE_URL,
 		PUBLIC_SUPABASE_PUBLISHABLE_KEY,
@@ -66,3 +68,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 	});
 };
+
+// The rig debug log goes first so it times the whole request (RIG_DEBUG, docs/rig-endpoints.md)
+export const handle = sequence(rigDebugHandle, appHandle);
