@@ -1,33 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
-	import type { RecentLaptime } from '$lib/types/listings';
 	import { title } from '$lib/store.js';
 	import { m } from '$lib/paraglide/messages.js';
 
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
-	import * as Accordion from '$lib/components/ui/accordion/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import RecentEntry from '$lib/components/leaderboards/recent_entry.svelte';
 	import RigCard from '$lib/components/home/RigCard.svelte';
-	import {
-		type Icon as IconType,
-		SlidersHorizontal,
-		CircleUserRound,
-		ListFilter,
-		Swords,
-		Monitor,
-		Timer
-	} from '@lucide/svelte';
+	import ActivityFeed from '$lib/components/home/ActivityFeed.svelte';
+	import { Monitor } from '@lucide/svelte';
 
 	title.set(m.nav_home());
 
 	let { data } = $props();
 
-	let showFilters = $state(true);
-
 	// No realtime: rig status is as of the load. Coming back to the tab reloads it (Decision 9).
+	// The Activity feed merges the fresh first page on top of the pages already loaded.
 	onMount(() => {
 		const refresh = () => {
 			if (document.visibilityState === 'visible') invalidateAll();
@@ -47,67 +33,4 @@
 	<RigCard rigs={data.rigs} />
 </div>
 
-{#if showFilters}
-	<div class=" bg-background sticky top-[57px] mb-1 flex items-center justify-between py-2">
-		<div class="flex flex-1 flex-col">
-			<span class="text-foreground flex items-center gap-3 text-xl font-medium tracking-tight">
-				<Timer size={21} />
-				{m.home_recent_laptimes()}
-			</span>
-			<!-- <span class="text-muted-foreground text-sm">{m.home_recent_laptimes_description()}</span> -->
-		</div>
-		<!-- <Button variant="outline">
-			Filters
-			<SlidersHorizontal class="ml-1" size="16" strokeWidth="2" />
-		</Button> -->
-	</div>
-{/if}
-
-<Accordion.Root type="single" class="flex w-full flex-col gap-4" value="">
-	{#each data.laptimes as laptime, index}
-		<Accordion.Item value={'item-' + index} class="not-last:border-b-0">
-			<!-- Tem um accordion trigger lá dentro -->
-			<RecentEntry {laptime} />
-
-			<Accordion.Content
-				class="bg-card flex flex-col gap-3 rounded-b-md border border-t-0 px-3 py-3 "
-			>
-				<a
-					class="text-muted-foreground hover:text-foreground flex items-center gap-2 no-underline!"
-					href="/driver/{laptime.driverid}"
-				>
-					<CircleUserRound class="" size="16" strokeWidth="2" />
-					{m.laptime_options_goto_driver()}
-				</a>
-				<Separator class="" />
-				<a
-					class="text-muted-foreground hover:text-foreground flex gap-2 no-underline!"
-					href="/leaders?track={laptime.trackid}"
-				>
-					<ListFilter class="rotate-180" size="16" strokeWidth="2" />
-					{m.laptime_options_goto_leaderboard()}
-				</a>
-				<Separator class="" />
-				<a
-					class="text-muted-foreground/50 hover:text-foreground pointer-events-none flex gap-2 no-underline!"
-					href="/driver/{laptime.driverid}"
-				>
-					<Swords class="" size="16" strokeWidth="2" />
-					{m.laptime_options_compare()}
-					<Badge variant="outline_teal" class="ml-1">
-						{m.laptime_options_compare_soon()}
-					</Badge>
-				</a>
-			</Accordion.Content>
-		</Accordion.Item>
-	{:else}
-		<div class="flex flex-col items-center justify-center py-40">
-			<span class="text-foreground text-lg font-medium tracking-tight">
-				{m.home_no_laptimes()}
-			</span>
-			<span class="text-muted-foreground text-sm">
-				{m.home_no_laptimes_description()}
-			</span>
-		</div>
-	{/each}
-</Accordion.Root>
+<ActivityFeed activity={data.activity} />
