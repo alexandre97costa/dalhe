@@ -24,3 +24,34 @@ export type HomeRigs = {
 	// Every other rig: live first, then most recently used. Empty is a state, not an error.
 	others: MyRig[];
 };
+
+// The homepage Activity feed (newest laps first, keyset paginated). Built by getActivity in
+// $lib/queries/homepage.ts.
+
+// Where the next page starts: the last lap shown, ordered by (created_at, lap_id) desc.
+export type ActivityCursor = { createdAt: string; lapId: number };
+
+// One lap of the feed. The view's columns, plus the rig whose active session it was driven in.
+export type ActivityLap = {
+	lapId: number;
+	createdAt: string;
+	driverId: string;
+	driverName: string;
+	driverAvatarUrl: string | null;
+	trackId: number;
+	trackName: string;
+	carMake: string;
+	carModel: string;
+	laptime: number;
+	previousLaptime: number | null;
+	isPersonalBest: boolean;
+	isTrackRecord: boolean;
+	// The rig, when the lap's session is still that rig's active session ("View session").
+	activeRigId: string | null;
+};
+
+export type ActivityPage = {
+	laps: ActivityLap[];
+	// Null on the last page.
+	nextCursor: ActivityCursor | null;
+};

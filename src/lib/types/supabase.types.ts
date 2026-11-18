@@ -743,12 +743,15 @@ export type Database = {
 					car_model: string;
 					created_at: string;
 					driver: string | null;
+					driver_avatar_url: string | null;
 					driverid: string;
 					game_id: number | null;
 					is_personal_best: boolean | null;
 					is_track_record: boolean | null;
+					lap_id: number;
 					laptime: number;
 					previous_laptime: number | null;
+					session_id: string | null;
 					track_name: string;
 					trackid: number;
 				};
@@ -760,11 +763,25 @@ export type Database = {
 						isOneToOne: false;
 						referencedRelation: 'game';
 						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'lap_time_session_id_fkey';
+						columns: ['session_id'];
+						isOneToOne: false;
+						referencedRelation: 'rig_session';
+						referencedColumns: ['id'];
 					}
 				];
 			};
 		};
 		Functions: {
+			active_lap_sessions: {
+				Args: { p_expiry_minutes: number; p_session_ids: string[] };
+				Returns: {
+					rig_id: string;
+					session_id: string;
+				}[];
+			};
 			connect_to_rig: {
 				Args: { p_expected_driver_id: string; p_rig_id: string; p_timeout_minutes: number };
 				Returns: string;
