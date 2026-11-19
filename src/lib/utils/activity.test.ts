@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { activityRowState, cursorFilter, mergeFirstPage, paginate } from './activity';
+import {
+	activityGroupKey,
+	activityGroupSummary,
+	activityRowState,
+	cursorFilter,
+	groupActivity,
+	mergeFirstPage,
+	paginate
+} from './activity';
 
 // Laps newest first, as the feed orders them: lapId n created n minutes after a fixed start.
 const lap = (
@@ -93,5 +101,83 @@ describe('mergeFirstPage', () => {
 	it('the fresh page is the whole list: takes it', () => {
 		const fresh = page(newestFirst(15, 1), null);
 		expect(mergeFirstPage(page(newestFirst(40, 21), 21), fresh)).toBe(fresh);
+	});
+});
+
+describe('groupActivity', () => {
+	// A lap in a stint: session s, driver d, track t, car c (all default to the same stint).
+	const stint = (lapId: number, { s = 'S1' as string | null, d = 'D1', t = 1, c = 1 } = {}) => ({
+		lapId,
+		sessionId: s,
+		driverId: d,
+		trackId: t,
+		carId: c
+	});
+	const ids = (groups: { laps: { lapId: number }[] }[]) =>
+		groups.map((g) => g.laps.map((l) => l.lapId));
+
+	it('laps of one session, track and car form one group, newest first', () => {
+		expect(ids(groupActivity([stint(3), stint(2), stint(1)]))).toEqual([[3, 2, 1]]);
+	});
+
+	it('a different track, car, driver or session starts another group', () => {
+		const groups = groupActivity([
+			stint(5),
+			stint(4, { t: 2 }),
+			stint(3, { c: 2 }),
+			stint(2, { d: 'D2' }),
+			stint(1, { s: 'S2' })
+		]);
+		expect(ids(groups)).toEqual([[5], [4], [3], [2], [1]]);
+	});
+
+	it('two rigs at once: interleaved laps still group by stint, placed at the newest lap', () => {
+		const groups = groupActivity([
+			stint(6, { s: 'A' }),
+			stint(5, { s: 'B' }),
+			stint(4, { s: 'A' }),
+			stint(3, { s: 'B' }),
+			stint(2, { s: 'A' })
+		]);
+		expect(ids(groups)).toEqual([
+			[6, 4, 2],
+			[5, 3]
+		]);
+	});
+
+	it('laps without a session are never grouped', () => {
+		expect(ids(groupActivity([stint(2, { s: null }), stint(1, { s: null })]))).toEqual([[2], [1]]);
+		expect(activityGroupKey(stint(7, { s: null }))).toBe('lap:7');
+	});
+
+	it('a group across a page boundary grows when the next page is appended', () => {
+		const page1 = [stint(4), stint(3, { s: 'X' })];
+		const page2 = [stint(2), stint(1)];
+		const before = groupActivity(page1);
+		const after = groupActivity([...page1, ...page2]);
+		expect(ids(after)).toEqual([[4, 2, 1], [3]]);
+		// Same key before and after, so the item on screen stays the same item.
+		expect(after[0].key).toBe(before[0].key);
+	});
+});
+
+describe('activityGroupSummary', () => {
+	const timed = (laptime: number, isTrackRecord = false, isPersonalBest = false) => ({
+		laptime,
+		isTrackRecord,
+		isPersonalBest
+	});
+
+	it('the fastest lap is the best; a plain stint is an upload', () => {
+		const laps = [timed(91000), timed(89500), timed(90200)];
+		expect(activityGroupSummary(laps)).toEqual({ best: laps[1], kind: 'upload' });
+	});
+
+	it('a record anywhere wins over a personal best', () => {
+		const laps = [timed(90000, false, true), timed(89000, true, true)];
+		expect(activityGroupSummary(laps).kind).toBe('record');
+		expect(activityGroupSummary([timed(90000), timed(89900, false, true)]).kind).toBe(
+			'personalBest'
+		);
 	});
 });

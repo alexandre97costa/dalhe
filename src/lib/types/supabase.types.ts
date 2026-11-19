@@ -739,6 +739,7 @@ export type Database = {
 		Views: {
 			listing_recent_laptimes: {
 				Row: {
+					car_id: number;
 					car_make: string;
 					car_model: string;
 					created_at: string;
@@ -757,6 +758,13 @@ export type Database = {
 				};
 				ComputedFields: never;
 				Relationships: [
+					{
+						foreignKeyName: 'lap_time_car_id_fkey';
+						columns: ['car_id'];
+						isOneToOne: false;
+						referencedRelation: 'car';
+						referencedColumns: ['id'];
+					},
 					{
 						foreignKeyName: 'lap_time_game_id_fkey';
 						columns: ['game_id'];
