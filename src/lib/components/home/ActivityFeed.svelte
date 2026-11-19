@@ -1,7 +1,8 @@
 <script lang="ts">
 	// The homepage Activity feed: page 1 comes from the load, Load more appends the next page
 	// (keyset cursor, ?/loadMore). When the load reruns (coming back to the tab), the fresh
-	// page 1 is merged on top so pages already loaded stay (mergeFirstPage).
+	// page 1 is merged on top so pages already loaded stay (mergeFirstPage). Laps of one stint
+	// (session, track, car) show as one item, grouped over everything loaded (groupActivity).
 	import type { ActivityPage } from '$lib/types/home';
 	import { m } from '$lib/paraglide/messages.js';
 	import { enhance } from '$app/forms';
@@ -10,7 +11,7 @@
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Spinner } from '$lib/components/ui/spinner/index.js';
-	import { mergeFirstPage } from '$lib/utils/activity';
+	import { groupActivity, mergeFirstPage } from '$lib/utils/activity';
 	import ActivityItem from './ActivityItem.svelte';
 
 	let { activity }: { activity: ActivityPage } = $props();
@@ -27,6 +28,8 @@
 		);
 	});
 
+	const groups = $derived(groupActivity(feed.laps));
+
 	let loading = $state(false);
 </script>
 
@@ -42,8 +45,8 @@
 
 	{#if feed.laps.length > 0}
 		<Accordion.Root type="single" class="flex flex-col gap-5">
-			{#each feed.laps as lap (lap.lapId)}
-				<ActivityItem {lap} />
+			{#each groups as group (group.key)}
+				<ActivityItem {group} />
 			{/each}
 		</Accordion.Root>
 	{:else}

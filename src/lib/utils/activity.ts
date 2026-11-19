@@ -2,7 +2,9 @@
 
 import type { ActivityCursor, ActivityLap } from '$lib/types/home';
 
-export const ACTIVITY_PAGE_SIZE = 20;
+export const ACTIVITY_PAGE_SIZE = 60;
+// Laps a group lists before "Show all".
+export const ACTIVITY_GROUP_PREVIEW = 5;
 
 export type ActivityKind = 'record' | 'personalBest' | 'upload';
 
@@ -18,6 +20,50 @@ export function activityRowState(lap: Pick<ActivityLap, 'isTrackRecord' | 'isPer
 			? 'personalBest'
 			: 'upload';
 	return { kind, showDelta: kind === 'upload' };
+}
+
+type Groupable = {
+	lapId: number;
+	sessionId: string | null;
+	driverId: string;
+	trackId: number;
+	carId: number;
+};
+
+// The laps of one stint share a key: same session, driver, track and car. A lap without a
+// session (typed in by hand) is its own group.
+export function activityGroupKey(lap: Groupable): string {
+	return lap.sessionId
+		? `${lap.sessionId}:${lap.driverId}:${lap.trackId}:${lap.carId}`
+		: `lap:${lap.lapId}`;
+}
+
+// Groups the feed's laps (newest first) by key, across the whole loaded list: two rigs driven
+// at once interleave their laps in time, and grouping only neighbours would break each stint
+// into single laps. A group sits where its newest lap is; its laps stay newest first.
+export function groupActivity<T extends Groupable>(laps: T[]): { key: string; laps: T[] }[] {
+	const groups = new Map<string, T[]>();
+	for (const lap of laps) {
+		const key = activityGroupKey(lap);
+		const group = groups.get(key);
+		if (group) group.push(lap);
+		else groups.set(key, [lap]);
+	}
+	return [...groups].map(([key, laps]) => ({ key, laps }));
+}
+
+// What a group says as a whole: its fastest lap, and the strongest kind among its laps
+// (a record anywhere tints the card purple, else a personal best yellow).
+export function activityGroupSummary<
+	T extends { laptime: number; isTrackRecord: boolean; isPersonalBest: boolean }
+>(laps: T[]): { best: T; kind: ActivityKind } {
+	const best = laps.reduce((a, b) => (b.laptime < a.laptime ? b : a));
+	const kind: ActivityKind = laps.some((lap) => lap.isTrackRecord)
+		? 'record'
+		: laps.some((lap) => lap.isPersonalBest)
+			? 'personalBest'
+			: 'upload';
+	return { best, kind };
 }
 
 // Rows come in fetched with one extra (pageSize + 1) to learn whether there is a next page.

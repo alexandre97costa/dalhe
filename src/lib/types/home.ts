@@ -38,8 +38,11 @@ export type ActivityLap = {
 	driverId: string;
 	driverName: string;
 	driverAvatarUrl: string | null;
+	// The lap's session; null for a lap typed in by hand (never grouped).
+	sessionId: string | null;
 	trackId: number;
 	trackName: string;
+	carId: number;
 	carMake: string;
 	carModel: string;
 	laptime: number;
@@ -49,6 +52,10 @@ export type ActivityLap = {
 	// The rig, when the lap's session is still that rig's active session ("View session").
 	activeRigId: string | null;
 };
+
+// Laps of one session by one driver on the same track and car, newest first. A group of
+// one is a single lap. Built by groupActivity in $lib/utils/activity.ts.
+export type ActivityGroup = { key: string; laps: ActivityLap[] };
 
 export type ActivityPage = {
 	laps: ActivityLap[];
