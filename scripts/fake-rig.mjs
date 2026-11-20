@@ -99,15 +99,17 @@ const LAP_STATS = {
 	lapNumber: '6',
 	lapTotalCount: '20',
 	laptime_ms: '41230',
-	deltaBest: '-0.21',
+	deltaBest: '-210', // ms
 	progress: '0.48',
 	valid: 'true',
 	currentSector: '2',
-	currentSplit: '29012',
-	s1_ms: '29012',
-	bestS1_ms: '28599',
-	bestS2_ms: '30120',
-	bestS3_ms: '25590'
+	currentSplit: '29012', // ms
+	// Sector times are ISO times; "null" when SimHub has none yet
+	s1_ms: '00:00:29.0120000',
+	s2_ms: 'null',
+	bestS1_ms: '00:00:28.5990000',
+	bestS2_ms: '00:00:30.1200000',
+	bestS3_ms: '00:00:25.5900000'
 };
 const SESSION_STATS = {
 	CurrentGame: 'AssettoCorsaCompetizione',
@@ -120,9 +122,10 @@ const SESSION_STATS = {
 	BrakeBias: '-15',
 	AirTemperature: '21',
 	TrackTemperature: '27',
-	rainIntensity: 'ACC_NO_RAIN',
-	rainIntensityIn10min: 'ACC_DRIZZLE',
-	rainIntensityIn30min: 'ACC_LIGHT_RAIN'
+	// ACC rain intensity as a number: 0 = no rain … 5 = thunderstorm
+	rainIntensity: '0',
+	rainIntensityIn10min: '1',
+	rainIntensityIn30min: '2'
 };
 
 // Live stats in each sector of a lap (Sprint 1.5, F8). currentSplit: time so far in the
@@ -134,7 +137,7 @@ const LIVE_IN_SECTOR = {
 		progress: '0.15',
 		currentSector: '1',
 		currentSplit: '12040',
-		s1_ms: undefined
+		s1_ms: 'null'
 	},
 	2: {
 		...LAP_STATS,
@@ -142,7 +145,7 @@ const LIVE_IN_SECTOR = {
 		progress: '0.48',
 		currentSector: '2',
 		currentSplit: '15780',
-		s1_ms: '25450'
+		s1_ms: '00:00:25.4500000'
 	},
 	3: {
 		...LAP_STATS,
@@ -150,8 +153,8 @@ const LIVE_IN_SECTOR = {
 		progress: '0.82',
 		currentSector: '3',
 		currentSplit: '14850',
-		s1_ms: '25450',
-		s2_ms: '29800'
+		s1_ms: '00:00:25.4500000',
+		s2_ms: '00:00:29.8000000'
 	}
 };
 // A SimHub car id that isn't in the catalog: stats are stored, the lounge falls back to labels.
@@ -174,8 +177,8 @@ function liveSectorScenario(sector) {
 					r.body?.status === 'ok' &&
 					stored?.currentSector === sector &&
 					stored?.currentSplit === Number(expected.currentSplit) &&
-					(stored?.s1_ms ?? null) === (expected.s1_ms ? Number(expected.s1_ms) : null) &&
-					(stored?.s2_ms ?? null) === (expected.s2_ms ? Number(expected.s2_ms) : null)
+					(stored?.s1_ms ?? null) === (expected.s1_ms === 'null' ? null : expected.s1_ms) &&
+					(stored?.s2_ms ?? null) === (expected.s2_ms === 'null' ? null : expected.s2_ms)
 				);
 			});
 		}
@@ -533,7 +536,11 @@ const scenarios = {
 				const r = await call(rig, '/send/session', SESSION_STATS);
 				const stored = await storedStats(rig, 'session_stats');
 				return (
-					r.status === 200 && r.body?.status === 'ok' && stored?.TCLevel === 3 && !('k' in stored)
+					r.status === 200 &&
+					r.body?.status === 'ok' &&
+					stored?.TCLevel === 3 &&
+					stored?.rainIntensityIn30min === 2 &&
+					!('k' in stored)
 				);
 			});
 		}

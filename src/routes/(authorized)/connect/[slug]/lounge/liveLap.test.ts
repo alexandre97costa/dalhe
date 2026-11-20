@@ -15,12 +15,16 @@ const bests: LoungeBests = {
 const live = (overrides: Partial<LapStats>): LapStats => ({
 	lapNumber: 6,
 	laptime_ms: 41230,
-	deltaBest: -0.21,
+	deltaBest: -210,
 	progress: 0.48,
 	valid: true,
 	currentSector: 2,
 	currentSplit: 12218,
-	s1_ms: 29012,
+	s1_ms: '00:00:29.0120000',
+	s2_ms: null,
+	bestS1_ms: null,
+	bestS2_ms: null,
+	bestS3_ms: null,
 	...overrides
 });
 
@@ -47,7 +51,7 @@ const lap = (overrides: Partial<LatestLap> = {}): LatestLap => ({
 describe('liveSectorTiles', () => {
 	it('sector 1: split in S1, S2 and S3 still to come', () => {
 		const tiles = liveSectorTiles(
-			live({ currentSector: 1, currentSplit: 12040, s1_ms: undefined }),
+			live({ currentSector: 1, currentSplit: 12040, s1_ms: null }),
 			bests
 		);
 		expect(tiles.map((t) => [t.state, t.time, t.pace])).toEqual([
@@ -58,7 +62,7 @@ describe('liveSectorTiles', () => {
 	});
 
 	it('sector 2: S1 coloured, split in S2', () => {
-		const tiles = liveSectorTiles(live({ currentSector: 2, s1_ms: 29012 }), bests);
+		const tiles = liveSectorTiles(live({ currentSector: 2, s1_ms: '00:00:29.0120000' }), bests);
 		expect(tiles.map((t) => [t.state, t.time, t.pace])).toEqual([
 			['done', 29012, 'onPace'],
 			['current', 12218, 'neutral'],
@@ -68,7 +72,12 @@ describe('liveSectorTiles', () => {
 
 	it('sector 3: S1 and S2 coloured, split in S3', () => {
 		const tiles = liveSectorTiles(
-			live({ currentSector: 3, currentSplit: 9000, s1_ms: 27900, s2_ms: 32000 }),
+			live({
+				currentSector: 3,
+				currentSplit: 9000,
+				s1_ms: '00:00:27.9000000',
+				s2_ms: '00:00:32.0000000'
+			}),
 			bests
 		);
 		expect(tiles.map((t) => [t.state, t.time, t.pace])).toEqual([
@@ -79,17 +88,36 @@ describe('liveSectorTiles', () => {
 	});
 
 	it('no bests (unmapped): every sector neutral', () => {
-		const tiles = liveSectorTiles(live({ currentSector: 3, s1_ms: 27900, s2_ms: 30000 }), null);
+		const tiles = liveSectorTiles(
+			live({ currentSector: 3, s1_ms: '00:00:27.9000000', s2_ms: '00:00:30.0000000' }),
+			null
+		);
 		expect(tiles.map((t) => t.pace)).toEqual(['neutral', 'neutral', 'neutral']);
 	});
 
 	it('a completed sector missing from the stats shows no time, neutral', () => {
-		const tiles = liveSectorTiles(live({ currentSector: 2, s1_ms: undefined }), bests);
+		const tiles = liveSectorTiles(live({ currentSector: 2, s1_ms: null }), bests);
 		expect(tiles[0]).toEqual({ kind: 's1', state: 'done', time: null, pace: 'neutral' });
 	});
 
+	it('converts the ISO sector times to ms and keeps currentSplit as ms', () => {
+		const tiles = liveSectorTiles(
+			live({
+				currentSector: 3,
+				currentSplit: 14850,
+				s1_ms: '00:00:25.4500000',
+				s2_ms: '00:01:02.0040000'
+			}),
+			null
+		);
+		expect(tiles.map((t) => t.time)).toEqual([25450, 62004, 14850]);
+	});
+
 	it('ignores the SimHub bestSx_ms', () => {
-		const tiles = liveSectorTiles(live({ currentSector: 2, s1_ms: 29012, bestS1_ms: 30000 }), null);
+		const tiles = liveSectorTiles(
+			live({ currentSector: 2, s1_ms: '00:00:29.0120000', bestS1_ms: '00:00:30.0000000' }),
+			null
+		);
 		expect(tiles[0].pace).toBe('neutral');
 	});
 });

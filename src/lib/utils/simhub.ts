@@ -36,10 +36,30 @@ export function sessionTypeLabel(
 	}
 }
 
-// ACC rain values: "No rain", "Drizzle", "Light rain", "Medium rain", "Heavy rain", "Thunderstorm".
+// ACC's rain intensity enum, in order: the overlay sends the index (0 = no rain … 5 = thunderstorm),
+// older stored stats have the name. The bigger the number, the heavier the rain.
+const ACC_RAIN = [
+	'ACC_NO_RAIN',
+	'ACC_DRIZZLE',
+	'ACC_LIGHT_RAIN',
+	'ACC_MEDIUM_RAIN',
+	'ACC_HEAVY_RAIN',
+	'ACC_THUNDERSTORM'
+] as const;
+type AccRain = (typeof ACC_RAIN)[number];
+
+// 0 (no rain) to 5 (thunderstorm), from the number (or a numeric string) or the ACC name.
 // Null for a missing or unknown value (e.g. stats stored before the rainIntensity rename).
+export function rainLevel(rain: RainIntensity | string | null | undefined): number | null {
+	if (rain === null || rain === undefined || rain === '') return null;
+	const level = /^\d+$/.test(String(rain)) ? Number(rain) : ACC_RAIN.indexOf(rain as AccRain);
+	return level >= 0 && level < ACC_RAIN.length ? level : null;
+}
+
+// "No rain", "Drizzle", "Light rain", "Medium rain", "Heavy rain", "Thunderstorm". Null when unknown.
 export function rainLabel(rain: RainIntensity | string | null | undefined): string | null {
-	switch (rain) {
+	const level = rainLevel(rain);
+	switch (level === null ? null : ACC_RAIN[level]) {
 		case 'ACC_NO_RAIN':
 			return m.lounge_rain_none();
 		case 'ACC_DRIZZLE':
@@ -55,18 +75,4 @@ export function rainLabel(rain: RainIntensity | string | null | undefined): stri
 		default:
 			return null;
 	}
-}
-
-// 0 (no rain) to 5 (thunderstorm), for picking a weather icon. Null when unknown.
-export function rainLevel(rain: RainIntensity | string | null | undefined): number | null {
-	const levels: string[] = [
-		'ACC_NO_RAIN',
-		'ACC_DRIZZLE',
-		'ACC_LIGHT_RAIN',
-		'ACC_MEDIUM_RAIN',
-		'ACC_HEAVY_RAIN',
-		'ACC_THUNDERSTORM'
-	];
-	const level = levels.indexOf(rain ?? '');
-	return level === -1 ? null : level;
 }

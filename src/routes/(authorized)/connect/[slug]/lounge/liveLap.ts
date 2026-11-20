@@ -6,7 +6,7 @@ import { FREEZE_WINDOW_S } from '$lib/config/lounge';
 import { classifyLap, classifyPace, type BestsByKey, type LoungeBests, type Pace } from '$lib/pace';
 import type { LapStats } from '$lib/types/rig';
 import type { LatestLap } from '$lib/types/lounge';
-import { formatLaptime, convertTimeStringToMilliseconds } from '$lib/utils/laptime'
+import { convertTimeStringToMilliseconds } from '$lib/utils/laptime';
 
 export type SectorKind = 's1' | 's2' | 's3';
 const KINDS: SectorKind[] = ['s1', 's2', 's3'];
@@ -16,23 +16,25 @@ export type SectorTile = {
 	// done: a completed sector; current: the sector being driven; future: not reached yet.
 	state: 'done' | 'current' | 'future';
 	// ms; null shows "–" (future sector, or a completed one the stats or the lap lack).
-	time: string | null;
+	time: number | null;
 	// Neutral for the sector in progress, future sectors and missing times.
 	pace: Pace;
 };
 
 // L1 + L2: completed sectors show s1_ms / s2_ms coloured against the live bests, the current
 // sector shows currentSplit (neutral), later sectors "–".
+// The overlay sends s1_ms / s2_ms as ISO times (00:00:29.0120000); they become ms here, once.
+// currentSplit is already ms.
 export function liveSectorTiles(live: LapStats, liveBests: LoungeBests | null): SectorTile[] {
-	const completed = [live.s1_ms, live.s2_ms];
+	const completed = [live.s1_ms, live.s2_ms].map((t) => convertTimeStringToMilliseconds(t ?? null));
 	return KINDS.map((kind, index) => {
 		const sector = index + 1;
 		if (sector < live.currentSector) {
-			const time = completed[index] ?? null;
-			return { kind, state: 'done', time, pace: classifyPace(convertTimeStringToMilliseconds(time), liveBests, kind) };
+			const time = completed[index];
+			return { kind, state: 'done', time, pace: classifyPace(time, liveBests, kind) };
 		}
 		if (sector === live.currentSector) {
-			return { kind, state: 'current', time: formatLaptime(live.currentSplit), pace: 'neutral' };
+			return { kind, state: 'current', time: live.currentSplit, pace: 'neutral' };
 		}
 		return { kind, state: 'future', time: null, pace: 'neutral' };
 	});
