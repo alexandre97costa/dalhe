@@ -3,14 +3,19 @@ import * as z from 'zod';
 // The overlay sends everything as query params (strings): numbers are coerced, booleans are "true"/"false".
 const int = z.coerce.number<number>().int();
 const num = z.coerce.number<number>();
-export const zRainIntensity = z.enum([
-	'ACC_NO_RAIN',
-	'ACC_DRIZZLE',
-	'ACC_LIGHT_RAIN', // Doesnt seem to exist but its ok to leave it here for future proofing
-	'ACC_MEDIUM_RAIN',
-	'ACC_HEAVY_RAIN',
-	'ACC_THUNDERSTORM'
-]);
+export const zRainIntensity = z.union([
+	z.coerce.number().int(),
+	z.enum([
+		'ACC_NO_RAIN',
+		'ACC_DRIZZLE',
+		'ACC_LIGHT_RAIN', // Doesnt seem to exist but its ok to leave it here for future proofing
+		'ACC_MEDIUM_RAIN',
+		'ACC_HEAVY_RAIN',
+		'ACC_THUNDERSTORM'
+	])
+])
+
+	;
 export type RainIntensity = z.infer<typeof zRainIntensity>;
 
 // Sim session stats, /send/session. Stored in rig_stats.session_stats.
@@ -29,11 +34,11 @@ export const zSessionStats = z.object({
 	]),
 	CarId: z.string().nonempty(), // audi_r8_lms_evo
 	CarClass: z.string().nullish(), // GT3
-	TCLevel: int.nonnegative(), // 6 (0 = off)
-	ABSLevel: int.nonnegative(), // 5 (0 = off)
-	BrakeBias: int, // -17
-	AirTemperature: int, // 30
-	TrackTemperature: int, // 37
+	TCLevel: z.coerce.number().int().nonnegative(), // 6 (0 = off)
+	ABSLevel: z.coerce.number().int().nonnegative(), // 5 (0 = off)
+	BrakeBias: z.coerce.number().int(), // -17
+	AirTemperature: z.coerce.number(), // 30
+	TrackTemperature: z.coerce.number(), // 37
 	rainIntensity: zRainIntensity, // ACC_NO_RAIN (renamed from the typo rainIntesity in Sprint 1.5)
 	rainIntensityIn10min: zRainIntensity,
 	rainIntensityIn30min: zRainIntensity
@@ -42,19 +47,19 @@ export type SessionStats = z.infer<typeof zSessionStats>;
 
 // Live lap stats, /send/live. Stored in rig_stats.lap_stats.
 export const zLapStats = z.object({
-	lapNumber: int.nonnegative(),
-	lapTotalCount: int.nonnegative().optional(),
-	laptime_ms: int.nonnegative(),
-	deltaBest: num,
-	progress: num.min(0).max(1) /* Progress from 0 to 1. */,
+	lapNumber: z.coerce.number().int().nonnegative(),
+	lapTotalCount: z.coerce.number().int().nonnegative().optional(),
+	laptime_ms: z.coerce.number().int().nonnegative(),
+	deltaBest: z.coerce.number(),
+	progress: z.coerce.number().min(0).max(1) /* Progress from 0 to 1. */,
 	valid: z.stringbool(),
-	currentSector: int.min(1).max(3),
-	currentSplit: int.nonnegative(),
-	s1_ms: int.nonnegative().optional(),
-	s2_ms: int.nonnegative().optional(),
-	bestS1_ms: int.nonnegative().optional(),
-	bestS2_ms: int.nonnegative().optional(),
-	bestS3_ms: int.nonnegative().optional()
+	currentSector: z.coerce.number().int().min(1).max(3),
+	currentSplit: z.coerce.number().int().nonnegative(),
+	s1_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
+	s2_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
+	bestS1_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
+	bestS2_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
+	bestS3_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable())
 });
 export type LapStats = z.infer<typeof zLapStats>;
 

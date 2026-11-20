@@ -101,8 +101,6 @@
 	let live = $derived(liveLap);
 	let liveTiles = $derived(live ? liveSectorTiles(live, liveBests) : []);
 
-	// deltaBest comes from SimHub in seconds.
-	let deltaMs = $derived(live ? Math.round(live.deltaBest * 1000) : null);
 </script>
 
 <Card.Root class="gap-1 py-4 " aria-label={m.lounge_live_lap()} aria-live="polite">
@@ -157,16 +155,16 @@
 				>
 					{formatLapClock(live.laptime_ms, false)}
 				</Card.Title>
-				{#if deltaMs !== null}
+				{#if live.deltaBest !== null}
 					<Badge
-						variant={deltaMs === 0 ? 'secondary' : 'outline'}
+						variant={live.deltaBest === 0 ? 'secondary' : 'outline'}
 						class={cn(
 							'font-mono text-sm tabular-nums',
-							deltaMs < 0 && 'border-delta-faster text-secondary bg-delta-faster',
-							deltaMs > 0 && 'border-delta-slower text-secondary bg-delta-slower'
+							live.deltaBest < 0 && 'border-delta-faster text-secondary bg-delta-faster',
+							live.deltaBest > 0 && 'border-delta-slower text-secondary bg-delta-slower'
 						)}
 					>
-						{formatDelta(deltaMs)}
+						{formatDelta(live.deltaBest)}
 					</Badge>
 				{/if}
 			</div>

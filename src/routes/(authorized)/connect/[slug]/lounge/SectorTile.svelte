@@ -6,6 +6,7 @@
 	import { paceBg, paceText } from '$lib/pace/classes';
 	import { sectorAriaLabel } from '$lib/pace/labels';
 	import type { SectorTile } from './liveLap';
+	import { convertTimeStringToMilliseconds } from '$lib/utils/laptime';
 
 	let { tile }: { tile: SectorTile } = $props();
 </script>
@@ -29,7 +30,7 @@
 			tile.state !== 'future' ? 'text-primary' : 'text-muted-foreground'
 		)}
 	>
-		{tile.time === null ? '-' : formatLapClock(tile.time, true)}
+		{tile.time === null ? '-' : formatLapClock(convertTimeStringToMilliseconds(tile.time), true)}
 	</strong>
 	<div
 		class={cn('h-2 rounded-full', tile.state === 'future' ? 'bg-muted' : paceBg[tile.pace])}

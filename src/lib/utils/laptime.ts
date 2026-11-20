@@ -2,7 +2,7 @@ import { m } from '$lib/paraglide/messages.js';
 import * as z from 'zod';
 
 export function formatLaptime(milliseconds: number | null): string {
-	if (milliseconds === null) return '--:--.--';
+	if (milliseconds === null) return '--:--.---';
 	const totalSeconds = Math.floor(milliseconds / 1000);
 	const minutes = Math.floor(totalSeconds / 60);
 	const seconds = totalSeconds % 60;
@@ -11,12 +11,12 @@ export function formatLaptime(milliseconds: number | null): string {
 	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
 }
 
-export function convertTimeStringToMilliseconds(timeString: string): number | null {
+export function convertTimeStringToMilliseconds(timeString: string | null): number | null {
 	const isoTime = z.iso.time();
 	const validate = isoTime.safeParse(timeString);
 	if (!validate.success) return null;
 
-	const parts = timeString.split(':');
+	const parts = validate.data.split(':');
 	const hours = parseInt(parts[0]);
 	const minutes = parseInt(parts[1]);
 	const seconds = parseFloat(parts[2]); /* 10.8620000 -> 10.862 */
@@ -68,7 +68,7 @@ export function formatLapClock(
 	milliseconds: number | null | undefined,
 	isSectors: boolean
 ): string {
-	if (milliseconds === null || milliseconds === undefined) return '–:––.–––';
+	if (milliseconds === null || milliseconds === undefined) return '-:--.---';
 	const ms = Math.max(0, Math.round(milliseconds));
 	const minutes = Math.floor(ms / 60_000);
 	const seconds = Math.floor((ms % 60_000) / 1000);

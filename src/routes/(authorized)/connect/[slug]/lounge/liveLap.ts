@@ -6,6 +6,7 @@ import { FREEZE_WINDOW_S } from '$lib/config/lounge';
 import { classifyLap, classifyPace, type BestsByKey, type LoungeBests, type Pace } from '$lib/pace';
 import type { LapStats } from '$lib/types/rig';
 import type { LatestLap } from '$lib/types/lounge';
+import { formatLaptime, convertTimeStringToMilliseconds } from '$lib/utils/laptime'
 
 export type SectorKind = 's1' | 's2' | 's3';
 const KINDS: SectorKind[] = ['s1', 's2', 's3'];
@@ -15,7 +16,7 @@ export type SectorTile = {
 	// done: a completed sector; current: the sector being driven; future: not reached yet.
 	state: 'done' | 'current' | 'future';
 	// ms; null shows "–" (future sector, or a completed one the stats or the lap lack).
-	time: number | null;
+	time: string | null;
 	// Neutral for the sector in progress, future sectors and missing times.
 	pace: Pace;
 };
@@ -28,10 +29,10 @@ export function liveSectorTiles(live: LapStats, liveBests: LoungeBests | null): 
 		const sector = index + 1;
 		if (sector < live.currentSector) {
 			const time = completed[index] ?? null;
-			return { kind, state: 'done', time, pace: classifyPace(time, liveBests, kind) };
+			return { kind, state: 'done', time, pace: classifyPace(convertTimeStringToMilliseconds(time), liveBests, kind) };
 		}
 		if (sector === live.currentSector) {
-			return { kind, state: 'current', time: live.currentSplit, pace: 'neutral' };
+			return { kind, state: 'current', time: formatLaptime(live.currentSplit), pace: 'neutral' };
 		}
 		return { kind, state: 'future', time: null, pace: 'neutral' };
 	});
