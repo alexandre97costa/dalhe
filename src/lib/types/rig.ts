@@ -1,7 +1,6 @@
 import * as z from 'zod';
 
 // The overlay sends everything as query params (strings): numbers are coerced, booleans are "true"/"false".
-const int = z.coerce.number<number>().int();
 const num = z.coerce.number<number>();
 export const zRainIntensity = z.union([
 	z.coerce.number().int(),
@@ -13,9 +12,7 @@ export const zRainIntensity = z.union([
 		'ACC_HEAVY_RAIN',
 		'ACC_THUNDERSTORM'
 	])
-])
-
-	;
+]);
 export type RainIntensity = z.infer<typeof zRainIntensity>;
 
 // Sim session stats, /send/session. Stored in rig_stats.session_stats.
@@ -55,11 +52,21 @@ export const zLapStats = z.object({
 	valid: z.stringbool(),
 	currentSector: z.coerce.number().int().min(1).max(3),
 	currentSplit: z.coerce.number().int().nonnegative(),
-	s1_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
-	s2_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
-	bestS1_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
-	bestS2_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable()),
-	bestS3_ms: z.preprocess((val: string) => { return (val === "null") ? null : val; }, z.iso.time().nullable())
+	s1_ms: z.preprocess((val: string) => {
+		return val === 'null' ? null : val;
+	}, z.iso.time().nullable()),
+	s2_ms: z.preprocess((val: string) => {
+		return val === 'null' ? null : val;
+	}, z.iso.time().nullable()),
+	bestS1_ms: z.preprocess((val: string) => {
+		return val === 'null' ? null : val;
+	}, z.iso.time().nullable()),
+	bestS2_ms: z.preprocess((val: string) => {
+		return val === 'null' ? null : val;
+	}, z.iso.time().nullable()),
+	bestS3_ms: z.preprocess((val: string) => {
+		return val === 'null' ? null : val;
+	}, z.iso.time().nullable())
 });
 export type LapStats = z.infer<typeof zLapStats>;
 

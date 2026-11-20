@@ -100,7 +100,6 @@
 
 	let live = $derived(liveLap);
 	let liveTiles = $derived(live ? liveSectorTiles(live, liveBests) : []);
-
 </script>
 
 <Card.Root class="gap-1 py-4 " aria-label={m.lounge_live_lap()} aria-live="polite">

@@ -332,11 +332,12 @@ values (
   'b0000000-0000-4000-8000-000000000002',
   '{"CurrentGame": "AssettoCorsaCompetizione", "TrackId": "brands_hatch", "SessionTypeName": "PRACTICE",
     "CarId": "porsche_991ii_gt3_r", "CarClass": "GT3", "TCLevel": 0, "ABSLevel": 2, "BrakeBias": -17,
-    "AirTemperature": 21, "TrackTemperature": 27, "rainIntensity": "ACC_NO_RAIN",
-    "rainIntensityIn10min": "ACC_DRIZZLE", "rainIntensityIn30min": "ACC_LIGHT_RAIN"}',
+    "AirTemperature": 21, "TrackTemperature": 27, "rainIntensity": 0,
+    "rainIntensityIn10min": 1, "rainIntensityIn30min": 2}',
   now(),
-  '{"lapNumber": 9, "lapTotalCount": 20, "laptime_ms": 41230, "deltaBest": -0.21, "progress": 0.48,
-    "valid": true, "currentSector": 2, "currentSplit": 15780, "s1_ms": 25450}',
+  '{"lapNumber": 9, "lapTotalCount": 20, "laptime_ms": 41230, "deltaBest": -210, "progress": 0.48,
+    "valid": true, "currentSector": 2, "currentSplit": 15780, "s1_ms": "00:00:25.4500000", "s2_ms": null,
+    "bestS1_ms": "00:00:25.1200000", "bestS2_ms": null, "bestS3_ms": null}',
   now()
 );
 
